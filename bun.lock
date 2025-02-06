@@ -4,6 +4,7 @@
     "": {
       "name": "futdrafts.com",
       "dependencies": {
+        "@better-fetch/fetch": "^1.1.12",
         "@next/env": "^15.1.6",
         "@t3-oss/env-nextjs": "^0.12.0",
         "better-auth": "^1.1.16",
