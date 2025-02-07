@@ -1,0 +1,25 @@
+import { SignUpForm } from "./_form";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+
+export default function SignUpPage() {
+    return (
+        <Card className="z-50 rounded-md rounded-t-none max-w-md">
+			<CardHeader>
+				<CardTitle className="text-lg md:text-xl">Sign Up</CardTitle>
+				<CardDescription className="text-xs md:text-sm">
+					Enter your information to create an account
+				</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<SignUpForm />
+			</CardContent>
+		</Card>
+    )
+}
