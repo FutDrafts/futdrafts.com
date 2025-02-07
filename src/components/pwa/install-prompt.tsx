@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { PlusIcon, ShareIcon } from "lucide-react"
 
 export function InstallPrompt() {
     const [isIOS, setIsIOS] = useState(false);
@@ -8,6 +9,7 @@ export function InstallPrompt() {
 
     useEffect(() => {
         setIsIOS( /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream)
+        setIsStandalone(window.matchMedia('(display-mode: standalone)').matches)
     }, []);
 
     if(isStandalone) {
@@ -22,12 +24,12 @@ export function InstallPrompt() {
           To install this app on your iOS device, tap the share button
           <span role="img" aria-label="share icon">
             {' '}
-            ⎋{' '}
+            <ShareIcon/>{' '}
           </span>
           and then "Add to Home Screen"
           <span role="img" aria-label="plus icon">
             {' '}
-            ➕{' '}
+            <PlusIcon/>{' '}
           </span>.
         </p>
       )}
