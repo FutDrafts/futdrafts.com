@@ -14,6 +14,9 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     autoSignIn: true,
     maxPasswordLength: 32,
+    async sendResetPassword(data, request) {
+      // TODO: Implement
+    },
   },
   socialProviders: {
     github: {
