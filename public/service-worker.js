@@ -1,5 +1,3 @@
-const { ClientPageRoot } = require("next/dist/client/components/client-page");
-
 self.addEventListener("push", function(event) {
     if(event.data) {
         const data = event.data.json();
