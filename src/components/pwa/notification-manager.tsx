@@ -5,7 +5,6 @@ import { env } from '@/env/client';
 import { urlBase64ToUint8Array } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
-import { CloudCog } from 'lucide-react';
 
 export function NotificationManager() {
     const [isSupported, setIsSupported] = useState(false);
