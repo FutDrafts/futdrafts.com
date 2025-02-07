@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import { PlusIcon, ShareIcon } from "lucide-react"
+interface WindowWithMSStream extends Window {
+  MSStream?: boolean;
+}
 
 export function InstallPrompt() {
     const [isIOS, setIsIOS] = useState(false);
     const [isStandalone, setIsStandalone] = useState(false);
 
     useEffect(() => {
-        // @ts-ignore
-        setIsIOS( /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream)
+        setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as WindowWithMSStream).MSStream)
         setIsStandalone(window.matchMedia('(display-mode: standalone)').matches)
     }, []);
 
