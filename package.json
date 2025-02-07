@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack --experimental-https",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -21,6 +21,7 @@
     "@next/mdx": "^15.1.6",
     "@t3-oss/env-nextjs": "^0.12.0",
     "@types/mdx": "^2.0.13",
+    "@types/web-push": "^3.6.4",
     "better-auth": "^1.1.16",
     "drizzle-orm": "^0.39.2",
     "jiti": "^2.4.2",
@@ -30,6 +31,7 @@
     "posthog-js": "^1.215.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "web-push": "^3.6.7",
     "zod": "^3.24.1"
   },
   "devDependencies": {
