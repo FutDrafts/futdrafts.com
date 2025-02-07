@@ -8,6 +8,7 @@ export function InstallPrompt() {
     const [isStandalone, setIsStandalone] = useState(false);
 
     useEffect(() => {
+        // @ts-ignore
         setIsIOS( /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream)
         setIsStandalone(window.matchMedia('(display-mode: standalone)').matches)
     }, []);
@@ -26,7 +27,7 @@ export function InstallPrompt() {
             {' '}
             <ShareIcon/>{' '}
           </span>
-          and then "Add to Home Screen"
+          and then Add to Home Screen
           <span role="img" aria-label="plus icon">
             {' '}
             <PlusIcon/>{' '}
