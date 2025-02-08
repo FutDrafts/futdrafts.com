@@ -1,0 +1,10 @@
+#!/bin/sh
+# Exit on error
+set -e
+
+echo "Running Prettier Formatting..."
+bun run format
+
+echo "Running Next Lint..."
+bun run lint
+
