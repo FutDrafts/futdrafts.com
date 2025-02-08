@@ -1,5 +1,4 @@
 import { createEnv } from '@t3-oss/env-nextjs'
-import { NEXT_BODY_SUFFIX } from 'next/dist/lib/constants'
 import { z } from 'zod'
 
 export const env = createEnv({

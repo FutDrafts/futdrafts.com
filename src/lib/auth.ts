@@ -16,6 +16,8 @@ export const auth = betterAuth({
         maxPasswordLength: 32,
         async sendResetPassword(data, request) {
             // TODO: Implement
+            console.log('sendResetPassword')
+            console.log(data, request)
         },
     },
     socialProviders: {
