@@ -52,7 +52,7 @@ export function SignUpForm() {
 
     const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
         setLoading(true)
-        console.log(image);
+        console.log(image)
 
         await authClient.signUp.email({
             email: data.email,
