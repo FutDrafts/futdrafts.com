@@ -24,8 +24,8 @@ export default function SignUpPage() {
             </CardContent>
             <CardFooter className="px-0">
                 <p className="text-xs text-muted-foreground">
-                    By signing up, you agree to the <Link href="/terms">Terms of Service</Link> and{' '}
-                    <Link href="/privacy">Privacy Policy</Link>
+                    By signing up, you agree to the <Link href="/policies/terms">Terms of Service</Link> and{' '}
+                    <Link href="/policies/privacy">Privacy Policy</Link>
                 </p>
             </CardFooter>
         </Card>
