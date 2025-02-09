@@ -38,7 +38,7 @@ export function SignInForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4" data-netlify="true">
                 <FormField
                     control={form.control}
                     name="email"
