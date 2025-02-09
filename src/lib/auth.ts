@@ -2,10 +2,12 @@ import { betterAuth } from 'better-auth'
 import { admin, jwt } from 'better-auth/plugins'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { db } from '@/db'
-import { env } from '@/env/server'
+import { env as serverEnv } from '@/env/server'
+import { env as clientEnv } from '@/env/client'
 
 export const auth = betterAuth({
     appName: 'FutDrafts',
+    baseURL: clientEnv.NEXT_PUBLIC_APP_URL,
     database: drizzleAdapter(db, {
         provider: 'pg',
     }),
@@ -23,8 +25,8 @@ export const auth = betterAuth({
     socialProviders: {
         github: {
             enabled: true,
-            clientId: env.GITHUB_CLIENT_ID as string,
-            clientSecret: env.GITHUB_CLIENT_SECRET as string,
+            clientId: serverEnv.GITHUB_CLIENT_ID as string,
+            clientSecret: serverEnv.GITHUB_CLIENT_SECRET as string,
         },
     },
     plugins: [admin(), jwt()],
