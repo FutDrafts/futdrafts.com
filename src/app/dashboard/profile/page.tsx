@@ -8,16 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import {
-    Trophy,
-    Medal,
-    Star,
-    Edit,
-    Save,
-    X,
-    Camera,
-    ChartLine,
-} from 'lucide-react'
+import { Trophy, Medal, Star, Edit, Save, X, Camera, ChartLine } from 'lucide-react'
 
 // Mock data - replace with real data fetching
 const mockUser = {
@@ -223,8 +214,8 @@ export default function ProfilePage() {
                                 <ChartLine className="mx-auto h-12 w-12 text-muted-foreground" />
                                 <h3 className="mt-4 text-lg font-semibold">Statistics Coming Soon</h3>
                                 <p className="mt-2 text-sm text-muted-foreground">
-                                    We&apos;re working on bringing you detailed statistics and analytics about your fantasy
-                                    football performance.
+                                    We&apos;re working on bringing you detailed statistics and analytics about your
+                                    fantasy football performance.
                                 </p>
                             </div>
                         </CardContent>
