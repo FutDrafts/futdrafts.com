@@ -4,10 +4,7 @@ import { Wrench } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
-import { betterFetch } from '@better-fetch/fetch'
-import { auth } from '@/lib/auth'
-
-type Session = typeof auth.$Infer.Session
+import { authClient } from '@/lib/auth-client'
 
 export default function MaintenancePage() {
     const [isAdmin, setIsAdmin] = useState(false)
@@ -16,8 +13,8 @@ export default function MaintenancePage() {
     useEffect(() => {
         async function checkSession() {
             try {
-                const { data: session } = await betterFetch<Session>('/api/auth/get-session')
-                setIsAdmin(session?.user?.role === 'admin')
+                const session = await authClient.getSession()
+                setIsAdmin(session?.data?.user?.role === '')
             } catch (error) {
                 console.error('Failed to check session:', error)
             } finally {
