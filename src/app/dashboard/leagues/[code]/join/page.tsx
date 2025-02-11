@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -27,8 +27,10 @@ const leagueData = {
     inviteRequired: true,
 }
 
-export default function JoinLeaguePage({ params }: { params: { code: string } }) {
+export default function JoinLeaguePage({ params }: { params: Promise<{ code: string }> }) {
     const router = useRouter()
+
+    const { code } = use(params)
     const [loading, setLoading] = useState(false)
     const [inviteCode, setInviteCode] = useState('')
     const [error, setError] = useState<string | null>(null)
@@ -40,8 +42,8 @@ export default function JoinLeaguePage({ params }: { params: { code: string } })
 
         try {
             // TODO: Implement league join API call
-            // await joinLeague(params.code, inviteCode)
-            router.push(`/dashboard/leagues/${params.code}`)
+            // await joinLeague(code, inviteCode)
+            router.push(`/dashboard/leagues/${code}`)
         } catch (error) {
             setError('Failed to join league. Please check your invite code and try again.')
             console.error(error)
@@ -54,7 +56,7 @@ export default function JoinLeaguePage({ params }: { params: { code: string } })
         <div className="mx-auto max-w-2xl space-y-6">
             <div className="flex items-center gap-4">
                 <Button variant="ghost" size="icon" asChild>
-                    <Link href={`/dashboard/leagues/${params.code}`}>
+                    <Link href={`/dashboard/leagues/${code}`}>
                         <ArrowLeft className="h-5 w-5" />
                     </Link>
                 </Button>
@@ -62,7 +64,7 @@ export default function JoinLeaguePage({ params }: { params: { code: string } })
                     <div className="flex items-center gap-2">
                         <h1 className="text-3xl font-bold">Join League</h1>
                         <Badge variant="outline" className="font-mono">
-                            {formatLeagueCode(params.code)}
+                            {formatLeagueCode(code)}
                         </Badge>
                     </div>
                     <p className="text-muted-foreground">Join {leagueData.name}</p>
@@ -129,7 +131,7 @@ export default function JoinLeaguePage({ params }: { params: { code: string } })
 
                         <div className="flex justify-end gap-4">
                             <Button variant="outline" asChild>
-                                <Link href={`/dashboard/leagues/${params.code}`}>Cancel</Link>
+                                <Link href={`/dashboard/leagues/${code}`}>Cancel</Link>
                             </Button>
                             <Button type="submit" disabled={loading}>
                                 {loading ? (
