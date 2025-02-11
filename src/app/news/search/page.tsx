@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { searchNews } from '@/lib/meilisearch'
@@ -16,7 +17,7 @@ interface SearchResult {
     }
 }
 
-export default function SearchPage() {
+function SearchResults() {
     const searchParams = useSearchParams()
     const query = searchParams.get('q') || ''
     const [results, setResults] = useState<SearchResult[]>([])
@@ -82,5 +83,17 @@ export default function SearchPage() {
                 ))}
             </div>
         </div>
+    )
+}
+
+export default function SearchPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center py-12">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            </div>
+        }>
+            <SearchResults />
+        </Suspense>
     )
 }
