@@ -77,11 +77,17 @@ export default function ProfilePage() {
     return (
         <div className="container mx-auto py-10">
             <Tabs defaultValue="overview" className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <TabsList>
-                        <TabsTrigger value="overview">Overview</TabsTrigger>
-                        <TabsTrigger value="statistics">Statistics</TabsTrigger>
-                        <TabsTrigger value="leagues">Past Leagues</TabsTrigger>
+                <div className="flex flex-col-reverse items-center gap-3 md:flex-row md:justify-center">
+                    <TabsList className="w-full">
+                        <TabsTrigger value="overview" className="w-full">
+                            Overview
+                        </TabsTrigger>
+                        <TabsTrigger value="statistics" className="w-full">
+                            Statistics
+                        </TabsTrigger>
+                        <TabsTrigger value="leagues" className="w-full">
+                            Past Leagues
+                        </TabsTrigger>
                     </TabsList>
                     {!isEditing ? (
                         <Button onClick={() => setIsEditing(true)}>
@@ -89,7 +95,7 @@ export default function ProfilePage() {
                             Edit Profile
                         </Button>
                     ) : (
-                        <div className="flex gap-2">
+                        <div className="flex justify-between gap-2 md:justify-start">
                             <Button variant="outline" onClick={() => setIsEditing(false)}>
                                 <X className="mr-2 h-4 w-4" />
                                 Cancel
