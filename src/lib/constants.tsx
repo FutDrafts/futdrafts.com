@@ -1,4 +1,4 @@
-import { Globe2Icon, SparklesIcon, TrophyIcon } from "lucide-react"
+import { Globe2Icon, SparklesIcon, TrophyIcon } from 'lucide-react'
 
 export const MARKETING_FOOTER_LINKS = {
     Product: [
