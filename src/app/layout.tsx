@@ -4,6 +4,7 @@ import './globals.css'
 
 import { ClientPostHogProvider } from '@/providers/posthog-provider'
 import { Providers } from '@/providers'
+import { Toaster } from 'sonner'
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -29,6 +30,7 @@ export default function RootLayout({
         <html lang="en" suppressHydrationWarning>
             <ClientPostHogProvider>
                 <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                    <Toaster closeButton={true} richColors={true} />
                     <Providers>{children}</Providers>
                 </body>
             </ClientPostHogProvider>

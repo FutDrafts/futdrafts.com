@@ -26,3 +26,41 @@ export async function convertImageToBase64(file: File): Promise<string> {
         reader.readAsDataURL(file)
     })
 }
+
+// Generate a random league code (e.g., "PREM-2X4Y-9Z7W")
+export function generateLeagueCode(): string {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    const sections = [
+        // League type prefix (4 chars)
+        Array(4)
+            .fill(0)
+            .map(() => characters[Math.floor(Math.random() * characters.length)])
+            .join(''),
+        // Two sections of 4 characters each
+        Array(4)
+            .fill(0)
+            .map(() => characters[Math.floor(Math.random() * characters.length)])
+            .join(''),
+        Array(4)
+            .fill(0)
+            .map(() => characters[Math.floor(Math.random() * characters.length)])
+            .join(''),
+    ]
+    return sections.join('-')
+}
+
+// Format a league code for display (e.g., "PREM-2X4Y-9Z7W")
+export function formatLeagueCode(code: string): string {
+    return (
+        code
+            .toUpperCase()
+            .match(/.{1,4}/g)
+            ?.join('-') || code
+    )
+}
+
+// Validate a league code format
+export function isValidLeagueCode(code: string): boolean {
+    const pattern = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/
+    return pattern.test(code.toUpperCase())
+}
