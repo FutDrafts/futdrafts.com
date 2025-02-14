@@ -36,7 +36,7 @@ export default async function NewsPage() {
             {/* Featured News Section */}
             <section>
                 <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                    {mockNews.map((news, index) => (
+                    {mockNews.map((news) => (
                         <NewsCard key={news.slug} {...news} />
                     ))}
                 </div>

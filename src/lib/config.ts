@@ -1,7 +1,5 @@
-import { db } from '@/db'
 import { config } from '@/db/schema'
 import { env } from '@/env/client'
-import { betterFetch } from '@better-fetch/fetch'
 
 export interface AppConfig {
     maxResultsPerPage: number
