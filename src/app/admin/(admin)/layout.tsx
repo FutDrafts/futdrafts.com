@@ -28,6 +28,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { authClient } from '@/lib/auth-client'
 import { toast } from 'sonner'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 const sidebarItems = [
     {
@@ -84,6 +85,7 @@ const currentUser = {
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const [collapsed, setCollapsed] = useState(false)
     const pathname = usePathname()
+    const isMobile = useIsMobile()
 
     const handleSignOut = async () => {
         await authClient.signOut({
@@ -97,6 +99,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 },
             },
         })
+    }
+
+    if (isMobile) {
+        redirect('/admin/error/mobile')
     }
 
     return (
