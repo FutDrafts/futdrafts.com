@@ -7,8 +7,8 @@ export default async function MarketingHomePage() {
         <main className="animate-fade-in relative min-h-screen bg-gradient-to-b from-background to-secondary/10 dark:from-background dark:to-secondary/5">
             <ThemeSwitcher className="animate-fade-in absolute right-4 top-4 sm:right-8 sm:top-8" />
 
-            <MarketingHero/>
-            <MarketingFooter/>
+            <MarketingHero />
+            <MarketingFooter />
         </main>
     )
 }
