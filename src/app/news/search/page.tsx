@@ -24,7 +24,7 @@ interface SearchResult extends Hit<NewsDocument> {
 
 function SearchHit({ hit }: { hit: SearchResult }) {
     return (
-        <article className="rounded-lg border bg-card p-4 transition-shadow hover:shadow-md">
+        <article className="rounded-lg border bg-card p-4 transition-shadow hover:shadow-md" key={hit.id}>
             <div className="space-y-2">
                 <div className="text-sm text-muted-foreground">
                     {hit.category} • {new Date(hit.date).toLocaleDateString()}
@@ -42,6 +42,7 @@ function SearchResults() {
 
     return (
         <InstantSearch
+            /* eslint-disable @typescript-eslint/no-explicit-any */
             searchClient={searchClient as any}
             indexName="news"
             initialUiState={{
