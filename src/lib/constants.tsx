@@ -28,19 +28,19 @@ export const MARKETING_FOOTER_LINKS = {
 }
 export const MARKETING_FEATURES = [
     {
-        icon: <Globe2Icon className="mb-4 h-8 w-8 text-primary" />,
+        icon: <Globe2Icon className="text-primary mb-4 h-8 w-8" />,
         title: '1000+ Leagues',
         description: 'Access fantasy drafts from leagues worldwide, from Premier League to Liga MX',
         isImplemented: true,
     },
     {
-        icon: <TrophyIcon className="mb-4 h-8 w-8 text-primary" />,
+        icon: <TrophyIcon className="text-primary mb-4 h-8 w-8" />,
         title: 'Compete & Win',
         description: 'Create private leagues, compete with friends, and climb global leaderboards',
         isImplemented: true,
     },
     {
-        icon: <SparklesIcon className="mb-4 h-8 w-8 text-primary" />,
+        icon: <SparklesIcon className="text-primary mb-4 h-8 w-8" />,
         title: 'Smart Draft AI',
         description: 'Get AI-powered insights and recommendations for your draft picks',
         isImplemented: false,

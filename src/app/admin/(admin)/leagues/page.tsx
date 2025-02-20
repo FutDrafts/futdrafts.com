@@ -60,7 +60,7 @@ export default function LeaguesPage() {
 
             <div className="flex items-center gap-4">
                 <div className="relative flex-1 md:max-w-sm">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
                     <Input
                         placeholder="Search leagues..."
                         className="pl-8"
@@ -92,13 +92,13 @@ export default function LeaguesPage() {
                                 <TableRow key={league.id}>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
-                                            <Trophy className="h-4 w-4 text-primary" />
+                                            <Trophy className="text-primary h-4 w-4" />
                                             <span className="font-medium">{league.name}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
-                                            <Globe className="h-4 w-4 text-muted-foreground" />
+                                            <Globe className="text-muted-foreground h-4 w-4" />
                                             {league.country}
                                         </div>
                                     </TableCell>

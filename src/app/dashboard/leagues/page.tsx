@@ -100,17 +100,17 @@ export default function LeaguesPage() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Active Leagues</CardTitle>
-                        <Trophy className="h-4 w-4 text-muted-foreground" />
+                        <Trophy className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">24</div>
-                        <p className="text-xs text-muted-foreground">Across all competitions</p>
+                        <p className="text-muted-foreground text-xs">Across all competitions</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Players</CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <Users className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">12.5k</div>
@@ -123,21 +123,21 @@ export default function LeaguesPage() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Prize Pools</CardTitle>
-                        <Trophy className="h-4 w-4 text-muted-foreground" />
+                        <Trophy className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">50.2k</div>
-                        <p className="text-xs text-muted-foreground">Total points available</p>
+                        <p className="text-muted-foreground text-xs">Total points available</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Competitions</CardTitle>
-                        <Globe className="h-4 w-4 text-muted-foreground" />
+                        <Globe className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">6</div>
-                        <p className="text-xs text-muted-foreground">Major leagues covered</p>
+                        <p className="text-muted-foreground text-xs">Major leagues covered</p>
                     </CardContent>
                 </Card>
             </div>
@@ -151,7 +151,7 @@ export default function LeaguesPage() {
                 <CardContent>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                         <div className="relative">
-                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
                             <Input
                                 placeholder="Search leagues..."
                                 className="pl-8"
@@ -237,9 +237,9 @@ export default function LeaguesPage() {
                                     <TableCell>
                                         <div className="flex items-center gap-2">
                                             {league.type === 'private' ? (
-                                                <Lock className="h-4 w-4 text-muted-foreground" />
+                                                <Lock className="text-muted-foreground h-4 w-4" />
                                             ) : (
-                                                <Globe className="h-4 w-4 text-muted-foreground" />
+                                                <Globe className="text-muted-foreground h-4 w-4" />
                                             )}
                                             <span className="font-medium">{league.name}</span>
                                         </div>
@@ -252,13 +252,13 @@ export default function LeaguesPage() {
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
-                                            <Users className="h-4 w-4 text-muted-foreground" />
+                                            <Users className="text-muted-foreground h-4 w-4" />
                                             {league.participants}/{league.maxParticipants}
                                         </div>
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
-                                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                                            <Calendar className="text-muted-foreground h-4 w-4" />
                                             {new Date(league.startDate).toLocaleDateString()}
                                         </div>
                                     </TableCell>

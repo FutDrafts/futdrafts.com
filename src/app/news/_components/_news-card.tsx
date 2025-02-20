@@ -29,18 +29,18 @@ export function NewsCard({ title, category, imageUrl, author, publishedAt, slug 
                 </CardHeader>
                 <CardContent className="space-y-2">
                     <div className="flex items-center gap-2 text-sm">
-                        <span className="font-medium text-primary">{category}</span>
+                        <span className="text-primary font-medium">{category}</span>
                         <span className="text-muted-foreground">•</span>
                         <time dateTime={publishedAt.toISOString()} className="text-muted-foreground">
                             {formatDistanceToNow(publishedAt, { addSuffix: true })}
                         </time>
                     </div>
-                    <h3 className="line-clamp-2 text-xl font-semibold leading-tight group-hover:text-primary">
+                    <h3 className="group-hover:text-primary line-clamp-2 text-xl leading-tight font-semibold">
                         {title}
                     </h3>
                 </CardContent>
                 <CardFooter className="mt-auto flex flex-col items-start gap-2">
-                    <p className="text-sm text-muted-foreground">By {author}</p>
+                    <p className="text-muted-foreground text-sm">By {author}</p>
                 </CardFooter>
             </Card>
         </Link>

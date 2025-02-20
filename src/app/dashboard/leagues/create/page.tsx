@@ -224,7 +224,7 @@ export default function CreateLeaguePage() {
                         <div className="flex items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
                                 <Label>Private League</Label>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-muted-foreground text-sm">
                                     Restrict access to invited participants only
                                 </p>
                             </div>

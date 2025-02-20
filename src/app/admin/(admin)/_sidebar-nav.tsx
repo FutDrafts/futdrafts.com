@@ -81,7 +81,7 @@ export function AdminSidebarNavigation({ reportCount }: Props) {
                         <Icon className="h-5 w-5" />
                         <span className="flex-1">{item.title}</span>
                         {item.href === '/admin/reports' && reportCount > 0 && (
-                            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs text-destructive-foreground">
+                            <span className="bg-destructive text-destructive-foreground flex h-5 w-5 items-center justify-center rounded-full text-xs">
                                 {reportCount}
                             </span>
                         )}

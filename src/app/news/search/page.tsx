@@ -24,13 +24,13 @@ interface SearchResult extends Hit<NewsDocument> {
 
 function SearchHit({ hit }: { hit: SearchResult }) {
     return (
-        <article className="rounded-lg border bg-card p-4 transition-shadow hover:shadow-md" key={hit.id}>
+        <article className="bg-card rounded-lg border p-4 transition-shadow hover:shadow-md" key={hit.id}>
             <div className="space-y-2">
-                <div className="text-sm text-muted-foreground">
+                <div className="text-muted-foreground text-sm">
                     {hit.category} • {new Date(hit.date).toLocaleDateString()}
                 </div>
                 <h2 className="text-xl font-semibold">{hit._formatted?.title || hit.title}</h2>
-                <p className="line-clamp-3 text-muted-foreground">{hit._formatted?.content || hit.content}</p>
+                <p className="text-muted-foreground line-clamp-3">{hit._formatted?.content || hit.content}</p>
             </div>
         </article>
     )
@@ -70,7 +70,7 @@ export default function SearchPage() {
         <Suspense
             fallback={
                 <div className="flex items-center justify-center py-12">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                    <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
                 </div>
             }
         >

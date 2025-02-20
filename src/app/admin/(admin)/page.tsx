@@ -94,7 +94,7 @@ export default function AdminDashboard() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <Users className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{metrics.totalUsers}</div>
@@ -107,7 +107,7 @@ export default function AdminDashboard() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Articles</CardTitle>
-                        <Newspaper className="h-4 w-4 text-muted-foreground" />
+                        <Newspaper className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{metrics.totalArticles}</div>
@@ -120,7 +120,7 @@ export default function AdminDashboard() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Daily Visits</CardTitle>
-                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                        <TrendingUp className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{metrics.dailyVisits}</div>
@@ -133,11 +133,11 @@ export default function AdminDashboard() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Active Users</CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <Users className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{metrics.activeUsers}</div>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-muted-foreground text-xs">
                             {(
                                 (parseInt(metrics.activeUsers.replace('k', '000')) /
                                     parseInt(metrics.totalUsers.replace('k', '000'))) *
@@ -170,14 +170,14 @@ export default function AdminDashboard() {
                                     >
                                         <div className="space-y-1">
                                             <p className="font-medium">{article.title}</p>
-                                            <div className="flex text-sm text-muted-foreground">
+                                            <div className="text-muted-foreground flex text-sm">
                                                 <span>{article.author}</span>
                                                 <span className="mx-2">•</span>
                                                 <span>{new Date(article.date).toLocaleDateString()}</span>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-4">
-                                            <div className="text-sm text-muted-foreground">{article.views} views</div>
+                                            <div className="text-muted-foreground text-sm">{article.views} views</div>
                                             <Button variant="ghost" size="sm" asChild>
                                                 <Link href={`/admin/news/${article.id}`}>View</Link>
                                             </Button>
@@ -203,7 +203,7 @@ export default function AdminDashboard() {
                                     >
                                         <div className="space-y-1">
                                             <p className="font-medium">{user.name}</p>
-                                            <div className="flex text-sm text-muted-foreground">
+                                            <div className="text-muted-foreground flex text-sm">
                                                 <span>{user.email}</span>
                                                 <span className="mx-2">•</span>
                                                 <span>Joined {new Date(user.joinDate).toLocaleDateString()}</span>

@@ -51,7 +51,7 @@ export function AdminSidebarProfile({ user }: Props) {
 
                         <div className="flex flex-1 flex-col items-start text-sm">
                             <span className="font-medium">{user.name}</span>
-                            <span className="text-xs text-muted-foreground">{user.role.toLocaleUpperCase()}</span>
+                            <span className="text-muted-foreground text-xs">{user.role.toLocaleUpperCase()}</span>
                         </div>
                     </Button>
                 </DropdownMenuTrigger>

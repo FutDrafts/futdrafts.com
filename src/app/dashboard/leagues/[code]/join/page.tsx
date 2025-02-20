@@ -81,7 +81,7 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ code: str
                         <div className="space-y-2">
                             <Label>Entry Fee</Label>
                             <div className="flex items-center gap-2">
-                                <Trophy className="h-4 w-4 text-muted-foreground" />
+                                <Trophy className="text-muted-foreground h-4 w-4" />
                                 <span className="font-medium">{leagueData.entryFee.toLocaleString()} points</span>
                             </div>
                         </div>
@@ -89,7 +89,7 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ code: str
                         <div className="space-y-2">
                             <Label>Participants</Label>
                             <div className="flex items-center gap-2">
-                                <Users className="h-4 w-4 text-muted-foreground" />
+                                <Users className="text-muted-foreground h-4 w-4" />
                                 <span className="font-medium">
                                     {leagueData.currentParticipants}/{leagueData.maxParticipants} players
                                 </span>

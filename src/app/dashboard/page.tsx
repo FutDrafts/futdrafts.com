@@ -105,17 +105,17 @@ export default function DashboardPage() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Leagues</CardTitle>
-                        <Trophy className="h-4 w-4 text-muted-foreground" />
+                        <Trophy className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{userStats.totalLeagues}</div>
-                        <p className="text-xs text-muted-foreground">{userStats.activeLeagues} active leagues</p>
+                        <p className="text-muted-foreground text-xs">{userStats.activeLeagues} active leagues</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Global Ranking</CardTitle>
-                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                        <TrendingUp className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{userStats.ranking}</div>
@@ -128,7 +128,7 @@ export default function DashboardPage() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Points</CardTitle>
-                        <Star className="h-4 w-4 text-muted-foreground" />
+                        <Star className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{userStats.totalPoints}</div>
@@ -141,11 +141,11 @@ export default function DashboardPage() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Active Players</CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <Users className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">11/11</div>
-                        <p className="text-xs text-muted-foreground">Full squad available</p>
+                        <p className="text-muted-foreground text-xs">Full squad available</p>
                     </CardContent>
                 </Card>
             </div>
@@ -166,7 +166,7 @@ export default function DashboardPage() {
                                 >
                                     <div className="space-y-1">
                                         <p className="font-medium">{league.name}</p>
-                                        <p className="text-sm text-muted-foreground">
+                                        <p className="text-muted-foreground text-sm">
                                             Position {league.position} of {league.totalParticipants}
                                         </p>
                                     </div>
@@ -174,7 +174,7 @@ export default function DashboardPage() {
                                         {league.pointsBehind === 0 ? (
                                             <Trophy className="h-5 w-5 text-yellow-500" />
                                         ) : (
-                                            <p className="text-sm text-muted-foreground">
+                                            <p className="text-muted-foreground text-sm">
                                                 {league.pointsBehind} pts behind
                                             </p>
                                         )}
@@ -215,7 +215,7 @@ export default function DashboardPage() {
                                             </Avatar>
                                         </div>
                                     </div>
-                                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                                    <div className="text-muted-foreground flex items-center justify-between text-sm">
                                         <span>{match.competition}</span>
                                         <div className="flex items-center gap-1">
                                             <Calendar className="h-4 w-4" />
@@ -241,7 +241,7 @@ export default function DashboardPage() {
                             <div key={league.id} className="flex items-center justify-between rounded-lg border p-4">
                                 <div className="space-y-1">
                                     <p className="font-medium">{league.name}</p>
-                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    <div className="text-muted-foreground flex items-center gap-2 text-sm">
                                         <Users className="h-4 w-4" />
                                         {league.participants} participants
                                     </div>

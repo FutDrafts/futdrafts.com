@@ -89,7 +89,7 @@ const mockReports = [
 const statusIcons = {
     pending: <Clock className="h-4 w-4 text-yellow-500" />,
     resolved: <CheckCircle2 className="h-4 w-4 text-green-500" />,
-    dismissed: <Trash2 className="h-4 w-4 text-muted-foreground" />,
+    dismissed: <Trash2 className="text-muted-foreground h-4 w-4" />,
 }
 
 export default function ReportsManagement() {
@@ -183,7 +183,7 @@ export default function ReportsManagement() {
                     <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div className="flex flex-1 items-center gap-4">
                             <div className="relative flex-1 md:max-w-sm">
-                                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
                                 <Input
                                     placeholder="Search reports..."
                                     className="pl-8"
@@ -233,14 +233,14 @@ export default function ReportsManagement() {
                                     <TableCell>
                                         <div>
                                             <div className="font-medium">{report.reportedUser.name}</div>
-                                            <div className="text-sm text-muted-foreground">
+                                            <div className="text-muted-foreground text-sm">
                                                 {report.reportedUser.email}
                                             </div>
                                         </div>
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
-                                            <AlertCircle className="h-4 w-4 text-destructive" />
+                                            <AlertCircle className="text-destructive h-4 w-4" />
                                             <span>{report.reason}</span>
                                         </div>
                                     </TableCell>
@@ -324,7 +324,7 @@ export default function ReportsManagement() {
 
                     {/* Pagination */}
                     <div className="mt-4 flex items-center justify-between">
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-muted-foreground text-sm">
                             Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
                             {Math.min(currentPage * ITEMS_PER_PAGE, filteredReports.length)} of {filteredReports.length}{' '}
                             results
@@ -372,34 +372,34 @@ export default function ReportsManagement() {
                                 <div className="space-y-4">
                                     <div>
                                         <h4 className="text-sm font-medium">Reported User</h4>
-                                        <p className="text-sm text-muted-foreground">
+                                        <p className="text-muted-foreground text-sm">
                                             {selectedReport.reportedUser.name} ({selectedReport.reportedUser.email})
                                         </p>
                                     </div>
                                     <div>
                                         <h4 className="text-sm font-medium">Reported By</h4>
-                                        <p className="text-sm text-muted-foreground">
+                                        <p className="text-muted-foreground text-sm">
                                             {selectedReport.reportedBy.name}
                                         </p>
                                     </div>
                                     <div>
                                         <h4 className="text-sm font-medium">Reason</h4>
-                                        <p className="text-sm text-muted-foreground">{selectedReport.reason}</p>
+                                        <p className="text-muted-foreground text-sm">{selectedReport.reason}</p>
                                     </div>
                                     <div>
                                         <h4 className="text-sm font-medium">Details</h4>
-                                        <p className="text-sm text-muted-foreground">{selectedReport.details}</p>
+                                        <p className="text-muted-foreground text-sm">{selectedReport.details}</p>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <h4 className="text-sm font-medium">Created At</h4>
-                                            <p className="text-sm text-muted-foreground">
+                                            <p className="text-muted-foreground text-sm">
                                                 {new Date(selectedReport.createdAt).toLocaleString()}
                                             </p>
                                         </div>
                                         <div>
                                             <h4 className="text-sm font-medium">Last Updated</h4>
-                                            <p className="text-sm text-muted-foreground">
+                                            <p className="text-muted-foreground text-sm">
                                                 {new Date(selectedReport.updatedAt).toLocaleString()}
                                             </p>
                                         </div>

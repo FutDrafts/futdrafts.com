@@ -86,7 +86,7 @@ export function ConfigForm({ initialConfig }: { initialConfig: AppConfig }) {
                     <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
                             <Label>Maintenance Mode</Label>
-                            <p className="text-sm text-muted-foreground">Put the site into maintenance mode</p>
+                            <p className="text-muted-foreground text-sm">Put the site into maintenance mode</p>
                         </div>
                         <Switch
                             checked={config.maintenance}

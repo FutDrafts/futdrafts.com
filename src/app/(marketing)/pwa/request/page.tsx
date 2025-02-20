@@ -35,7 +35,7 @@ export default function TestRequestPage() {
 
     return (
         <div className="container flex h-screen flex-col items-center justify-center gap-4">
-            <p className="text-wrap text-xs">{data ? JSON.stringify(data) : 'Request probably failed'}</p>
+            <p className="text-xs text-wrap">{data ? JSON.stringify(data) : 'Request probably failed'}</p>
         </div>
     )
 }

@@ -122,9 +122,9 @@ export default function ProfilePage() {
                                         <AvatarFallback>{userInfo.name.slice(0, 2)}</AvatarFallback>
                                     </Avatar>
                                     {isEditing && (
-                                        <div className="absolute bottom-0 right-0">
+                                        <div className="absolute right-0 bottom-0">
                                             <Label htmlFor="avatar" className="cursor-pointer">
-                                                <div className="rounded-full bg-primary p-1.5 text-primary-foreground hover:bg-primary/90">
+                                                <div className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full p-1.5">
                                                     <Camera className="h-4 w-4" />
                                                 </div>
                                             </Label>
@@ -182,7 +182,7 @@ export default function ProfilePage() {
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
                                 <CardTitle className="text-sm font-medium">Leagues Joined</CardTitle>
-                                <Trophy className="h-4 w-4 text-muted-foreground" />
+                                <Trophy className="text-muted-foreground h-4 w-4" />
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">{mockStats.leaguesJoined}</div>
@@ -191,7 +191,7 @@ export default function ProfilePage() {
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
                                 <CardTitle className="text-sm font-medium">Leagues Won</CardTitle>
-                                <Medal className="h-4 w-4 text-muted-foreground" />
+                                <Medal className="text-muted-foreground h-4 w-4" />
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">{mockStats.leaguesWon}</div>
@@ -200,7 +200,7 @@ export default function ProfilePage() {
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
                                 <CardTitle className="text-sm font-medium">Win Rate</CardTitle>
-                                <Star className="h-4 w-4 text-muted-foreground" />
+                                <Star className="text-muted-foreground h-4 w-4" />
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">{mockStats.winRate}</div>
@@ -216,10 +216,10 @@ export default function ProfilePage() {
                             <CardDescription>Your performance metrics and achievements</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="rounded-lg border bg-card p-8 text-center">
-                                <ChartLine className="mx-auto h-12 w-12 text-muted-foreground" />
+                            <div className="bg-card rounded-lg border p-8 text-center">
+                                <ChartLine className="text-muted-foreground mx-auto h-12 w-12" />
                                 <h3 className="mt-4 text-lg font-semibold">Statistics Coming Soon</h3>
-                                <p className="mt-2 text-sm text-muted-foreground">
+                                <p className="text-muted-foreground mt-2 text-sm">
                                     We&apos;re working on bringing you detailed statistics and analytics about your
                                     fantasy football performance.
                                 </p>
@@ -250,12 +250,12 @@ export default function ProfilePage() {
                                                     {league.status}
                                                 </Badge>
                                             </div>
-                                            <div className="text-sm text-muted-foreground">Season: {league.season}</div>
+                                            <div className="text-muted-foreground text-sm">Season: {league.season}</div>
                                         </div>
                                         <div className="flex items-center gap-4">
                                             <div className="text-right">
                                                 <div className="font-medium">Position: {league.position}</div>
-                                                <div className="text-sm text-muted-foreground">
+                                                <div className="text-muted-foreground text-sm">
                                                     {league.points} points
                                                 </div>
                                             </div>

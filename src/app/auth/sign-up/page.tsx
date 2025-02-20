@@ -7,7 +7,7 @@ export default function SignUpPage() {
         <Card className="z-50 mx-auto w-full max-w-md rounded-md rounded-t-none p-4 sm:p-6">
             <CardHeader>
                 <div className="flex flex-col gap-0.5">
-                    <Link href="/" className="text-sm text-muted-foreground hover:text-primary">
+                    <Link href="/" className="text-muted-foreground hover:text-primary text-sm">
                         ← Back to Home
                     </Link>
                     <CardTitle className="text-lg md:text-xl">Sign Up</CardTitle>
@@ -17,13 +17,13 @@ export default function SignUpPage() {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <p className="mb-4 text-xs text-muted-foreground">
+                <p className="text-muted-foreground mb-4 text-xs">
                     Already have an account? <Link href="/auth/sign-in">Sign in</Link>
                 </p>
                 <SignUpForm />
             </CardContent>
             <CardFooter className="px-0">
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                     By signing up, you agree to the <Link href="/policies/terms">Terms of Service</Link> and{' '}
                     <Link href="/policies/privacy">Privacy Policy</Link>
                 </p>
