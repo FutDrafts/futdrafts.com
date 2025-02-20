@@ -9,7 +9,10 @@ export default function TestRequestPage() {
     const { token, isLoading, isError } = useToken()
     const [data, setData] = useState<unknown>()
 
-    if (isLoading) <div className='flex flex-col items-center h-screen w-screen'><Loader2 className='animate-spin'/></div>
+    if (isLoading)
+        <div className="flex h-screen w-screen flex-col items-center">
+            <Loader2 className="animate-spin" />
+        </div>
     if (isError) toast.error(isError)
 
     useEffect(() => {
