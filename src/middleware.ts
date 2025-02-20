@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { getSessionCookie } from 'better-auth'
-import { getConfig } from './lib/config'
+import { getConfig } from './actions/admin/config'
 
 // List of paths that should be accessible even in maintenance mode
 const ALLOWED_PATHS = ['/admin', '/admin/settings', '/auth/sign-in', '/maintenance']

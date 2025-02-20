@@ -40,6 +40,6 @@ export async function PATCH(request: Request) {
 
         return NextResponse.json(updated[0])
     } catch (error) {
-        return NextResponse.json({ error: 'Error updating config' }, { status: 500 })
+        return NextResponse.json({ error: 'Error updating config', details: error }, { status: 500 })
     }
 }
