@@ -11,7 +11,7 @@ export function MarketingHero() {
                         <StarIcon className="mx-auto h-16 w-16 text-primary" />
                     </div>
                     <h1 className="animate-fade-up text-4xl font-extrabold tracking-tight [animation-delay:200ms] sm:text-5xl md:text-6xl">
-                        <span className="bg-gradient-to-r from-primary via-purple-600 to-primary bg-clip-text text-transparent dark:from-primary dark:via-purple-400 dark:to-primary">
+                        <span className="bg-linear-to-r from-primary via-purple-600 to-primary bg-clip-text text-transparent dark:from-primary dark:via-purple-400 dark:to-primary">
                             FutDrafts
                         </span>
                     </h1>
@@ -34,7 +34,7 @@ export function MarketingHero() {
                     <div className="animate-fade-up [animation-delay:600ms]">
                         <Link
                             href="/dashboard"
-                            className="inline-flex items-center justify-center rounded-lg border border-primary/20 bg-background/50 px-8 py-3 font-medium backdrop-blur-sm transition hover:bg-primary/10 dark:border-primary/10 dark:hover:bg-primary/20"
+                            className="inline-flex items-center justify-center rounded-lg border border-primary/20 bg-background/50 px-8 py-3 font-medium backdrop-blur-xs transition hover:bg-primary/10 dark:border-primary/10 dark:hover:bg-primary/20"
                         >
                             View Demo
                         </Link>
@@ -46,7 +46,7 @@ export function MarketingHero() {
                     {MARKETING_FEATURES.map((feature, index) => (
                         <div
                             key={index}
-                            className={`animate-fade-up rounded-xl border border-primary/10 bg-background/50 p-6 backdrop-blur-sm transition hover:border-primary/30 hover:shadow-lg dark:bg-background/30 dark:hover:border-primary/20 dark:hover:bg-background/40 [animation-delay:${800 + index * 200}ms]`}
+                            className={`animate-fade-up rounded-xl border border-primary/10 bg-background/50 p-6 backdrop-blur-xs transition hover:border-primary/30 hover:shadow-lg dark:bg-background/30 dark:hover:border-primary/20 dark:hover:bg-background/40 [animation-delay:${800 + index * 200}ms]`}
                         >
                             <div className="flex items-start justify-between">
                                 <div className="transition-transform hover:scale-105">{feature.icon}</div>
