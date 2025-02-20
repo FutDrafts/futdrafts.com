@@ -22,6 +22,7 @@ const defaultConfig: AppConfig = {
 type ConfigType = typeof config.$inferSelect
 
 export async function getConfig(): Promise<AppConfig> {
+    'use server'
     try {
         const response = await fetch(`${env.NEXT_PUBLIC_APP_URL}/api/admin/settings`)
         if (!response.ok) throw new Error('Failed to fetch config')
