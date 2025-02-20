@@ -11,9 +11,9 @@ export function AdZone({ className = '', size = 'medium' }: AdZoneProps) {
     }
 
     return (
-        <div className={`w-full rounded-lg border bg-muted/30 ${sizeClasses[size]} ${className}`}>
+        <div className={`bg-muted/30 w-full rounded-lg border ${sizeClasses[size]} ${className}`}>
             <div className="flex h-full items-center justify-center">
-                <p className="text-sm text-muted-foreground">Advertisement</p>
+                <p className="text-muted-foreground text-sm">Advertisement</p>
             </div>
         </div>
     )

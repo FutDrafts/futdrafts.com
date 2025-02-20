@@ -53,7 +53,7 @@ export function ProfileButton({ collapsed, session }: Props) {
                         {!collapsed && (
                             <div className="flex flex-1 flex-col items-start text-sm">
                                 <span className="font-medium">{session?.user.name}</span>
-                                <span className="text-xs text-muted-foreground">{session?.user.role}</span>
+                                <span className="text-muted-foreground text-xs">{session?.user.role}</span>
                             </div>
                         )}
                     </Button>

@@ -58,7 +58,7 @@ export function AdminSidebar({ collapsed, setCollapsed, pathname }: Props) {
     return (
         <aside
             className={cn(
-                'fixed left-0 top-0 z-50 mr-4 flex h-full flex-col border-r bg-card transition-all duration-150',
+                'bg-card fixed top-0 left-0 z-50 mr-4 flex h-full flex-col border-r transition-all duration-150',
                 collapsed ? 'w-16' : 'w-64',
             )}
         >
@@ -94,7 +94,7 @@ export function AdminSidebar({ collapsed, setCollapsed, pathname }: Props) {
                             <Icon className="h-5 w-5" />
                             {!collapsed && <span className="flex-1">{item.title}</span>}
                             {!collapsed && item.badge && (
-                                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs text-destructive-foreground">
+                                <span className="bg-destructive text-destructive-foreground flex h-5 w-5 items-center justify-center rounded-full text-xs">
                                     {item.badge}
                                 </span>
                             )}

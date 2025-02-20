@@ -26,11 +26,11 @@ export default function MaintenancePage() {
     }, [])
 
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-background">
+        <div className="bg-background flex min-h-screen flex-col items-center justify-center">
             <div className="container flex max-w-[700px] flex-col items-center gap-4 text-center">
-                <Wrench className="h-12 w-12 animate-pulse text-primary" />
+                <Wrench className="text-primary h-12 w-12 animate-pulse" />
                 <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl">Under Maintenance</h1>
-                <p className="max-w-[600px] text-lg text-muted-foreground sm:text-xl">
+                <p className="text-muted-foreground max-w-[600px] text-lg sm:text-xl">
                     We&apos;re currently performing some maintenance on our site. We&apos;ll be back shortly.
                 </p>
                 {!loading && isAdmin && (

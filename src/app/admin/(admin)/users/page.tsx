@@ -60,8 +60,8 @@ const mockUsers = [
 ]
 
 const roleIcons = {
-    admin: <ShieldCheck className="h-4 w-4 text-primary" />,
-    user: <ShieldAlert className="h-4 w-4 text-muted-foreground" />,
+    admin: <ShieldCheck className="text-primary h-4 w-4" />,
+    user: <ShieldAlert className="text-muted-foreground h-4 w-4" />,
 }
 
 type Role = 'admin' | 'user'
@@ -152,7 +152,7 @@ export default function UserManagement() {
                     <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div className="flex flex-1 items-center gap-4">
                             <div className="relative flex-1 md:max-w-sm">
-                                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
                                 <Input
                                     placeholder="Search users..."
                                     className="pl-8"
@@ -200,7 +200,7 @@ export default function UserManagement() {
                                     <TableCell>
                                         <div>
                                             <div className="font-medium">{user.name}</div>
-                                            <div className="text-sm text-muted-foreground">{user.email}</div>
+                                            <div className="text-muted-foreground text-sm">{user.email}</div>
                                         </div>
                                     </TableCell>
                                     <TableCell>
@@ -261,7 +261,7 @@ export default function UserManagement() {
 
                     {/* Pagination */}
                     <div className="mt-4 flex items-center justify-between">
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-muted-foreground text-sm">
                             Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
                             {Math.min(currentPage * ITEMS_PER_PAGE, filteredUsers.length)} of {filteredUsers.length}{' '}
                             results

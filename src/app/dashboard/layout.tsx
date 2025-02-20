@@ -74,9 +74,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="bg-background min-h-screen">
             {/* Top Navigation Bar */}
-            <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <header className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur-sm">
                 <div className="container flex h-14 items-center">
                     <div className="mr-4 flex md:hidden">
                         <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -93,7 +93,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                     key={item.href}
                                     href={item.href}
                                     className={cn(
-                                        'transition-colors hover:text-foreground/80',
+                                        'hover:text-foreground/80 transition-colors',
                                         pathname === item.href ? 'text-foreground' : 'text-foreground/60',
                                     )}
                                 >
@@ -115,8 +115,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             <DropdownMenuContent className="w-56" align="end" forceMount>
                                 <DropdownMenuLabel className="font-normal">
                                     <div className="flex flex-col space-y-1">
-                                        <p className="text-sm font-medium leading-none">{currentUser.name}</p>
-                                        <p className="text-xs leading-none text-muted-foreground">
+                                        <p className="text-sm leading-none font-medium">{currentUser.name}</p>
+                                        <p className="text-muted-foreground text-xs leading-none">
                                             {currentUser.email}
                                         </p>
                                     </div>
@@ -140,8 +140,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             {/* Mobile Navigation Menu */}
             {isMobileMenuOpen && (
-                <div className="fixed inset-0 top-14 z-50 grid h-[calc(100vh-3.5rem)] grid-flow-row auto-rows-max overflow-auto p-6 pb-32 shadow-lg animate-in slide-in-from-bottom-80 md:hidden">
-                    <div className="relative z-20 grid gap-6 rounded-md bg-popover p-4 text-popover-foreground shadow-md">
+                <div className="animate-in slide-in-from-bottom-80 fixed inset-0 top-14 z-50 grid h-[calc(100vh-3.5rem)] grid-flow-row auto-rows-max overflow-auto p-6 pb-32 shadow-lg md:hidden">
+                    <div className="bg-popover text-popover-foreground relative z-20 grid gap-6 rounded-md p-4 shadow-md">
                         <nav className="grid grid-flow-row auto-rows-max text-sm">
                             {navigationItems.map((item) => (
                                 <Link

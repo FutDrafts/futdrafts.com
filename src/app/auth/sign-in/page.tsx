@@ -7,7 +7,7 @@ export default function SignInPage() {
         <Card className="z-50 mx-auto w-full max-w-md rounded-md rounded-t-none p-4 sm:p-6">
             <CardHeader>
                 <div className="flex flex-col gap-0.5">
-                    <Link href="/" className="text-sm text-muted-foreground hover:text-primary">
+                    <Link href="/" className="text-muted-foreground hover:text-primary text-sm">
                         ← Back to Home
                     </Link>
                     <CardTitle className="text-lg md:text-xl">Sign In</CardTitle>
@@ -17,7 +17,7 @@ export default function SignInPage() {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <p className="mb-4 text-xs text-muted-foreground">
+                <p className="text-muted-foreground mb-4 text-xs">
                     Don&apos;t have an account? <Link href="/auth/sign-up">Sign up</Link>
                 </p>
                 <SignInForm />

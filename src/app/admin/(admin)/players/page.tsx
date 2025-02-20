@@ -87,7 +87,7 @@ export default function PlayersPage() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Players</CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <Users className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{players.length}</div>
@@ -96,7 +96,7 @@ export default function PlayersPage() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Active Players</CardTitle>
-                        <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+                        <ShieldCheck className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{players.filter((p) => p.status === 'active').length}</div>
@@ -105,7 +105,7 @@ export default function PlayersPage() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Leagues</CardTitle>
-                        <Trophy className="h-4 w-4 text-muted-foreground" />
+                        <Trophy className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{leagues.length}</div>
@@ -121,7 +121,7 @@ export default function PlayersPage() {
                 <CardContent>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                         <div className="relative">
-                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
                             <Input
                                 placeholder="Search players..."
                                 className="pl-8"

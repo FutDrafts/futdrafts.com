@@ -65,7 +65,7 @@ export default function FantasyLeaguesPage() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Leagues</CardTitle>
-                        <Trophy className="h-4 w-4 text-muted-foreground" />
+                        <Trophy className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{fantasyLeagues.length}</div>
@@ -74,7 +74,7 @@ export default function FantasyLeaguesPage() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Active Players</CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <Users className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">
@@ -85,7 +85,7 @@ export default function FantasyLeaguesPage() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Current Season</CardTitle>
-                        <Trophy className="h-4 w-4 text-muted-foreground" />
+                        <Trophy className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">2023/24</div>
@@ -95,7 +95,7 @@ export default function FantasyLeaguesPage() {
 
             <div className="flex items-center gap-4">
                 <div className="relative flex-1 md:max-w-sm">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
                     <Input
                         placeholder="Search fantasy leagues..."
                         className="pl-8"
@@ -127,14 +127,14 @@ export default function FantasyLeaguesPage() {
                                 <TableRow key={league.id}>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
-                                            <Trophy className="h-4 w-4 text-primary" />
+                                            <Trophy className="text-primary h-4 w-4" />
                                             <span className="font-medium">{league.name}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>{league.baseLeague}</TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
-                                            <Users className="h-4 w-4 text-muted-foreground" />
+                                            <Users className="text-muted-foreground h-4 w-4" />
                                             {league.members} members
                                         </div>
                                     </TableCell>
