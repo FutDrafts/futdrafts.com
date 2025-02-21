@@ -5,6 +5,7 @@
 /coverage
 /logs
 /certificates
+/scripts
 
 .next
 .env
