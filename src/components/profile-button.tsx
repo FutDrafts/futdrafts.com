@@ -16,11 +16,11 @@ import Link from 'next/link'
 import { authClient } from '@/lib/auth-client'
 import { redirect } from 'next/navigation'
 import { toast } from 'sonner'
-import { Session } from '@/lib/types'
+import { Session, User } from '@/lib/types'
 
 interface Props {
     collapsed: boolean
-    session: Session | null
+    session: { session: Session; user: User } | null
 }
 
 export function ProfileButton({ collapsed, session }: Props) {
