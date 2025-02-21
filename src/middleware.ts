@@ -6,9 +6,13 @@ import { getConfig } from './actions/admin/config'
 const ALLOWED_PATHS = ['/admin', '/admin/settings', '/auth/sign-in', '/maintenance']
 
 export async function middleware(request: NextRequest) {
+    const sessionCookie = getSessionCookie(request)
+    if (!sessionCookie) {
+        return NextResponse.redirect(new URL('/auth/sign-in', request.url))
+    }
+
     // Check if the site is in maintenance mode
     const { maintenance } = await getConfig()
-
     if (maintenance) {
         // Get the path from the request
         const path = request.nextUrl.pathname
@@ -20,12 +24,6 @@ export async function middleware(request: NextRequest) {
         if (maintenance && !isAllowedPath) {
             return NextResponse.rewrite(new URL('/maintenance', request.url))
         }
-    }
-
-    const sessionCookie = getSessionCookie(request)
-
-    if (!sessionCookie) {
-        return NextResponse.redirect(new URL('/auth/sign-in', request.url))
     }
 
     return NextResponse.next()
