@@ -4,6 +4,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { db } from '@/db'
 import { env as serverEnv } from '@/env/server'
 import { env as clientEnv } from '@/env/client'
+import { nextCookies } from 'better-auth/next-js'
 
 export const auth = betterAuth({
     appName: 'FutDrafts',
@@ -29,5 +30,19 @@ export const auth = betterAuth({
             clientSecret: serverEnv.GITHUB_CLIENT_SECRET as string,
         },
     },
-    plugins: [admin(), jwt()],
+    plugins: [admin(), jwt(), nextCookies()],
+    trustedOrigins: [clientEnv.NEXT_PUBLIC_APP_URL, clientEnv.NEXT_PUBLIC_API_URL],
+    advanced: {
+        crossSubDomainCookies: {
+            enabled: true,
+        },
+        cookies: {
+            sessionToken: {
+                attributes: {
+                    sameSite: 'none',
+                    secure: true,
+                },
+            },
+        },
+    },
 })
