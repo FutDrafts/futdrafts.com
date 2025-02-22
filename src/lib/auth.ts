@@ -32,9 +32,4 @@ export const auth = betterAuth({
     },
     plugins: [admin(), jwt(), nextCookies()],
     trustedOrigins: [clientEnv.NEXT_PUBLIC_APP_URL, clientEnv.NEXT_PUBLIC_API_URL],
-    advanced: {
-        crossSubDomainCookies: {
-            enabled: true,
-        },
-    },
 })
