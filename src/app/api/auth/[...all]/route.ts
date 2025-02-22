@@ -7,7 +7,7 @@ export const runtime = 'edge'
 const handler = toNextJsHandler(auth)
 
 // Add OPTIONS method handler for CORS preflight requests
-export async function OPTIONS(request: Request) {
+export async function OPTIONS() {
     const headersList = await headers()
     const origin = headersList.get('origin')
 
