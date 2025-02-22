@@ -44,4 +44,7 @@ export const auth = betterAuth({
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         maxAge: 86400,
     },
+    logger: {
+        disabled: false,
+    },
 })
