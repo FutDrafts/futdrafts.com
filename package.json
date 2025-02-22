@@ -41,6 +41,7 @@
         "@types/mdx": "^2.0.13",
         "@types/web-push": "^3.6.4",
         "@uiw/react-md-editor": "^4.0.5",
+        "@vercel/speed-insights": "^1.2.0",
         "better-auth": "^1.1.18",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
