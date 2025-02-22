@@ -9,7 +9,7 @@ import { useEffect } from 'react'
 export function ClientPostHogProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         scan({
-            enabled: true,
+            enabled: process.env.NODE_ENV !== 'production',
             log: true,
         })
 
