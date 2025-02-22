@@ -1,8 +1,7 @@
 import { auth } from '@/lib/auth'
 import { toNextJsHandler } from 'better-auth/next-js'
 import { headers } from 'next/headers'
-
-export const runtime = 'edge'
+import { NextResponse } from 'next/server'
 
 const handler = toNextJsHandler(auth)
 
@@ -14,7 +13,7 @@ export async function OPTIONS() {
     // Check if the origin is in the trusted origins list
     const isTrustedOrigin = auth.options.trustedOrigins.includes(origin || '')
 
-    return new Response(null, {
+    return new NextResponse(null, {
         status: 204,
         headers: {
             'Access-Control-Allow-Origin': isTrustedOrigin ? origin! : auth.options.baseURL,
