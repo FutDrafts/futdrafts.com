@@ -6,6 +6,7 @@ import { ClientPostHogProvider } from '@/providers/posthog-provider'
 import { Providers } from '@/providers'
 import { Toaster } from 'sonner'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Analytics } from '@vercel/analytics/react'
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -34,6 +35,7 @@ export default function RootLayout({
                     <Toaster closeButton={true} richColors={true} />
                     <Providers>{children}</Providers>
                     <SpeedInsights />
+                    <Analytics />
                 </body>
             </ClientPostHogProvider>
         </html>
