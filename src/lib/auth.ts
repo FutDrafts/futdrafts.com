@@ -31,5 +31,17 @@ export const auth = betterAuth({
         },
     },
     plugins: [admin(), jwt(), nextCookies()],
-    trustedOrigins: [clientEnv.NEXT_PUBLIC_APP_URL, clientEnv.NEXT_PUBLIC_API_URL],
+    trustedOrigins: [
+        clientEnv.NEXT_PUBLIC_APP_URL,
+        clientEnv.NEXT_PUBLIC_API_URL,
+        'https://futdrafts.com',
+        'http://localhost:3000',
+        'https://localhost:3000',
+    ],
+    cors: {
+        credentials: true,
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        maxAge: 86400,
+    },
 })
