@@ -35,15 +35,10 @@ export const auth = betterAuth({
         clientEnv.NEXT_PUBLIC_APP_URL,
         clientEnv.NEXT_PUBLIC_API_URL,
         'https://futdrafts.com',
+        'https://www.futdrafts.com',
         'http://localhost:3000',
         'https://localhost:3000',
     ],
-    cors: {
-        credentials: true,
-        allowedHeaders: ['Content-Type', 'Authorization'],
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        maxAge: 86400,
-    },
     logger: {
         disabled: process.env.NODE_ENV === 'production',
     },
