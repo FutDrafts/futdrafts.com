@@ -1,14 +1,28 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { getSessionCookie } from 'better-auth'
 import { getConfig } from './actions/admin/config'
+import { betterFetch } from '@better-fetch/fetch'
+import { AuthSession } from './lib/types'
 
 // List of paths that should be accessible even in maintenance mode
 const ALLOWED_PATHS = ['/admin', '/admin/settings', '/auth/sign-in', '/maintenance']
 
 export async function middleware(request: NextRequest) {
-    const sessionCookie = getSessionCookie(request)
-    if (!sessionCookie) {
+    const { data: session } = await betterFetch<AuthSession>('/api/auth/get-session', {
+        baseURL: request.nextUrl.origin,
+        headers: {
+            cookie: request.headers.get('cookie') || '',
+        },
+    })
+
+    if (!session) {
         return NextResponse.redirect(new URL('/auth/sign-in', request.url))
+    }
+
+    // Check if accessing admin routes
+    if (request.nextUrl.pathname.startsWith('/admin')) {
+        if (session.user.role !== 'admin') {
+            return NextResponse.redirect(new URL('/dashboard', request.url))
+        }
     }
 
     // Check if the site is in maintenance mode
