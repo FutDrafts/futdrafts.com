@@ -1,4 +1,4 @@
-import { betterAuth, createLogger } from 'better-auth'
+import { betterAuth } from 'better-auth'
 import { admin, jwt } from 'better-auth/plugins'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { db } from '@/db'
