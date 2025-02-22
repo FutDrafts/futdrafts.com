@@ -1,4 +1,4 @@
-import { betterAuth } from 'better-auth'
+import { betterAuth, createLogger } from 'better-auth'
 import { admin, jwt } from 'better-auth/plugins'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { db } from '@/db'
@@ -45,6 +45,6 @@ export const auth = betterAuth({
         maxAge: 86400,
     },
     logger: {
-        disabled: false,
+        disabled: process.env.NODE_ENV === 'production',
     },
 })
