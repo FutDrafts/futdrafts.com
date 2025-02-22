@@ -23,6 +23,11 @@ export const auth = betterAuth({
             console.log(data, request)
         },
     },
+    account: {
+        accountLinking: {
+            trustedProviders: ['github', 'google', 'discord', 'apple', 'email-password'],
+        },
+    },
     socialProviders: {
         github: {
             enabled: true,
