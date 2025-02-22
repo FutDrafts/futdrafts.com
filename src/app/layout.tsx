@@ -5,6 +5,7 @@ import './globals.css'
 import { ClientPostHogProvider } from '@/providers/posthog-provider'
 import { Providers } from '@/providers'
 import { Toaster } from 'sonner'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -32,6 +33,7 @@ export default function RootLayout({
                 <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                     <Toaster closeButton={true} richColors={true} />
                     <Providers>{children}</Providers>
+                    <SpeedInsights />
                 </body>
             </ClientPostHogProvider>
         </html>
