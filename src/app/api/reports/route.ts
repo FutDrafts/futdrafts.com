@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { report, ReportCategory, ReportStatus } from "@/db/schema";
+import { report } from "@/db/schema";
 import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
