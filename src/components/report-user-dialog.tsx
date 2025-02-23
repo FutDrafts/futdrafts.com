@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
+import { useState } from "react";
 import {
     Dialog,
     DialogContent,
@@ -8,43 +8,51 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { AlertTriangle } from 'lucide-react'
-import { toast } from 'sonner'
-import { REPORT_CATEGORY_LABELS, ReportCategory } from '@/lib/types'
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
+import { ReportCategory } from "@/db/schema";
 
 interface ReportUserDialogProps {
-    open: boolean
-    onOpenChange: (open: boolean) => void
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
     reportedUser: {
-        id: string
-        name: string
-    }
+        id: string;
+        name: string;
+    };
 }
 
-export function ReportUserDialog({ open, onOpenChange, reportedUser }: ReportUserDialogProps) {
-    const [category, setCategory] = useState<ReportCategory | ''>('')
-    const [reason, setReason] = useState('')
-    const [details, setDetails] = useState('')
-    const [isSubmitting, setIsSubmitting] = useState(false)
+export function ReportUserDialog(
+    { open, onOpenChange, reportedUser }: ReportUserDialogProps,
+) {
+    const [category, setCategory] = useState<ReportCategory | "">("");
+    const [reason, setReason] = useState("");
+    const [details, setDetails] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async () => {
         if (!category || !reason.trim()) {
-            toast.error('Please fill in all required fields')
-            return
+            toast.error("Please fill in all required fields");
+            return;
         }
 
-        setIsSubmitting(true)
+        setIsSubmitting(true);
 
         try {
-            const response = await fetch('/api/reports', {
-                method: 'POST',
+            const response = await fetch("/api/reports", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                     reportedUserId: reportedUser.id,
@@ -52,28 +60,28 @@ export function ReportUserDialog({ open, onOpenChange, reportedUser }: ReportUse
                     reason,
                     details,
                 }),
-            })
+            });
 
             if (!response.ok) {
-                throw new Error('Failed to submit report')
+                throw new Error("Failed to submit report");
             }
 
-            toast.success('Report submitted successfully')
-            onOpenChange(false)
-            resetForm()
+            toast.success("Report submitted successfully");
+            onOpenChange(false);
+            resetForm();
         } catch (error) {
-            console.error(error)
-            toast.error('Failed to submit report')
+            console.error(error);
+            toast.error("Failed to submit report");
         } finally {
-            setIsSubmitting(false)
+            setIsSubmitting(false);
         }
-    }
+    };
 
     const resetForm = () => {
-        setCategory('')
-        setReason('')
-        setDetails('')
-    }
+        setCategory("");
+        setReason("");
+        setDetails("");
+    };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -84,21 +92,32 @@ export function ReportUserDialog({ open, onOpenChange, reportedUser }: ReportUse
                         Report User
                     </DialogTitle>
                     <DialogDescription>
-                        Report inappropriate behavior by {reportedUser.name}. Our moderators will review your report.
+                        Report inappropriate behavior by{" "}
+                        {reportedUser.name}. Our moderators will review your
+                        report.
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
-                        <label htmlFor="category" className="text-sm font-medium">
+                        <label
+                            htmlFor="category"
+                            className="text-sm font-medium"
+                        >
                             Category
                         </label>
-                        <Select value={category} onValueChange={(value) => setCategory(value as ReportCategory)}>
+                        <Select
+                            value={category}
+                            onValueChange={(value) =>
+                                setCategory(value as ReportCategory)}
+                        >
                             <SelectTrigger>
                                 <SelectValue placeholder="Select a category" />
                             </SelectTrigger>
                             <SelectContent>
-                                {Object.entries(REPORT_CATEGORY_LABELS).map(([value, label]) => (
+                                {Object.entries(REPORT_CATEGORY_LABELS).map((
+                                    [value, label],
+                                ) => (
                                     <SelectItem key={value} value={value}>
                                         {label}
                                     </SelectItem>
@@ -120,7 +139,10 @@ export function ReportUserDialog({ open, onOpenChange, reportedUser }: ReportUse
                     </div>
 
                     <div className="grid gap-2">
-                        <label htmlFor="details" className="text-sm font-medium">
+                        <label
+                            htmlFor="details"
+                            className="text-sm font-medium"
+                        >
                             Additional Details
                         </label>
                         <Textarea
@@ -134,14 +156,17 @@ export function ReportUserDialog({ open, onOpenChange, reportedUser }: ReportUse
                 </div>
 
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>
+                    <Button
+                        variant="outline"
+                        onClick={() => onOpenChange(false)}
+                    >
                         Cancel
                     </Button>
                     <Button onClick={handleSubmit} disabled={isSubmitting}>
-                        {isSubmitting ? 'Submitting...' : 'Submit Report'}
+                        {isSubmitting ? "Submitting..." : "Submit Report"}
                     </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-    )
+    );
 }
