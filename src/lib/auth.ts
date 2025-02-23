@@ -35,7 +35,7 @@ export const auth = betterAuth({
             clientSecret: serverEnv.GITHUB_CLIENT_SECRET as string,
         },
     },
-    plugins: [admin(), jwt(), nextCookies()],
+    plugins: [admin({}), jwt(), nextCookies()],
     trustedOrigins: [
         clientEnv.NEXT_PUBLIC_APP_URL,
         clientEnv.NEXT_PUBLIC_API_URL,
