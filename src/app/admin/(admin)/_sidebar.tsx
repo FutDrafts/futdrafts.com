@@ -3,11 +3,16 @@ import { AdminSidebarNavigation } from './_sidebar-nav'
 import { AdminSidebarProfile } from './_sidebar-profile'
 import { ChevronLeftIcon } from 'lucide-react'
 import { getLimitedUserInfo } from '@/actions/admin/user'
-import { getOpenReportCount } from '@/actions/admin/data'
+import { getReportCount } from '@/actions/admin/reports'
+import { toast } from 'sonner'
 
 export async function AdminSidebar() {
     const user = await getLimitedUserInfo()
-    const reportCount = await getOpenReportCount()
+    const { pendingReportCount, error: reportCountError } = await getReportCount()
+
+    if (reportCountError) {
+        toast.error(reportCountError)
+    }
 
     return (
         <aside
@@ -24,7 +29,7 @@ export async function AdminSidebar() {
             </div>
 
             {/* Sidebar Navigation */}
-            <AdminSidebarNavigation reportCount={reportCount} />
+            <AdminSidebarNavigation reportCount={pendingReportCount ?? 0} />
 
             {/* Profile Section */}
             <AdminSidebarProfile user={user} />
