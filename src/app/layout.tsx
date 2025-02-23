@@ -7,6 +7,7 @@ import { Providers } from '@/providers'
 import { Toaster } from 'sonner'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/react'
+import { ReactQueryClientProvider } from '@/providers/react-query-provider'
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -29,15 +30,17 @@ export default function RootLayout({
     children: React.ReactNode
 }>) {
     return (
-        <html lang="en" suppressHydrationWarning>
-            <ClientPostHogProvider>
-                <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-                    <Toaster closeButton={true} richColors={true} />
-                    <Providers>{children}</Providers>
-                    <SpeedInsights />
-                    <Analytics />
-                </body>
-            </ClientPostHogProvider>
-        </html>
+        <ReactQueryClientProvider>
+            <html lang="en" suppressHydrationWarning>
+                <ClientPostHogProvider>
+                    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                        <Toaster closeButton={true} richColors={true} />
+                        <Providers>{children}</Providers>
+                        <SpeedInsights />
+                        <Analytics />
+                    </body>
+                </ClientPostHogProvider>
+            </html>
+        </ReactQueryClientProvider>
     )
 }
