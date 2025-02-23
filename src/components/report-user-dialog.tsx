@@ -115,13 +115,13 @@ export function ReportUserDialog(
                                 <SelectValue placeholder="Select a category" />
                             </SelectTrigger>
                             <SelectContent>
-                                {Object.entries(REPORT_CATEGORY_LABELS).map((
-                                    [value, label],
-                                ) => (
-                                    <SelectItem key={value} value={value}>
-                                        {label}
-                                    </SelectItem>
-                                ))}
+                                <SelectItem value="harassment">Harassment</SelectItem>
+                                <SelectItem value="spam">Spam</SelectItem>
+                                <SelectItem value="inappropriate_behavior">Inappropriate Behavior</SelectItem>
+                                <SelectItem value="hate_speech">Hate Speech</SelectItem>
+                                <SelectItem value="cheating">Cheating</SelectItem>
+                                <SelectItem value="impersonation">Impersonation</SelectItem>
+                                <SelectItem value="other">Other</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
