@@ -151,7 +151,7 @@ export default function LeaguesPage() {
                 <CardContent>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                         <div className="relative">
-                            <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
+                            <Search className="text-muted-foreground absolute left-2 top-2.5 h-4 w-4" />
                             <Input
                                 placeholder="Search leagues..."
                                 className="pl-8"

@@ -60,7 +60,7 @@ export default function LeaguesPage() {
 
             <div className="flex items-center gap-4">
                 <div className="relative flex-1 md:max-w-sm">
-                    <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
+                    <Search className="text-muted-foreground absolute left-2 top-2.5 h-4 w-4" />
                     <Input
                         placeholder="Search leagues..."
                         className="pl-8"
