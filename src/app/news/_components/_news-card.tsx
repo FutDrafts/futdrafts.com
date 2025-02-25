@@ -35,7 +35,7 @@ export function NewsCard({ title, category, imageUrl, author, publishedAt, slug 
                             {formatDistanceToNow(publishedAt, { addSuffix: true })}
                         </time>
                     </div>
-                    <h3 className="group-hover:text-primary line-clamp-2 text-xl font-semibold leading-tight">
+                    <h3 className="group-hover:text-primary line-clamp-2 text-xl leading-tight font-semibold">
                         {title}
                     </h3>
                 </CardContent>

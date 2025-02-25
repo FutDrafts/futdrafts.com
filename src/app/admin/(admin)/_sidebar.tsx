@@ -17,7 +17,7 @@ export async function AdminSidebar() {
     return (
         <aside
             className={
-                'bg-card fixed left-0 top-0 z-50 mr-4 flex h-full w-64 flex-col border-r transition-all duration-150'
+                'bg-card fixed top-0 left-0 z-50 mr-4 flex h-full w-64 flex-col border-r transition-all duration-150'
             }
         >
             {/* Sidebar Header */}

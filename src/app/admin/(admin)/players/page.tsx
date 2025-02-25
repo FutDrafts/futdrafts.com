@@ -121,7 +121,7 @@ export default function PlayersPage() {
                 <CardContent>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                         <div className="relative">
-                            <Search className="text-muted-foreground absolute left-2 top-2.5 h-4 w-4" />
+                            <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
                             <Input
                                 placeholder="Search players..."
                                 className="pl-8"

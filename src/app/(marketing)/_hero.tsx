@@ -34,7 +34,7 @@ export function MarketingHero() {
                     <div className="animate-fade-up [animation-delay:600ms]">
                         <Link
                             href="/dashboard"
-                            className="border-primary/20 bg-background/50 hover:bg-primary/10 dark:border-primary/10 dark:hover:bg-primary/20 backdrop-blur-xs inline-flex items-center justify-center rounded-lg border px-8 py-3 font-medium transition"
+                            className="border-primary/20 bg-background/50 hover:bg-primary/10 dark:border-primary/10 dark:hover:bg-primary/20 inline-flex items-center justify-center rounded-lg border px-8 py-3 font-medium backdrop-blur-xs transition"
                         >
                             View Demo
                         </Link>
@@ -46,7 +46,7 @@ export function MarketingHero() {
                     {MARKETING_FEATURES.map((feature, index) => (
                         <div
                             key={index}
-                            className={`animate-fade-up border-primary/10 bg-background/50 hover:border-primary/30 dark:bg-background/30 dark:hover:border-primary/20 dark:hover:bg-background/40 backdrop-blur-xs rounded-xl border p-6 transition hover:shadow-lg [animation-delay:${800 + index * 200}ms]`}
+                            className={`animate-fade-up border-primary/10 bg-background/50 hover:border-primary/30 dark:bg-background/30 dark:hover:border-primary/20 dark:hover:bg-background/40 rounded-xl border p-6 backdrop-blur-xs transition hover:shadow-lg [animation-delay:${800 + index * 200}ms]`}
                         >
                             <div className="flex items-start justify-between">
                                 <div className="transition-transform hover:scale-105">{feature.icon}</div>

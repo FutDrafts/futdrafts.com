@@ -122,7 +122,7 @@ export default function ProfilePage() {
                                         <AvatarFallback>{userInfo.name.slice(0, 2)}</AvatarFallback>
                                     </Avatar>
                                     {isEditing && (
-                                        <div className="absolute bottom-0 right-0">
+                                        <div className="absolute right-0 bottom-0">
                                             <Label htmlFor="avatar" className="cursor-pointer">
                                                 <div className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full p-1.5">
                                                     <Camera className="h-4 w-4" />
