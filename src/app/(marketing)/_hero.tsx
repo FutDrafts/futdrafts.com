@@ -25,7 +25,7 @@ export function MarketingHero() {
                     <div className="animate-fade-up [animation-delay:600ms]">
                         <Link
                             href="/auth/sign-up"
-                            className="group bg-primary text-primary-foreground hover:bg-primary/90 relative inline-flex items-center justify-center overflow-hidden rounded-lg px-8 py-3 font-medium transition"
+                            className="bg-primary text-primary-foreground hover:bg-primary/90 group relative inline-flex items-center justify-center overflow-hidden rounded-lg px-8 py-3 font-medium transition"
                         >
                             Get Started
                             <ArrowRightIcon className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />

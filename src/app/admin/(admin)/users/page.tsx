@@ -1,9 +1,7 @@
-import TotalUsersCard from './_total-users-card'
-import ActiveUsersCard from './_active-users-card'
-import BannedUsersCard from './_banned-users-card'
 import UsersTable from './_table'
 import { getUserCount } from '@/actions/admin/user'
 import { toast } from 'sonner'
+import { AdminQuickStatCard } from '@/components/admin-quick-stat-card'
 
 export default async function UserManagement() {
     const { totalUsers, activeUsers, bannedUsers, error: userCountError } = await getUserCount()
@@ -20,9 +18,9 @@ export default async function UserManagement() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-3">
-                <TotalUsersCard totalUsers={totalUsers ?? 0} />
-                <ActiveUsersCard activeUsers={activeUsers ?? 0} />
-                <BannedUsersCard bannedUsers={bannedUsers ?? 0} />
+                <AdminQuickStatCard title="Total Users" description="All time users" statistic={totalUsers ?? 0} />
+                <AdminQuickStatCard title="Active Users" description="Active users" statistic={activeUsers ?? 0} />
+                <AdminQuickStatCard title="Banned Users" description="Banned users" statistic={bannedUsers ?? 0} />
             </div>
 
             <UsersTable />

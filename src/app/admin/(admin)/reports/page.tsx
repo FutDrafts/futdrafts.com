@@ -1,9 +1,7 @@
-import { TotalReportsCard } from './_total-reports-card'
-import { PendingReportsCard } from './_pending-reports-card'
-import { ResolvedReportsCard } from './_resolved-reports-card'
 import ReportsTable from './_table'
 import { getReportCount } from '@/actions/admin/reports'
 import { toast } from 'sonner'
+import { AdminQuickStatCard } from '@/components/admin-quick-stat-card'
 
 export default async function ReportsManagement() {
     const {
@@ -25,9 +23,21 @@ export default async function ReportsManagement() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-3">
-                <TotalReportsCard totalReports={totalReportCount ?? 0} />
-                <PendingReportsCard pendingReports={pendingReportCount ?? 0} />
-                <ResolvedReportsCard resolvedReports={resolvedReportCount ?? 0} />
+                <AdminQuickStatCard
+                    title="Total Reports"
+                    description="All time reports"
+                    statistic={totalReportCount ?? 0}
+                />
+                <AdminQuickStatCard
+                    title="Pending Reports"
+                    description="Reports awaiting review"
+                    statistic={pendingReportCount ?? 0}
+                />
+                <AdminQuickStatCard
+                    title="Resolved Reports"
+                    description="Reports resolved"
+                    statistic={resolvedReportCount ?? 0}
+                />
             </div>
 
             <ReportsTable />
