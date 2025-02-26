@@ -133,7 +133,7 @@ export default function UsersTable() {
                 <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div className="flex flex-1 items-center gap-4">
                         <div className="relative flex-1 md:max-w-sm">
-                            <SearchIcon className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
+                            <SearchIcon className="text-muted-foreground absolute left-2 top-2.5 h-4 w-4" />
                             <Input
                                 placeholder="Search users..."
                                 className="pl-8"
