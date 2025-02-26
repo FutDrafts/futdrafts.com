@@ -1,4 +1,4 @@
-import { Globe2Icon, SparklesIcon, TrophyIcon } from 'lucide-react'
+import { Globe2Icon, HomeIcon, Search, SparklesIcon, TrophyIcon, BarChart3Icon, UserIcon } from 'lucide-react'
 
 export const MARKETING_FOOTER_LINKS = {
     Product: [
@@ -44,5 +44,38 @@ export const MARKETING_FEATURES = [
         title: 'Smart Draft AI',
         description: 'Get AI-powered insights and recommendations for your draft picks',
         isImplemented: false,
+    },
+]
+
+export const DASHBOARD_NAVIGATION_ITEMS = [
+    {
+        title: 'Home',
+        href: '/dashboard',
+        icon: HomeIcon,
+        description: 'Overview and quick access',
+    },
+    {
+        title: 'Leagues',
+        href: '/dashboard/leagues',
+        icon: TrophyIcon,
+        description: 'Browse and join leagues',
+    },
+    {
+        title: 'Search',
+        href: '/dashboard/search',
+        icon: Search,
+        description: 'Find leagues and players',
+    },
+    {
+        title: 'Stats',
+        href: '/dashboard/stats',
+        icon: BarChart3Icon,
+        description: 'Player and team statistics',
+    },
+    {
+        title: 'Profile',
+        href: '/dashboard/profile',
+        icon: UserIcon,
+        description: 'Your profile and settings',
     },
 ]
