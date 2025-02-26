@@ -153,7 +153,7 @@ export function UserTab(props: Props) {
                         <CardDescription>Manage your profile details and preferences</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        <div className="flex md:flex-row flex-col items-center md:items-start gap-6">
+                        <div className="flex flex-col items-center gap-6 md:flex-row md:items-start">
                             <div className="flex flex-col items-center gap-2">
                                 <div className="relative">
                                     <Avatar className="h-24 w-24">
@@ -164,7 +164,7 @@ export function UserTab(props: Props) {
                                         <AvatarFallback>{user.name?.slice(0, 2) || ''}</AvatarFallback>
                                     </Avatar>
                                     {isEditing && (
-                                        <div className="absolute bottom-0 right-0">
+                                        <div className="absolute right-0 bottom-0">
                                             <Label htmlFor="avatar" className="cursor-pointer">
                                                 <div className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full p-1.5">
                                                     <CameraIcon className="h-4 w-4" />
