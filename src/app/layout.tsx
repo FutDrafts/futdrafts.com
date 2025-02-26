@@ -34,7 +34,7 @@ export default function RootLayout({
             <html lang="en" suppressHydrationWarning>
                 <ClientPostHogProvider>
                     <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-                        <Toaster closeButton={true} richColors={true} />
+                        <Toaster richColors={true} />
                         <Providers>{children}</Providers>
                         <SpeedInsights />
                         <Analytics />
