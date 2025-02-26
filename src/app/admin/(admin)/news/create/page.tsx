@@ -65,7 +65,7 @@ export default function CreateArticle() {
 
         try {
             const result = await createPost(formData)
-            
+
             if (result.success) {
                 toast.success('Article created successfully')
                 router.push('/admin/news')

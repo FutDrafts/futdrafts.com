@@ -17,7 +17,7 @@ import { use } from 'react'
 export async function generateStaticParams() {
     try {
         const posts = await getPublishedPosts()
-        
+
         return posts.map((post) => ({
             slug: post.slug,
         }))
@@ -31,14 +31,14 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = use(params)
     const post = await getPostBySlug(slug)
-    
+
     if (!post) {
         return {
             title: 'Post Not Found',
             description: 'The requested post could not be found.',
         }
     }
-    
+
     return {
         title: post.title,
         description: post.excerpt || `Read about ${post.title}`,
@@ -56,18 +56,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function NewsPostPage({ params }: { params: { slug: string } }) {
     // Get the post by slug
     const post = await getPostBySlug(params.slug)
-    
+
     // For debugging
     console.log('Fetching post with slug:', params.slug)
     console.log('Post found:', post ? 'Yes' : 'No')
     if (post) {
         console.log('Post status:', post.status)
     }
-    
+
     if (!post || post.status !== 'published') {
         notFound()
     }
-    
+
     return (
         <div className="container mx-auto max-w-4xl space-y-8 py-8">
             <div>
@@ -78,33 +78,34 @@ export default async function NewsPostPage({ params }: { params: { slug: string 
                     </Link>
                 </Button>
             </div>
-            
+
             <article className="space-y-8">
                 <div className="space-y-4">
                     <div className="flex items-center gap-2 text-sm">
                         <span className="text-primary font-medium">{post.category}</span>
                         <span className="text-muted-foreground">•</span>
-                        <time dateTime={post.publishedAt?.toString() || post.createdAt.toString()} className="text-muted-foreground">
-                            {post.publishedAt 
+                        <time
+                            dateTime={post.publishedAt?.toString() || post.createdAt.toString()}
+                            className="text-muted-foreground"
+                        >
+                            {post.publishedAt
                                 ? formatDistanceToNow(new Date(post.publishedAt), { addSuffix: true })
                                 : formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
                         </time>
                     </div>
-                    
+
                     <h1 className="text-4xl font-bold tracking-tight">{post.title}</h1>
-                    
-                    {post.excerpt && (
-                        <p className="text-xl text-muted-foreground">{post.excerpt}</p>
-                    )}
-                    
+
+                    {post.excerpt && <p className="text-muted-foreground text-xl">{post.excerpt}</p>}
+
                     {post.author && (
                         <div className="flex items-center gap-2">
                             {post.author.image && (
-                                <Image 
-                                    src={post.author.image} 
-                                    alt={post.author.name} 
-                                    width={40} 
-                                    height={40} 
+                                <Image
+                                    src={post.author.image}
+                                    alt={post.author.name}
+                                    width={40}
+                                    height={40}
                                     className="rounded-full"
                                 />
                             )}
@@ -112,7 +113,7 @@ export default async function NewsPostPage({ params }: { params: { slug: string 
                         </div>
                     )}
                 </div>
-                
+
                 {post.featuredImage && (
                     <div className="aspect-video overflow-hidden rounded-lg">
                         <Image
@@ -125,21 +126,18 @@ export default async function NewsPostPage({ params }: { params: { slug: string 
                         />
                     </div>
                 )}
-                
+
                 <div className="prose prose-lg dark:prose-invert max-w-none">
-                    <ReactMarkdown 
-                        remarkPlugins={[remarkGfm]}
-                        rehypePlugins={[rehypeRaw]}
-                    >
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                         {post.content}
                     </ReactMarkdown>
                 </div>
             </article>
-            
+
             <div className="my-12">
                 <AdZone size="large" className="mx-auto" />
             </div>
-            
+
             <Card className="p-6">
                 <h2 className="mb-4 text-2xl font-bold">Share this article</h2>
                 <div className="flex gap-4">
@@ -156,4 +154,4 @@ export default async function NewsPostPage({ params }: { params: { slug: string 
             </Card>
         </div>
     )
-} 
+}

@@ -26,7 +26,7 @@ export default function DraftArticles() {
                 setLoading(false)
             }
         }
-        
+
         loadDrafts()
     }, [])
 
@@ -51,7 +51,7 @@ export default function DraftArticles() {
             ) : drafts.length === 0 ? (
                 <Card>
                     <CardContent className="flex flex-col items-center justify-center py-12">
-                        <p className="mb-4 text-muted-foreground">No draft articles found</p>
+                        <p className="text-muted-foreground mb-4">No draft articles found</p>
                         <Button asChild>
                             <Link href="/admin/news/create">Create a new article</Link>
                         </Button>
@@ -63,15 +63,15 @@ export default function DraftArticles() {
                         <Card key={draft.id} className="overflow-hidden">
                             {draft.featuredImage && (
                                 <div className="aspect-video w-full overflow-hidden">
-                                    <img 
-                                        src={draft.featuredImage} 
+                                    <img
+                                        src={draft.featuredImage}
                                         alt={draft.title}
                                         className="h-full w-full object-cover transition-all hover:scale-105"
                                     />
                                 </div>
                             )}
                             <CardHeader>
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <div className="text-muted-foreground flex items-center gap-2 text-sm">
                                     <span className="capitalize">{draft.category}</span>
                                     <span>•</span>
                                     <span className="flex items-center gap-1">
@@ -104,4 +104,4 @@ export default function DraftArticles() {
             )}
         </div>
     )
-} 
+}

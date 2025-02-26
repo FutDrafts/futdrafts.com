@@ -170,132 +170,136 @@
 .markdown-body {
     /* Table styles */
     table {
-        @apply w-full border-collapse my-4;
+        @apply my-4 w-full border-collapse;
     }
-    
-    th, td {
-        @apply border border-border p-2;
+
+    th,
+    td {
+        @apply border-border border p-2;
     }
-    
+
     thead {
         @apply bg-muted;
     }
-    
+
     /* Task list styles */
-    ul li input[type="checkbox"] {
+    ul li input[type='checkbox'] {
         @apply mr-2;
     }
-    
+
     /* Code block styles */
     pre {
-        @apply bg-muted p-4 rounded-md overflow-x-auto my-4;
+        @apply bg-muted my-4 overflow-x-auto rounded-md p-4;
     }
-    
+
     code {
         @apply font-mono text-sm;
     }
-    
+
     /* Inline code */
     :not(pre) > code {
-        @apply bg-muted px-1 py-0.5 rounded text-sm;
+        @apply bg-muted rounded px-1 py-0.5 text-sm;
     }
-    
+
     /* Strikethrough */
     del {
         @apply line-through;
     }
-    
+
     /* Blockquote */
     blockquote {
-        @apply border-l-4 border-primary/20 pl-4 italic my-4;
+        @apply border-primary/20 my-4 border-l-4 pl-4 italic;
     }
-    
+
     /* GitHub-style callouts */
     .callout {
-        @apply my-4 p-4 rounded-md border-l-4;
+        @apply my-4 rounded-md border-l-4 p-4;
     }
-    
+
     .callout-title {
-        @apply flex items-center font-bold mb-2;
+        @apply mb-2 flex items-center font-bold;
     }
-    
+
     .callout-icon {
         @apply mr-2 inline-flex items-center justify-center;
     }
-    
-    .callout-icon[data-icon="info"]::before {
-        content: "";
+
+    .callout-icon[data-icon='info']::before {
+        content: '';
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>');
-        @apply w-5 h-5 block;
+        @apply block h-5 w-5;
     }
-    
-    .callout-icon[data-icon="alert-triangle"]::before {
-        content: "";
+
+    .callout-icon[data-icon='alert-triangle']::before {
+        content: '';
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>');
-        @apply w-5 h-5 block;
+        @apply block h-5 w-5;
     }
-    
-    .callout-icon[data-icon="alert-circle"]::before {
-        content: "";
+
+    .callout-icon[data-icon='alert-circle']::before {
+        content: '';
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>');
-        @apply w-5 h-5 block;
+        @apply block h-5 w-5;
     }
-    
-    .callout-icon[data-icon="check-circle-2"]::before {
-        content: "";
+
+    .callout-icon[data-icon='check-circle-2']::before {
+        content: '';
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>');
-        @apply w-5 h-5 block;
+        @apply block h-5 w-5;
     }
-    
-    .callout-icon[data-icon="help-circle"]::before {
-        content: "";
+
+    .callout-icon[data-icon='help-circle']::before {
+        content: '';
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>');
-        @apply w-5 h-5 block;
+        @apply block h-5 w-5;
     }
-    
+
     /* Callout colors */
     .callout-note {
         @apply border-blue-500 bg-blue-50 dark:bg-blue-950/30;
     }
-    
+
     .callout-warning {
         @apply border-yellow-500 bg-yellow-50 dark:bg-yellow-950/30;
     }
-    
+
     .callout-important {
         @apply border-red-500 bg-red-50 dark:bg-red-950/30;
     }
-    
+
     .callout-tip {
         @apply border-green-500 bg-green-50 dark:bg-green-950/30;
     }
-    
+
     .callout-caution {
         @apply border-orange-500 bg-orange-50 dark:bg-orange-950/30;
     }
-    
+
     /* Syntax highlighting classes */
-    .language-js, .language-javascript {
+    .language-js,
+    .language-javascript {
         @apply text-blue-600 dark:text-blue-400;
     }
-    
-    .language-ts, .language-typescript {
+
+    .language-ts,
+    .language-typescript {
         @apply text-blue-700 dark:text-blue-300;
     }
-    
+
     .language-html {
         @apply text-orange-600 dark:text-orange-400;
     }
-    
+
     .language-css {
         @apply text-purple-600 dark:text-purple-400;
     }
-    
+
     .language-json {
         @apply text-green-600 dark:text-green-400;
     }
-    
-    .language-md, .language-markdown {
+
+    .language-md,
+    .language-markdown {
         @apply text-gray-700 dark:text-gray-300;
     }
 }

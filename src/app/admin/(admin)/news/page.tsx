@@ -5,7 +5,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Plus, MoreVertical, Pencil, Trash2, Eye, FileText } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
@@ -29,14 +38,14 @@ export default function NewsManagement() {
             try {
                 const posts = await getPosts()
                 setArticles(posts)
-                
+
                 // Calculate counts
                 setCounts({
                     total: posts.length,
-                    published: posts.filter(post => post.status === 'published').length,
-                    draft: posts.filter(post => post.status === 'draft').length,
+                    published: posts.filter((post) => post.status === 'published').length,
+                    draft: posts.filter((post) => post.status === 'draft').length,
                 })
-                
+
                 setLoading(false)
             } catch (error) {
                 console.error('Failed to load posts:', error)
@@ -44,7 +53,7 @@ export default function NewsManagement() {
                 setLoading(false)
             }
         }
-        
+
         loadPosts()
     }, [])
 
@@ -55,22 +64,22 @@ export default function NewsManagement() {
 
     const handleDeleteConfirm = async () => {
         if (!articleToDelete) return
-        
+
         try {
             const result = await deletePost(articleToDelete)
-            
+
             if (result.success) {
                 // Remove the deleted article from the state
-                const updatedArticles = articles.filter(article => article.id !== articleToDelete)
+                const updatedArticles = articles.filter((article) => article.id !== articleToDelete)
                 setArticles(updatedArticles)
-                
+
                 // Update counts
                 setCounts({
                     total: updatedArticles.length,
-                    published: updatedArticles.filter(post => post.status === 'published').length,
-                    draft: updatedArticles.filter(post => post.status === 'draft').length,
+                    published: updatedArticles.filter((post) => post.status === 'published').length,
+                    draft: updatedArticles.filter((post) => post.status === 'draft').length,
                 })
-                
+
                 toast.success('Article deleted successfully')
             } else {
                 toast.error('Failed to delete article')
@@ -135,11 +144,9 @@ export default function NewsManagement() {
                         <p className="text-3xl font-bold">{counts.draft}</p>
                     </CardContent>
                     {counts.draft > 0 && (
-                        <div className="absolute bottom-0 right-0 p-4">
+                        <div className="absolute right-0 bottom-0 p-4">
                             <Button size="sm" variant="ghost" asChild>
-                                <Link href="/admin/news/drafts">
-                                    View All
-                                </Link>
+                                <Link href="/admin/news/drafts">View All</Link>
                             </Button>
                         </div>
                     )}
@@ -158,7 +165,7 @@ export default function NewsManagement() {
                         </div>
                     ) : articles.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-8">
-                            <p className="mb-4 text-muted-foreground">No articles found</p>
+                            <p className="text-muted-foreground mb-4">No articles found</p>
                             <Button asChild>
                                 <Link href="/admin/news/create">
                                     <Plus className="mr-2 h-4 w-4" />
@@ -196,8 +203,10 @@ export default function NewsManagement() {
                                             </span>
                                         </TableCell>
                                         <TableCell>
-                                            {article.publishedAt 
-                                                ? formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })
+                                            {article.publishedAt
+                                                ? formatDistanceToNow(new Date(article.publishedAt), {
+                                                      addSuffix: true,
+                                                  })
                                                 : formatDistanceToNow(new Date(article.createdAt), { addSuffix: true })}
                                         </TableCell>
                                         <TableCell>{article.authorId}</TableCell>
@@ -256,7 +265,10 @@ export default function NewsManagement() {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        <AlertDialogAction
+                            onClick={handleDeleteConfirm}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
                             Delete
                         </AlertDialogAction>
                     </AlertDialogFooter>

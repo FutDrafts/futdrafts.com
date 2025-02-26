@@ -19,12 +19,7 @@ function SearchResults() {
 
     return (
         <div className="space-y-8 py-8">
-            <Input 
-                type="search"
-                placeholder="Search news..."
-                className="mb-8"
-                defaultValue={query}
-            />
+            <Input type="search" placeholder="Search news..." className="mb-8" defaultValue={query} />
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {/* Add your search results mapping here */}
                 <Card>
@@ -35,7 +30,8 @@ function SearchResults() {
                             </div>
                             <h2 className="text-xl font-semibold">Example News Title</h2>
                             <p className="text-muted-foreground line-clamp-3">
-                                This is an example news article content. Replace this with your actual search implementation.
+                                This is an example news article content. Replace this with your actual search
+                                implementation.
                             </p>
                         </div>
                     </CardContent>

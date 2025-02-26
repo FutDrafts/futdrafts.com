@@ -12,19 +12,19 @@ export const metadata: Metadata = {
 export default async function NewsPage() {
     // Get featured news (latest 3 published posts)
     const featuredNews = await getPublishedPosts({ limit: 3 })
-    
+
     // Get latest news (next 4 published posts)
-    const latestNews = await getPublishedPosts({ 
-        limit: 4, 
-        page: 2 
+    const latestNews = await getPublishedPosts({
+        limit: 4,
+        page: 2,
     })
-    
+
     // Get top stories (published posts in the 'analysis' category)
-    const topStories = await getPublishedPosts({ 
-        limit: 4, 
-        category: 'analysis' 
+    const topStories = await getPublishedPosts({
+        limit: 4,
+        category: 'analysis',
     })
-    
+
     return (
         <div className="space-y-8">
             <AnnouncementBanner
@@ -41,8 +41,8 @@ export default async function NewsPage() {
                 <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                     {featuredNews.length > 0 ? (
                         featuredNews.map((news) => (
-                            <NewsCard 
-                                key={news.id} 
+                            <NewsCard
+                                key={news.id}
                                 title={news.title}
                                 category={news.category}
                                 imageUrl={news.featuredImage || '/images/placeholder.jpg'}
@@ -52,7 +52,7 @@ export default async function NewsPage() {
                             />
                         ))
                     ) : (
-                        <div className="col-span-3 py-12 text-center text-muted-foreground">
+                        <div className="text-muted-foreground col-span-3 py-12 text-center">
                             No featured news available at the moment.
                         </div>
                     )}
@@ -71,18 +71,20 @@ export default async function NewsPage() {
                     <div className="space-y-6">
                         {latestNews.length > 0 ? (
                             latestNews.map((news) => (
-                                <NewsCard 
-                                    key={news.id} 
+                                <NewsCard
+                                    key={news.id}
                                     title={news.title}
                                     category={news.category}
                                     imageUrl={news.featuredImage || '/images/placeholder.jpg'}
                                     author={news.authorId}
-                                    publishedAt={news.publishedAt ? new Date(news.publishedAt) : new Date(news.createdAt)}
+                                    publishedAt={
+                                        news.publishedAt ? new Date(news.publishedAt) : new Date(news.createdAt)
+                                    }
                                     slug={news.slug}
                                 />
                             ))
                         ) : (
-                            <div className="py-8 text-center text-muted-foreground">
+                            <div className="text-muted-foreground py-8 text-center">
                                 No latest news available at the moment.
                             </div>
                         )}
@@ -93,18 +95,20 @@ export default async function NewsPage() {
                     <div className="space-y-6">
                         {topStories.length > 0 ? (
                             topStories.map((news) => (
-                                <NewsCard 
-                                    key={news.id} 
+                                <NewsCard
+                                    key={news.id}
                                     title={news.title}
                                     category={news.category}
                                     imageUrl={news.featuredImage || '/images/placeholder.jpg'}
                                     author={news.authorId}
-                                    publishedAt={news.publishedAt ? new Date(news.publishedAt) : new Date(news.createdAt)}
+                                    publishedAt={
+                                        news.publishedAt ? new Date(news.publishedAt) : new Date(news.createdAt)
+                                    }
                                     slug={news.slug}
                                 />
                             ))
                         ) : (
-                            <div className="py-8 text-center text-muted-foreground">
+                            <div className="text-muted-foreground py-8 text-center">
                                 No top stories available at the moment.
                             </div>
                         )}

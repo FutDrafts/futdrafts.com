@@ -64,13 +64,13 @@ export default function EditArticle({ params }: { params: { id: string } }) {
         async function loadPost() {
             try {
                 const post = await getPostById(params.id)
-                
+
                 if (!post) {
                     toast.error('Post not found')
                     router.push('/admin/news')
                     return
                 }
-                
+
                 setFormData({
                     title: post.title,
                     category: post.category,
@@ -80,7 +80,7 @@ export default function EditArticle({ params }: { params: { id: string } }) {
                     slug: post.slug,
                     featuredImage: post.featuredImage || undefined,
                 })
-                
+
                 setLoading(false)
             } catch (error) {
                 console.error('Failed to load post:', error)
@@ -88,7 +88,7 @@ export default function EditArticle({ params }: { params: { id: string } }) {
                 router.push('/admin/news')
             }
         }
-        
+
         loadPost()
     }, [params.id, router])
 
@@ -98,7 +98,7 @@ export default function EditArticle({ params }: { params: { id: string } }) {
 
         try {
             const result = await updatePost(params.id, formData)
-            
+
             if (result.success) {
                 toast.success('Article updated successfully')
                 router.push('/admin/news')
@@ -116,7 +116,7 @@ export default function EditArticle({ params }: { params: { id: string } }) {
     if (loading) {
         return (
             <div className="flex h-[50vh] items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
             </div>
         )
     }
@@ -162,9 +162,7 @@ export default function EditArticle({ params }: { params: { id: string } }) {
                                     setFormData({ ...formData, slug: e.target.value })
                                 }
                             />
-                            <p className="text-xs text-muted-foreground">
-                                Leave empty to auto-generate from title
-                            </p>
+                            <p className="text-muted-foreground text-xs">Leave empty to auto-generate from title</p>
                         </div>
 
                         <div className="space-y-2">
@@ -303,4 +301,4 @@ export default function EditArticle({ params }: { params: { id: string } }) {
             </form>
         </div>
     )
-} 
+}

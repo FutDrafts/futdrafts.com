@@ -11,4 +11,4 @@ export const postSchema = z.object({
     slug: z.string().optional(),
 })
 
-export type PostFormData = z.infer<typeof postSchema> 
+export type PostFormData = z.infer<typeof postSchema>

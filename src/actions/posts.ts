@@ -23,11 +23,11 @@ async function isAdmin() {
     const session = await auth.api.getSession({
         headers: await headers(),
     })
-    
+
     if (!session?.user) {
         return false
     }
-    
+
     return session.user.role === 'admin'
 }
 
@@ -36,20 +36,20 @@ export async function createPost(formData: PostFormData) {
     const session = await auth.api.getSession({
         headers: await headers(),
     })
-    
+
     if (!session?.user) {
         throw new Error('You must be logged in to create a post')
     }
-    
+
     // Check if user is admin
     if (session.user.role !== 'admin') {
         throw new Error('Only administrators can create posts')
     }
-    
+
     const validatedData = postSchema.parse(formData)
-    
+
     const slug = validatedData.slug || generateSlug(validatedData.title)
-    
+
     const newPost = {
         id: nanoid(),
         title: validatedData.title,
@@ -62,12 +62,12 @@ export async function createPost(formData: PostFormData) {
         authorId: session.user.id,
         publishedAt: validatedData.status === 'published' ? new Date() : null,
     }
-    
+
     await db.insert(post).values(newPost)
-    
+
     revalidatePath('/news')
     revalidatePath('/admin/news')
-    
+
     return { success: true, post: newPost }
 }
 
@@ -76,29 +76,29 @@ export async function updatePost(id: string, formData: PostFormData) {
     const session = await auth.api.getSession({
         headers: await headers(),
     })
-    
+
     if (!session?.user) {
         throw new Error('You must be logged in to update a post')
     }
-    
+
     // Check if user is admin
     if (session.user.role !== 'admin') {
         throw new Error('Only administrators can update posts')
     }
-    
+
     const validatedData = postSchema.parse(formData)
-    
+
     const existingPost = await db.query.post.findFirst({
         where: eq(post.id, id),
     })
-    
+
     if (!existingPost) {
         throw new Error('Post not found')
     }
-    
+
     const wasPublished = existingPost.status === 'published'
     const isNowPublished = validatedData.status === 'published'
-    
+
     const updatedPost = {
         title: validatedData.title,
         content: validatedData.content,
@@ -110,13 +110,13 @@ export async function updatePost(id: string, formData: PostFormData) {
         publishedAt: !wasPublished && isNowPublished ? new Date() : existingPost.publishedAt,
         updatedAt: new Date(),
     }
-    
+
     await db.update(post).set(updatedPost).where(eq(post.id, id))
-    
+
     revalidatePath('/news')
     revalidatePath(`/news/${updatedPost.slug}`)
     revalidatePath('/admin/news')
-    
+
     return { success: true, post: { ...existingPost, ...updatedPost } }
 }
 
@@ -125,29 +125,29 @@ export async function deletePost(id: string) {
     const session = await auth.api.getSession({
         headers: await headers(),
     })
-    
+
     if (!session?.user) {
         throw new Error('You must be logged in to delete a post')
     }
-    
+
     // Check if user is admin
     if (session.user.role !== 'admin') {
         throw new Error('Only administrators can delete posts')
     }
-    
+
     const existingPost = await db.query.post.findFirst({
         where: eq(post.id, id),
     })
-    
+
     if (!existingPost) {
         throw new Error('Post not found')
     }
-    
+
     await db.delete(post).where(eq(post.id, id))
-    
+
     revalidatePath('/news')
     revalidatePath('/admin/news')
-    
+
     return { success: true }
 }
 
@@ -159,19 +159,19 @@ export async function getPosts(options?: {
     category?: PostCategory
 }) {
     const { page = 1, limit = 10, status, category } = options || {}
-    
+
     const conditions = []
-    
+
     if (status) {
         conditions.push(eq(post.status, status))
     }
-    
+
     if (category) {
         conditions.push(eq(post.category, category))
     }
-    
+
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined
-    
+
     const posts = await db
         .select()
         .from(post)
@@ -179,7 +179,7 @@ export async function getPosts(options?: {
         .orderBy(desc(post.createdAt))
         .limit(limit)
         .offset((page - 1) * limit)
-    
+
     return posts
 }
 
@@ -191,14 +191,14 @@ export async function getPostById(id: string) {
             author: true,
         },
     })
-    
+
     return result
 }
 
 // Get a single post by slug
 export async function getPostBySlug(slug: string) {
     console.log('getPostBySlug called with slug:', slug)
-    
+
     try {
         const result = await db.query.post.findFirst({
             where: eq(post.slug, slug),
@@ -206,12 +206,12 @@ export async function getPostBySlug(slug: string) {
                 author: true,
             },
         })
-        
+
         console.log('Post found:', result ? 'Yes' : 'No')
         if (result) {
             console.log('Post status:', result.status)
         }
-        
+
         return result
     } catch (error) {
         console.error('Error fetching post by slug:', error)
@@ -220,19 +220,15 @@ export async function getPostBySlug(slug: string) {
 }
 
 // Get published posts for public display
-export async function getPublishedPosts(options?: {
-    page?: number
-    limit?: number
-    category?: PostCategory
-}) {
+export async function getPublishedPosts(options?: { page?: number; limit?: number; category?: PostCategory }) {
     const { page = 1, limit = 10, category } = options || {}
-    
+
     const conditions = [eq(post.status, 'published')]
-    
+
     if (category) {
         conditions.push(eq(post.category, category))
     }
-    
+
     const posts = await db
         .select()
         .from(post)
@@ -240,6 +236,6 @@ export async function getPublishedPosts(options?: {
         .orderBy(desc(post.publishedAt))
         .limit(limit)
         .offset((page - 1) * limit)
-    
+
     return posts
-} 
+}
