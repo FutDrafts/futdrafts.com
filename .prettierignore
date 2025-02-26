@@ -6,6 +6,7 @@
 /logs
 /certificates
 /scripts
+/drizzle
 
 .next
 .env
