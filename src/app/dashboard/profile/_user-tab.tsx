@@ -153,7 +153,7 @@ export function UserTab(props: Props) {
                         <CardDescription>Manage your profile details and preferences</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        <div className="flex items-start gap-6">
+                        <div className="flex md:flex-row flex-col items-center md:items-start gap-6">
                             <div className="flex flex-col items-center gap-2">
                                 <div className="relative">
                                     <Avatar className="h-24 w-24">
