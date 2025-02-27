@@ -1,6 +1,38 @@
 import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp, boolean, json, pgEnum } from 'drizzle-orm/pg-core'
 
+const postStatuses = ['draft', 'published', 'archived'] as const
+export type PostStatus = (typeof postStatuses)[number]
+export const postStatusEnum = pgEnum('post_status', postStatuses)
+
+const postCategories = ['transfers', 'match-reports', 'analysis', 'interviews', 'news'] as const
+export type PostCategory = (typeof postCategories)[number]
+export const postCategoryEnum = pgEnum('post_category', postCategories)
+
+export const post = pgTable('post', {
+    id: text('id').primaryKey(),
+    title: text('title').notNull(),
+    slug: text('slug').notNull().unique(),
+    content: text('content').notNull(),
+    excerpt: text('excerpt'),
+    status: postStatusEnum('status').notNull().default('draft'),
+    category: postCategoryEnum('category').notNull(),
+    featuredImage: text('featured_image'),
+    authorId: text('author_id')
+        .notNull()
+        .references(() => user.id),
+    publishedAt: timestamp('published_at'),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
+export const postRelations = relations(post, ({ one }) => ({
+    author: one(user, {
+        fields: [post.authorId],
+        references: [user.id],
+    }),
+}))
+
 export const config = pgTable('config', {
     key: text('key').primaryKey(),
     value: json('value').notNull(),

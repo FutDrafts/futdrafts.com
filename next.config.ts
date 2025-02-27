@@ -10,6 +10,13 @@ jiti.esmResolve('./src/env/server.ts')
 const nextConfig: NextConfig = {
     /* config options here */
     pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'mdx'],
+    images: {
+        remotePatterns: [
+            {
+                hostname: 'avatars.githubusercontent.com',
+            },
+        ],
+    },
     headers: async () => [
         {
             source: '/(.*)',

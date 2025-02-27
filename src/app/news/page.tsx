@@ -1,28 +1,30 @@
+import { Metadata } from 'next'
 import { AnnouncementBanner } from '@/app/news/_components/_announcement-banner'
 import { AdZone } from '@/app/news/_components/_ad-zone'
 import { NewsCard } from '@/app/news/_components/_news-card'
+import { getPublishedPosts } from '@/actions/posts'
 
-// TODO: Replace with actual data fetching
-const mockNews = [
-    {
-        title: 'Transfer News: Major Signing Expected',
-        category: 'Transfers',
-        imageUrl: '/images/placeholder.jpg',
-        author: 'John Doe',
-        publishedAt: new Date(),
-        slug: 'transfer-news-major-signing',
-    },
-    {
-        title: 'Match Report: Thrilling Derby',
-        category: 'Match Reports',
-        imageUrl: '/images/placeholder.jpg',
-        author: 'Jane Smith',
-        publishedAt: new Date(),
-        slug: 'match-report-thrilling-derby',
-    },
-]
+export const metadata: Metadata = {
+    title: 'News | FutDrafts',
+    description: 'Stay up to date with the latest football news, transfers, and match reports.',
+}
 
 export default async function NewsPage() {
+    // Get featured news (latest 3 published posts)
+    const featuredNews = await getPublishedPosts({ limit: 3 })
+
+    // Get latest news (next 4 published posts)
+    const latestNews = await getPublishedPosts({
+        limit: 4,
+        page: 2,
+    })
+
+    // Get top stories (published posts in the 'analysis' category)
+    const topStories = await getPublishedPosts({
+        limit: 4,
+        category: 'analysis',
+    })
+
     return (
         <div className="space-y-8">
             <AnnouncementBanner
@@ -35,10 +37,25 @@ export default async function NewsPage() {
 
             {/* Featured News Section */}
             <section>
+                <h2 className="mb-6 text-3xl font-bold">Featured News</h2>
                 <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                    {mockNews.map((news) => (
-                        <NewsCard key={news.slug} {...news} />
-                    ))}
+                    {featuredNews.length > 0 ? (
+                        featuredNews.map((news) => (
+                            <NewsCard
+                                key={news.id}
+                                title={news.title}
+                                category={news.category}
+                                imageUrl={news.featuredImage || '/images/placeholder.jpg'}
+                                author={news.authorId}
+                                publishedAt={news.publishedAt ? new Date(news.publishedAt) : new Date(news.createdAt)}
+                                slug={news.slug}
+                            />
+                        ))
+                    ) : (
+                        <div className="text-muted-foreground col-span-3 py-12 text-center">
+                            No featured news available at the moment.
+                        </div>
+                    )}
                 </div>
             </section>
 
@@ -52,17 +69,49 @@ export default async function NewsPage() {
                 <div>
                     <h2 className="mb-4 text-2xl font-bold">Latest News</h2>
                     <div className="space-y-6">
-                        {mockNews.map((news) => (
-                            <NewsCard key={news.slug} {...news} />
-                        ))}
+                        {latestNews.length > 0 ? (
+                            latestNews.map((news) => (
+                                <NewsCard
+                                    key={news.id}
+                                    title={news.title}
+                                    category={news.category}
+                                    imageUrl={news.featuredImage || '/images/placeholder.jpg'}
+                                    author={news.authorId}
+                                    publishedAt={
+                                        news.publishedAt ? new Date(news.publishedAt) : new Date(news.createdAt)
+                                    }
+                                    slug={news.slug}
+                                />
+                            ))
+                        ) : (
+                            <div className="text-muted-foreground py-8 text-center">
+                                No latest news available at the moment.
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div>
                     <h2 className="mb-4 text-2xl font-bold">Top Stories</h2>
                     <div className="space-y-6">
-                        {mockNews.map((news) => (
-                            <NewsCard key={news.slug} {...news} />
-                        ))}
+                        {topStories.length > 0 ? (
+                            topStories.map((news) => (
+                                <NewsCard
+                                    key={news.id}
+                                    title={news.title}
+                                    category={news.category}
+                                    imageUrl={news.featuredImage || '/images/placeholder.jpg'}
+                                    author={news.authorId}
+                                    publishedAt={
+                                        news.publishedAt ? new Date(news.publishedAt) : new Date(news.createdAt)
+                                    }
+                                    slug={news.slug}
+                                />
+                            ))
+                        ) : (
+                            <div className="text-muted-foreground py-8 text-center">
+                                No top stories available at the moment.
+                            </div>
+                        )}
                     </div>
                     <div className="mt-8">
                         <AdZone size="medium" />

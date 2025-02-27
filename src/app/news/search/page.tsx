@@ -2,66 +2,34 @@
 
 import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { searchClient } from '@/lib/meilisearch'
-import { InstantSearch, SearchBox, Hits } from 'react-instantsearch'
-import type { Hit } from 'instantsearch.js'
-import 'instantsearch.css/themes/satellite.css'
-
-interface NewsDocument {
-    id: string
-    title: string
-    content: string
-    date: string
-    category: string
-}
-
-interface SearchResult extends Hit<NewsDocument> {
-    _formatted?: {
-        title: string
-        content: string
-    }
-}
-
-function SearchHit({ hit }: { hit: SearchResult }) {
-    return (
-        <article className="bg-card rounded-lg border p-4 transition-shadow hover:shadow-md" key={hit.id}>
-            <div className="space-y-2">
-                <div className="text-muted-foreground text-sm">
-                    {hit.category} • {new Date(hit.date).toLocaleDateString()}
-                </div>
-                <h2 className="text-xl font-semibold">{hit._formatted?.title || hit.title}</h2>
-                <p className="text-muted-foreground line-clamp-3">{hit._formatted?.content || hit.content}</p>
-            </div>
-        </article>
-    )
-}
+import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 
 function SearchResults() {
     const searchParams = useSearchParams()
     const query = searchParams.get('q') || ''
 
     return (
-        <InstantSearch
-            /* eslint-disable @typescript-eslint/no-explicit-any */
-            searchClient={searchClient as any}
-            indexName="news"
-            initialUiState={{
-                news: {
-                    query,
-                },
-            }}
-        >
-            <div className="space-y-8 py-8">
-                <SearchBox placeholder="Search news..." className="mb-8" />
-                <Hits<SearchResult>
-                    hitComponent={SearchHit}
-                    classNames={{
-                        list: 'grid gap-6 md:grid-cols-2 lg:grid-cols-3',
-                        item: 'p-0!',
-                    }}
-                />
+        <div className="space-y-8 py-8">
+            <Input type="search" placeholder="Search news..." className="mb-8" defaultValue={query} />
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {/* Add your search results mapping here */}
+                <Card>
+                    <CardContent className="p-4">
+                        <div className="space-y-2">
+                            <div className="text-muted-foreground text-sm">
+                                Example Category • {new Date().toLocaleDateString()}
+                            </div>
+                            <h2 className="text-xl font-semibold">Example News Title</h2>
+                            <p className="text-muted-foreground line-clamp-3">
+                                This is an example news article content. Replace this with your actual search
+                                implementation.
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
-        </InstantSearch>
+        </div>
     )
 }
 

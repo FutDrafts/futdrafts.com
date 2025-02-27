@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -12,7 +12,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import MDEditor from '@uiw/react-md-editor'
 import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
-import { createPost } from '@/actions/posts'
+import { getPostById, updatePost } from '@/actions/posts'
 import { PostFormData } from '@/lib/validator'
 import { toast } from 'sonner'
 import { PostCategory, PostStatus } from '@/db/schema'
@@ -49,9 +49,11 @@ const imageUploadHandler = async (file: File): Promise<string> => {
     }
 }
 
-export default function CreateArticle() {
+export default function EditArticle({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params)
     const router = useRouter()
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const [saving, setSaving] = useState(false)
     const [formData, setFormData] = useState<PostFormData>({
         title: '',
         category: 'news',
@@ -60,25 +62,65 @@ export default function CreateArticle() {
         status: 'draft',
     })
 
+    useEffect(() => {
+        async function loadPost() {
+            try {
+                const post = await getPostById(id)
+
+                if (!post) {
+                    toast.error('Post not found')
+                    router.push('/admin/news')
+                    return
+                }
+
+                setFormData({
+                    title: post.title,
+                    category: post.category,
+                    content: post.content,
+                    excerpt: post.excerpt || '',
+                    status: post.status,
+                    slug: post.slug,
+                    featuredImage: post.featuredImage || undefined,
+                })
+
+                setLoading(false)
+            } catch (error) {
+                console.error('Failed to load post:', error)
+                toast.error('Failed to load post')
+                router.push('/admin/news')
+            }
+        }
+
+        loadPost()
+    }, [id, router])
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        setLoading(true)
+        setSaving(true)
 
         try {
-            const result = await createPost(formData)
+            const result = await updatePost(id, formData)
 
             if (result.success) {
-                toast.success('Article created successfully')
+                toast.success('Article updated successfully')
                 router.push('/admin/news')
             } else {
-                toast.error('Failed to create article')
+                toast.error('Failed to update article')
             }
         } catch (error) {
-            console.error('Failed to create article:', error)
-            toast.error(error instanceof Error ? error.message : 'Failed to create article')
+            console.error('Failed to update article:', error)
+            toast.error(error instanceof Error ? error.message : 'Failed to update article')
         } finally {
-            setLoading(false)
+            setSaving(false)
         }
+    }
+
+    if (loading) {
+        return (
+            <div className="flex h-[50vh] items-center justify-center">
+                <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
+            </div>
+        )
     }
 
     return (
@@ -88,8 +130,8 @@ export default function CreateArticle() {
                     <ArrowLeft className="h-5 w-5" />
                 </Button>
                 <div>
-                    <h1 className="text-3xl font-bold">Create Article</h1>
-                    <p className="text-muted-foreground">Create a new news article</p>
+                    <h1 className="text-3xl font-bold">Edit Article</h1>
+                    <p className="text-muted-foreground">Update an existing news article</p>
                 </div>
             </div>
 
@@ -113,10 +155,23 @@ export default function CreateArticle() {
                         </div>
 
                         <div className="space-y-2">
+                            <Label htmlFor="slug">Slug</Label>
+                            <Input
+                                id="slug"
+                                placeholder="article-url-slug"
+                                value={formData.slug}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                    setFormData({ ...formData, slug: e.target.value })
+                                }
+                            />
+                            <p className="text-muted-foreground text-xs">Leave empty to auto-generate from title</p>
+                        </div>
+
+                        <div className="space-y-2">
                             <Label htmlFor="category">Category</Label>
                             <Select
                                 value={formData.category}
-                                onValueChange={(value) => setFormData({ ...formData, category: value as PostCategory })}
+                                onValueChange={(value: PostCategory) => setFormData({ ...formData, category: value })}
                                 required
                             >
                                 <SelectTrigger>
@@ -136,7 +191,7 @@ export default function CreateArticle() {
                             <Label htmlFor="status">Status</Label>
                             <Select
                                 value={formData.status}
-                                onValueChange={(value) => setFormData({ ...formData, status: value as PostStatus })}
+                                onValueChange={(value: PostStatus) => setFormData({ ...formData, status: value })}
                                 required
                             >
                                 <SelectTrigger>
@@ -145,8 +200,21 @@ export default function CreateArticle() {
                                 <SelectContent>
                                     <SelectItem value="draft">Draft</SelectItem>
                                     <SelectItem value="published">Published</SelectItem>
+                                    <SelectItem value="archived">Archived</SelectItem>
                                 </SelectContent>
                             </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="featuredImage">Featured Image URL</Label>
+                            <Input
+                                id="featuredImage"
+                                placeholder="https://example.com/image.jpg"
+                                value={formData.featuredImage || ''}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                    setFormData({ ...formData, featuredImage: e.target.value })
+                                }
+                            />
                         </div>
 
                         <div className="space-y-2">
@@ -221,14 +289,14 @@ export default function CreateArticle() {
                     <Button type="button" variant="outline" onClick={() => router.back()}>
                         Cancel
                     </Button>
-                    <Button type="submit" disabled={loading}>
-                        {loading ? (
+                    <Button type="submit" disabled={saving}>
+                        {saving ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Creating...
+                                Saving...
                             </>
                         ) : (
-                            'Create Article'
+                            'Save Changes'
                         )}
                     </Button>
                 </div>
