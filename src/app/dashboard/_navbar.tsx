@@ -21,6 +21,7 @@ import { Session, User } from '@/lib/types'
 import { authClient } from '@/lib/auth-client'
 import { toast } from 'sonner'
 import { redirect } from 'next/navigation'
+import ThemeSwitcher from '@/components/theme-switcher'
 
 interface Props {
     session: { user: User; session: Session } | null
@@ -73,7 +74,7 @@ export function DashboardNavbar({ session }: Props) {
                             ))}
                         </nav>
                     </div>
-                    <div className="flex flex-1 items-center justify-end space-x-4">
+                    <div className="flex flex-1 items-center justify-end space-x-4 gap-2">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -105,6 +106,8 @@ export function DashboardNavbar({ session }: Props) {
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
+
+                        <ThemeSwitcher />
                     </div>
                 </div>
             </header>
