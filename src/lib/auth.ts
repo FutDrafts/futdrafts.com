@@ -5,6 +5,8 @@ import { db } from '@/db'
 import { env as serverEnv } from '@/env/server'
 import { env as clientEnv } from '@/env/client'
 import { nextCookies } from 'better-auth/next-js'
+import { user } from '@/db/schema'
+import { eq } from 'drizzle-orm'
 
 export const auth = betterAuth({
     appName: 'FutDrafts',
@@ -26,6 +28,24 @@ export const auth = betterAuth({
     account: {
         accountLinking: {
             trustedProviders: ['github', 'google', 'discord', 'apple', 'email-password'],
+        },
+    },
+    user: {
+        additionalFields: {
+            lastLogin: {
+                type: 'date',
+                input: false,
+                required: true,
+            },
+        },
+    },
+    databaseHooks: {
+        session: {
+            create: {
+                after: async (session) => {
+                    await db.update(user).set({ lastLogin: new Date() }).where(eq(user.id, session.userId))
+                },
+            },
         },
     },
     socialProviders: {
