@@ -4,7 +4,7 @@ import './globals.css'
 
 import { ClientPostHogProvider } from '@/providers/posthog-provider'
 import { Providers } from '@/providers'
-import { Toaster } from 'sonner'
+import { Toaster } from '@/components/ui/sonner'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/react'
 import { ReactQueryClientProvider } from '@/providers/react-query-provider'
