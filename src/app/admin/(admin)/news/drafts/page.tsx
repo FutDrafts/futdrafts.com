@@ -3,15 +3,18 @@
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ArrowLeft, Calendar, Edit, Eye } from 'lucide-react'
+import { ArrowLeftIcon, CalendarIcon, EditIcon, EyeIcon } from 'lucide-react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { getPosts } from '@/actions/posts'
 import { toast } from 'sonner'
+import { post } from '@/db/schema'
+import Image from 'next/image'
+
+type PostSchema = typeof post.$inferSelect
 
 export default function DraftArticles() {
-    const [drafts, setDrafts] = useState<any[]>([])
+    const [drafts, setDrafts] = useState<PostSchema[]>([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -35,7 +38,7 @@ export default function DraftArticles() {
             <div className="flex items-center gap-4">
                 <Button variant="ghost" size="icon" asChild>
                     <Link href="/admin/news">
-                        <ArrowLeft className="h-5 w-5" />
+                        <ArrowLeftIcon className="h-5 w-5" />
                     </Link>
                 </Button>
                 <div>
@@ -63,9 +66,10 @@ export default function DraftArticles() {
                         <Card key={draft.id} className="overflow-hidden">
                             {draft.featuredImage && (
                                 <div className="aspect-video w-full overflow-hidden">
-                                    <img
+                                    <Image
                                         src={draft.featuredImage}
                                         alt={draft.title}
+                                        fill
                                         className="h-full w-full object-cover transition-all hover:scale-105"
                                     />
                                 </div>
@@ -75,7 +79,7 @@ export default function DraftArticles() {
                                     <span className="capitalize">{draft.category}</span>
                                     <span>•</span>
                                     <span className="flex items-center gap-1">
-                                        <Calendar className="h-3 w-3" />
+                                        <CalendarIcon className="h-3 w-3" />
                                         {formatDistanceToNow(new Date(draft.createdAt), { addSuffix: true })}
                                     </span>
                                 </div>
@@ -87,13 +91,13 @@ export default function DraftArticles() {
                             <CardFooter className="flex justify-between">
                                 <Button variant="outline" size="sm" asChild>
                                     <Link href={`/admin/news/drafts/${draft.slug}`}>
-                                        <Eye className="mr-2 h-4 w-4" />
+                                        <EyeIcon className="mr-2 h-4 w-4" />
                                         Preview
                                     </Link>
                                 </Button>
                                 <Button variant="outline" size="sm" asChild>
                                     <Link href={`/admin/news/edit/${draft.id}`}>
-                                        <Edit className="mr-2 h-4 w-4" />
+                                        <EditIcon className="mr-2 h-4 w-4" />
                                         Edit
                                     </Link>
                                 </Button>

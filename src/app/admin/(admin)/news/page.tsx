@@ -21,9 +21,12 @@ import { cn } from '@/lib/utils'
 import { getPosts, deletePost } from '@/actions/posts'
 import { toast } from 'sonner'
 import { formatDistanceToNow } from 'date-fns'
+import { post } from '@/db/schema'
+
+type PostSchema = typeof post.$inferSelect
 
 export default function NewsManagement() {
-    const [articles, setArticles] = useState<any[]>([])
+    const [articles, setArticles] = useState<PostSchema[]>([])
     const [loading, setLoading] = useState(true)
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [articleToDelete, setArticleToDelete] = useState<string | null>(null)

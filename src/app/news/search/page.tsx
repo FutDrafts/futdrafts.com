@@ -5,14 +5,6 @@ import { useSearchParams } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 
-interface NewsDocument {
-    id: string
-    title: string
-    content: string
-    date: string
-    category: string
-}
-
 function SearchResults() {
     const searchParams = useSearchParams()
     const query = searchParams.get('q') || ''

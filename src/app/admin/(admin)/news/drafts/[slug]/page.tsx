@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import { useState, useEffect, use } from 'react'
@@ -6,7 +8,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { getPostBySlug } from '@/actions/posts'
-import { ArrowLeft, Edit, AlertTriangle, Info, AlertCircle, CheckCircle2, HelpCircle } from 'lucide-react'
+import { ArrowLeftIcon, EditIcon, AlertTriangleIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -17,6 +19,11 @@ import rehypeRaw from 'rehype-raw'
 import rehypeSanitize from 'rehype-sanitize'
 import remarkBreaks from 'remark-breaks'
 import React from 'react'
+import { post, user } from '@/db/schema'
+
+type PostSchema = typeof post.$inferSelect & {
+    author: typeof user.$inferSelect
+}
 
 // Function to preprocess markdown content to handle callouts
 function preprocessMarkdown(content: string) {
@@ -48,7 +55,7 @@ function preprocessMarkdown(content: string) {
 export default function DraftPreview({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params)
     const router = useRouter()
-    const [post, setPost] = useState<any>(null)
+    const [post, setPost] = useState<PostSchema | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -89,7 +96,7 @@ export default function DraftPreview({ params }: { params: Promise<{ slug: strin
             <div className="container mx-auto max-w-4xl space-y-8 py-8">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" onClick={() => router.back()}>
-                        <ArrowLeft className="h-5 w-5" />
+                        <ArrowLeftIcon className="h-5 w-5" />
                     </Button>
                     <Skeleton className="h-10 w-64" />
                 </div>
@@ -115,7 +122,7 @@ export default function DraftPreview({ params }: { params: Promise<{ slug: strin
                 role="alert"
             >
                 <div className="flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5" />
+                    <AlertTriangleIcon className="h-5 w-5" />
                     <p className="font-bold">Draft Preview</p>
                 </div>
                 <p>You are viewing a draft article. This content is not visible to regular users.</p>
@@ -124,14 +131,14 @@ export default function DraftPreview({ params }: { params: Promise<{ slug: strin
             <div className="flex items-center justify-between">
                 <Button variant="ghost" size="sm" asChild className="mb-4">
                     <Link href="/admin/news/drafts">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        <ArrowLeftIcon className="mr-2 h-4 w-4" />
                         Back to Drafts
                     </Link>
                 </Button>
 
                 <Button asChild>
-                    <Link href={`/admin/news/edit/${post.id}`}>
-                        <Edit className="mr-2 h-4 w-4" />
+                    <Link href={`/admin/news/edit/${post?.id}`}>
+                        <EditIcon className="mr-2 h-4 w-4" />
                         Edit Draft
                     </Link>
                 </Button>
@@ -140,10 +147,10 @@ export default function DraftPreview({ params }: { params: Promise<{ slug: strin
             <article className="space-y-8">
                 <div className="space-y-4">
                     <div className="flex items-center gap-2 text-sm">
-                        <span className="text-primary font-medium capitalize">{post.category}</span>
+                        <span className="text-primary font-medium capitalize">{post?.category}</span>
                         <span className="text-muted-foreground">•</span>
-                        <time dateTime={post.createdAt.toString()} className="text-muted-foreground">
-                            Created {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                        <time dateTime={post?.createdAt?.toString() || ''} className="text-muted-foreground">
+                            Created {formatDistanceToNow(new Date(post?.createdAt || ''), { addSuffix: true })}
                         </time>
                         <span className="text-muted-foreground">•</span>
                         <span className="rounded bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">
@@ -151,31 +158,31 @@ export default function DraftPreview({ params }: { params: Promise<{ slug: strin
                         </span>
                     </div>
 
-                    <h1 className="text-4xl font-bold tracking-tight">{post.title}</h1>
+                    <h1 className="text-4xl font-bold tracking-tight">{post?.title}</h1>
 
-                    {post.excerpt && <p className="text-muted-foreground text-xl">{post.excerpt}</p>}
+                    {post?.excerpt && <p className="text-muted-foreground text-xl">{post?.excerpt}</p>}
 
-                    {post.author && (
+                    {post?.author && (
                         <div className="flex items-center gap-2">
-                            {post.author.image && (
+                            {post?.author.image && (
                                 <Image
-                                    src={post.author.image}
-                                    alt={post.author.name}
+                                    src={post?.author.image}
+                                    alt={post?.author.name}
                                     width={40}
                                     height={40}
                                     className="rounded-full"
                                 />
                             )}
-                            <span>By {post.author.name}</span>
+                            <span>By {post?.author.name}</span>
                         </div>
                     )}
                 </div>
 
-                {post.featuredImage && (
+                {post?.featuredImage && (
                     <div className="aspect-video overflow-hidden rounded-lg">
                         <Image
-                            src={post.featuredImage}
-                            alt={post.title}
+                            src={post?.featuredImage}
+                            alt={post?.title || ''}
                             width={1200}
                             height={675}
                             className="h-full w-full object-cover"
@@ -285,7 +292,7 @@ export default function DraftPreview({ params }: { params: Promise<{ slug: strin
                         <p className="text-muted-foreground">Make this article visible to all users</p>
                     </div>
                     <Button asChild>
-                        <Link href={`/admin/news/edit/${post.id}`}>Edit and Publish</Link>
+                        <Link href={`/admin/news/edit/${post?.id}`}>Edit and Publish</Link>
                     </Button>
                 </div>
             </Card>

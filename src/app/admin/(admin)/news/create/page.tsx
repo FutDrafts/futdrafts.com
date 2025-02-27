@@ -15,6 +15,7 @@ import remarkGfm from 'remark-gfm'
 import { createPost } from '@/actions/posts'
 import { PostFormData } from '@/lib/validator'
 import { toast } from 'sonner'
+import { PostCategory, PostStatus } from '@/db/schema'
 
 const categories = [
     { value: 'transfers', label: 'Transfers' },
@@ -115,7 +116,7 @@ export default function CreateArticle() {
                             <Label htmlFor="category">Category</Label>
                             <Select
                                 value={formData.category}
-                                onValueChange={(value: any) => setFormData({ ...formData, category: value })}
+                                onValueChange={(value) => setFormData({ ...formData, category: value as PostCategory })}
                                 required
                             >
                                 <SelectTrigger>
@@ -135,7 +136,7 @@ export default function CreateArticle() {
                             <Label htmlFor="status">Status</Label>
                             <Select
                                 value={formData.status}
-                                onValueChange={(value: any) => setFormData({ ...formData, status: value })}
+                                onValueChange={(value) => setFormData({ ...formData, status: value as PostStatus})}
                                 required
                             >
                                 <SelectTrigger>

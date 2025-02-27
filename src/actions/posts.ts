@@ -18,19 +18,6 @@ function generateSlug(title: string): string {
         .concat('-', nanoid(6))
 }
 
-// Check if user is admin
-async function isAdmin() {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    })
-
-    if (!session?.user) {
-        return false
-    }
-
-    return session.user.role === 'admin'
-}
-
 // Create a new post
 export async function createPost(formData: PostFormData) {
     const session = await auth.api.getSession({
@@ -206,11 +193,6 @@ export async function getPostBySlug(slug: string) {
                 author: true,
             },
         })
-
-        console.log('Post found:', result ? 'Yes' : 'No')
-        if (result) {
-            console.log('Post status:', result.status)
-        }
 
         return result
     } catch (error) {

@@ -11,7 +11,6 @@ import { AdZone } from '@/app/news/_components/_ad-zone'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
-import { use } from 'react'
 
 // Generate static params for static generation
 export async function generateStaticParams() {
@@ -29,7 +28,7 @@ export async function generateStaticParams() {
 
 // Generate metadata for the page
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-    const { slug } = use(params)
+    const { slug } = await Promise.resolve(params)
     const post = await getPostBySlug(slug)
 
     if (!post) {
