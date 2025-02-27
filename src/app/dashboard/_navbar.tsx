@@ -74,7 +74,7 @@ export function DashboardNavbar({ session }: Props) {
                             ))}
                         </nav>
                     </div>
-                    <div className="flex flex-1 items-center justify-end space-x-4 gap-2">
+                    <div className="flex flex-1 items-center justify-end gap-2 space-x-4">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
