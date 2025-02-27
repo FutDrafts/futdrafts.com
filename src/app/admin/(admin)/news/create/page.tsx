@@ -136,7 +136,7 @@ export default function CreateArticle() {
                             <Label htmlFor="status">Status</Label>
                             <Select
                                 value={formData.status}
-                                onValueChange={(value) => setFormData({ ...formData, status: value as PostStatus})}
+                                onValueChange={(value) => setFormData({ ...formData, status: value as PostStatus })}
                                 required
                             >
                                 <SelectTrigger>
