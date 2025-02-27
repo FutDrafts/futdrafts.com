@@ -128,6 +128,7 @@ export const user = pgTable('user', {
     banned: boolean('banned').default(false).notNull(),
     banReason: text('ban_reason'),
     banExpires: timestamp('ban_expires'),
+    lastLogin: timestamp('last_login').notNull().defaultNow(),
 })
 
 export const session = pgTable('session', {

@@ -7,7 +7,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
         await auth.api.getSession({
             headers: await headers(),
         }),
-    ]).catch(() => redirect('/auth/sign-ing'))
+    ]).catch(() => redirect('/auth/sign-in'))
 
     if (session) {
         redirect('/dashboard')
