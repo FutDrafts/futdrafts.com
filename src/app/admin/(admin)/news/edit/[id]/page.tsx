@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -49,7 +49,8 @@ const imageUploadHandler = async (file: File): Promise<string> => {
     }
 }
 
-export default function EditArticle({ params }: { params: { id: string } }) {
+export default function EditArticle({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params)
     const router = useRouter()
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
@@ -64,7 +65,7 @@ export default function EditArticle({ params }: { params: { id: string } }) {
     useEffect(() => {
         async function loadPost() {
             try {
-                const post = await getPostById(params.id)
+                const post = await getPostById(id)
 
                 if (!post) {
                     toast.error('Post not found')
@@ -91,14 +92,14 @@ export default function EditArticle({ params }: { params: { id: string } }) {
         }
 
         loadPost()
-    }, [params.id, router])
+    }, [id, router])
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setSaving(true)
 
         try {
-            const result = await updatePost(params.id, formData)
+            const result = await updatePost(id, formData)
 
             if (result.success) {
                 toast.success('Article updated successfully')
