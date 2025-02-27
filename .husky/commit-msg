@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+
+bun commitlint --edit $1 --verbose
