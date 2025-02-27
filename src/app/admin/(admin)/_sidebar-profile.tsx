@@ -41,7 +41,7 @@ export function AdminSidebarProfile({ user }: Props) {
     }
 
     return (
-        <div className="border-t p-4 flex flex-row gap-1">
+        <div className="flex flex-row gap-1 border-t p-4">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className={'flex w-full items-center gap-2 px-2'}>
@@ -72,7 +72,7 @@ export function AdminSidebarProfile({ user }: Props) {
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <ThemeSwitcher/>
+            <ThemeSwitcher />
         </div>
     )
 }
