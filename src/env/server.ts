@@ -9,6 +9,8 @@ export const env = createEnv({
         GITHUB_CLIENT_ID: z.string(),
         GITHUB_CLIENT_SECRET: z.string(),
         VAPID_PRIVATE_KEY: z.string(),
+        POSTHOG_PROJECT_ID: z.string(),
+        POSTHOG_API_KEY: z.string(),
     },
     experimental__runtimeEnv: process.env,
 })
