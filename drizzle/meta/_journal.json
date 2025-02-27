@@ -15,6 +15,13 @@
       "when": 1740516295351,
       "tag": "0001_cool_electro",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1740606310583,
+      "tag": "0002_complete_silver_sable",
+      "breakpoints": true
     }
   ]
 }
