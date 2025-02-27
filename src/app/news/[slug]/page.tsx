@@ -52,16 +52,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
 }
 
-export default async function NewsPostPage({ params }: { params: { slug: string } }) {
+export default async function NewsPostPage({ params }: { params: Promise<{ slug: string }> }) {
     // Get the post by slug
-    const post = await getPostBySlug(params.slug)
-
-    // For debugging
-    console.log('Fetching post with slug:', params.slug)
-    console.log('Post found:', post ? 'Yes' : 'No')
-    if (post) {
-        console.log('Post status:', post.status)
-    }
+    const { slug } = await Promise.resolve(params)
+    const post = await getPostBySlug(slug)
 
     if (!post || post.status !== 'published') {
         notFound()
