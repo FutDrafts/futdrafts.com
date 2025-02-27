@@ -15,6 +15,7 @@ import { redirect } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { LogOutIcon, UsersIcon } from 'lucide-react'
+import ThemeSwitcher from '@/components/theme-switcher'
 
 interface Props {
     user: {
@@ -40,7 +41,7 @@ export function AdminSidebarProfile({ user }: Props) {
     }
 
     return (
-        <div className="border-t p-4">
+        <div className="border-t p-4 flex flex-row gap-1">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className={'flex w-full items-center gap-2 px-2'}>
@@ -70,6 +71,8 @@ export function AdminSidebarProfile({ user }: Props) {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
+
+            <ThemeSwitcher/>
         </div>
     )
 }
