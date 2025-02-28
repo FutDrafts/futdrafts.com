@@ -48,7 +48,7 @@ export default function RootLayout({
                         <Toaster richColors={true} />
                         <SpeedInsights />
                         <Suspense>
-                            <UTSSR/>
+                            <UTSSR />
                         </Suspense>
                         <Analytics />
                         <Providers>{children}</Providers>

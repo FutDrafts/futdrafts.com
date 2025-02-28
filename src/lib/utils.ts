@@ -64,3 +64,13 @@ export function isValidLeagueCode(code: string): boolean {
     const pattern = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/
     return pattern.test(code.toUpperCase())
 }
+
+// Generate a random username with "user_" prefix and random characters
+export function generateUsername(): string {
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789'
+    const randomString = Array(8)
+        .fill(0)
+        .map(() => characters[Math.floor(Math.random() * characters.length)])
+        .join('')
+    return `user_${randomString}`
+}

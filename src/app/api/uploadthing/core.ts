@@ -1,9 +1,9 @@
-import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { UploadThingError } from "uploadthing/server";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { createUploadthing, type FileRouter } from 'uploadthing/next'
+import { UploadThingError } from 'uploadthing/server'
+import { auth } from '@/lib/auth'
+import { headers } from 'next/headers'
 
-const f = createUploadthing();
+const f = createUploadthing()
 
 export const ourFileRouter = {
     imageUploader: f({
@@ -11,18 +11,20 @@ export const ourFileRouter = {
             maxFileSize: '4MB',
             maxFileCount: 1,
         },
-    }).middleware(async () => {
-        const session = await auth.api.getSession({headers: await headers()})
-        if((!session || !session.user) && session?.user.role !== 'admin') {
-            throw new UploadThingError("Unauthorized")
-        }
-
-        return {
-            userId: session?.user.id,
-        }
-    }).onUploadComplete(async ({metadata, file}) => {
-        return { uploadedBy: metadata.userId, fileUrl: file.ufsUrl }
     })
+        .middleware(async () => {
+            const session = await auth.api.getSession({ headers: await headers() })
+            if ((!session || !session.user) && session?.user.role !== 'admin') {
+                throw new UploadThingError('Unauthorized')
+            }
+
+            return {
+                userId: session?.user.id,
+            }
+        })
+        .onUploadComplete(async ({ metadata, file }) => {
+            return { uploadedBy: metadata.userId, fileUrl: file.ufsUrl }
+        }),
 } satisfies FileRouter
 
 export type OurFileRouter = typeof ourFileRouter
