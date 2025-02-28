@@ -1,3 +1,4 @@
+import { generateUsername } from '@/lib/utils'
 import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp, boolean, json, pgEnum } from 'drizzle-orm/pg-core'
 
@@ -128,6 +129,9 @@ export const user = pgTable('user', {
     banned: boolean('banned').default(false).notNull(),
     banReason: text('ban_reason'),
     banExpires: timestamp('ban_expires'),
+    username: text('username')
+        .unique()
+        .$defaultFn(() => generateUsername()),
     lastLogin: timestamp('last_login').notNull().defaultNow(),
 })
 
