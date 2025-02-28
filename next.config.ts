@@ -14,7 +14,12 @@ const nextConfig: NextConfig = {
         remotePatterns: [
             {
                 hostname: 'avatars.githubusercontent.com',
+                protocol: "https",
             },
+            {
+                hostname: "4z1m6cqolm.ufs.sh",
+                protocol: "https",
+            }
         ],
     },
     headers: async () => [

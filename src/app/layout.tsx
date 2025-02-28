@@ -8,6 +8,11 @@ import { Toaster } from '@/components/ui/sonner'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/react'
 import { ReactQueryClientProvider } from '@/providers/react-query-provider'
+import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin'
+import { extractRouterConfig } from 'uploadthing/server'
+import { ourFileRouter } from './api/uploadthing/core'
+import { connection } from 'next/server'
+import { Suspense } from 'react'
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -24,6 +29,12 @@ export const metadata: Metadata = {
     description: 'International Fantasy Football Drafts',
 }
 
+async function UTSSR() {
+    await connection()
+
+    return <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+}
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -35,9 +46,12 @@ export default function RootLayout({
                 <ClientPostHogProvider>
                     <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                         <Toaster richColors={true} />
-                        <Providers>{children}</Providers>
                         <SpeedInsights />
+                        <Suspense>
+                            <UTSSR/>
+                        </Suspense>
                         <Analytics />
+                        <Providers>{children}</Providers>
                     </body>
                 </ClientPostHogProvider>
             </html>
