@@ -11,6 +11,7 @@ export const env = createEnv({
         VAPID_PRIVATE_KEY: z.string(),
         POSTHOG_PROJECT_ID: z.string(),
         POSTHOG_API_KEY: z.string(),
+        UPLOADTHING_TOKEN: z.string(),
     },
     experimental__runtimeEnv: process.env,
 })

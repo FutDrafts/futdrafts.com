@@ -16,6 +16,7 @@ import { getPostById, updatePost } from '@/actions/posts'
 import { PostFormData } from '@/lib/validator'
 import { toast } from 'sonner'
 import { PostCategory, PostStatus } from '@/db/schema'
+import { UploadButton } from '@/components/ui/uploadthing'
 
 const categories = [
     { value: 'transfers', label: 'Transfers' },
@@ -206,15 +207,26 @@ export default function EditArticle({ params }: { params: Promise<{ id: string }
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="featuredImage">Featured Image URL</Label>
+                            <Label htmlFor="featuredImage">Featured Image</Label>
+                            <div className='flex flex-row gap-2'>
                             <Input
                                 id="featuredImage"
                                 placeholder="https://example.com/image.jpg"
                                 value={formData.featuredImage || ''}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setFormData({ ...formData, featuredImage: e.target.value })
-                                }
+                                disabled
                             />
+                            <UploadButton 
+                                endpoint="imageUploader"
+                                onClientUploadComplete={(res) => {
+                                    toast.success("Uploaded Image Successfully")
+                                    setFormData({ ...formData, featuredImage: res[0].ufsUrl })
+                                }}
+                                onUploadError={(error: Error) => {
+                                    toast.error(`There was an error uploading the image: ${error.message}`)
+                                }}
+                            />
+                            
+                                    </div>
                         </div>
 
                         <div className="space-y-2">
