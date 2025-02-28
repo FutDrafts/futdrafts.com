@@ -1,5 +1,5 @@
 import { betterAuth } from 'better-auth'
-import { admin, jwt } from 'better-auth/plugins'
+import { admin, jwt, username } from 'better-auth/plugins'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { db } from '@/db'
 import { env as serverEnv } from '@/env/server'
@@ -55,7 +55,7 @@ export const auth = betterAuth({
             clientSecret: serverEnv.GITHUB_CLIENT_SECRET as string,
         },
     },
-    plugins: [admin({}), jwt(), nextCookies()],
+    plugins: [admin({}), jwt(), nextCookies(), username()],
     trustedOrigins: [
         clientEnv.NEXT_PUBLIC_APP_URL,
         clientEnv.NEXT_PUBLIC_API_URL,

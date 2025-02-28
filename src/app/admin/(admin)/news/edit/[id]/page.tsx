@@ -208,25 +208,24 @@ export default function EditArticle({ params }: { params: Promise<{ id: string }
 
                         <div className="space-y-2">
                             <Label htmlFor="featuredImage">Featured Image</Label>
-                            <div className='flex flex-row gap-2'>
-                            <Input
-                                id="featuredImage"
-                                placeholder="https://example.com/image.jpg"
-                                value={formData.featuredImage || ''}
-                                disabled
-                            />
-                            <UploadButton 
-                                endpoint="imageUploader"
-                                onClientUploadComplete={(res) => {
-                                    toast.success("Uploaded Image Successfully")
-                                    setFormData({ ...formData, featuredImage: res[0].ufsUrl })
-                                }}
-                                onUploadError={(error: Error) => {
-                                    toast.error(`There was an error uploading the image: ${error.message}`)
-                                }}
-                            />
-                            
-                                    </div>
+                            <div className="flex flex-row gap-2">
+                                <Input
+                                    id="featuredImage"
+                                    placeholder="https://example.com/image.jpg"
+                                    value={formData.featuredImage || ''}
+                                    disabled
+                                />
+                                <UploadButton
+                                    endpoint="imageUploader"
+                                    onClientUploadComplete={(res) => {
+                                        toast.success('Uploaded Image Successfully')
+                                        setFormData({ ...formData, featuredImage: res[0].ufsUrl })
+                                    }}
+                                    onUploadError={(error: Error) => {
+                                        toast.error(`There was an error uploading the image: ${error.message}`)
+                                    }}
+                                />
+                            </div>
                         </div>
 
                         <div className="space-y-2">

@@ -7,11 +7,12 @@ import { LaptopIcon, Loader2Icon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { authClient } from '@/lib/auth-client'
-import { AuthSession } from '@/lib/types'
+import { AuthSession, Session } from '@/lib/types'
 import { useRouter } from 'next/navigation'
+import { formatDistanceToNow } from 'date-fns'
 
 interface ActiveSessionsListProps {
-    activeSessions: AuthSession['session'][]
+    activeSessions: Session[]
     currentSessionId?: string
 }
 
@@ -50,14 +51,22 @@ export function ActiveSessionsList({ activeSessions, currentSessionId }: ActiveS
         <div className="flex flex-col gap-2">
             {currentSessions.map((session) => (
                 <div key={session.id} className="flex justify-between rounded border px-4 py-3">
-                    <div className="flex items-center gap-2 text-sm font-medium text-black dark:text-white">
-                        {new UAParser(session.userAgent || '').getDevice().type === 'mobile' ? (
-                            <MobileIcon />
-                        ) : (
-                            <LaptopIcon size={16} />
-                        )}
-                        {new UAParser(session.userAgent || '').getOS().name},{' '}
-                        {new UAParser(session.userAgent || '').getBrowser().name}
+                    <div className="flex-col gap-1">
+                        <div className="flex items-center gap-2 text-sm font-medium text-black dark:text-white">
+                            {new UAParser(session.userAgent || '').getDevice().type === 'mobile' ? (
+                                <MobileIcon />
+                            ) : (
+                                <LaptopIcon size={16} />
+                            )}
+                            {new UAParser(session.userAgent || '').getOS().name},{' '}
+                            {new UAParser(session.userAgent || '').getBrowser().name}
+                        </div>
+                        <p className="text-muted-foreground text-sm">
+                            {session.ipAddress ? `IP: ${session.ipAddress}` : 'Unknown IP'} •{' '}
+                            {session.createdAt
+                                ? formatDistanceToNow(new Date(session.createdAt), { addSuffix: true })
+                                : 'Unknown time'}
+                        </p>
                     </div>
                     <Button
                         variant={'destructive'}
