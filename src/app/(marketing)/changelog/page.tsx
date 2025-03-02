@@ -18,10 +18,7 @@ export default async function ChangelogPage() {
                 <ScrollArea className="h-[calc(100vh-300px)]">
                     <div className="space-y-6 pb-8">
                         {entries.map((entry) => (
-                            <ChangelogEntry
-                                key={entry.id}
-                                entry={entry}
-                            />
+                            <ChangelogEntry key={entry.id} entry={entry} />
                         ))}
                     </div>
                 </ScrollArea>

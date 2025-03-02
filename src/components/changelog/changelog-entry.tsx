@@ -13,11 +13,7 @@ export function ChangelogEntry({ entry }: ChangelogEntryProps) {
     const formattedDate = formatDistanceToNow(new Date(entry.date), { addSuffix: true })
 
     return (
-        <div
-            className={cn(
-                'rounded-lg border p-4 transition-colors',
-            )}
-        >
+        <div className={cn('rounded-lg border p-4 transition-colors')}>
             <div className="mb-2 flex items-center justify-between">
                 <h3 className="font-semibold">{entry.title}</h3>
                 <div className="flex items-center gap-2">

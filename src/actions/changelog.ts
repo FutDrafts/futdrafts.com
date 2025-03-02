@@ -91,7 +91,7 @@ export async function createChangelogEntry(formData: ChangelogFormData) {
 
         await db.insert(changelog).values({
             id: nanoid(),
-            title: validatedData.title, 
+            title: validatedData.title,
             description: validatedData.description,
             version: validatedData.version || null,
             important: validatedData.important,

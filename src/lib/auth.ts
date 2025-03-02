@@ -66,11 +66,11 @@ export const auth = betterAuth({
     ],
     logger: {
         disabled: false,
-        level: "debug",
+        level: 'debug',
         log: (level, message, ...args) => {
-          console.log(`[BETTER-AUTH] [${level.toUpperCase()}]: ${message}`, ...args)
+            console.log(`[BETTER-AUTH] [${level.toUpperCase()}]: ${message}`, ...args)
         },
-      },
+    },
     advanced: {
         useSecureCookies: true,
 
