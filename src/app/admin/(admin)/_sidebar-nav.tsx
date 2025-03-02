@@ -9,6 +9,7 @@ import {
     TrophyIcon,
     Gamepad2Icon,
     SettingsIcon,
+    ClipboardListIcon,
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -23,6 +24,11 @@ const SIDEBAR_ITEMS = [
         title: 'News Management',
         href: '/admin/news',
         icon: NewspaperIcon,
+    },
+    {
+        title: 'Changelog',
+        href: '/admin/changelog',
+        icon: ClipboardListIcon,
     },
     {
         title: 'User Management',
