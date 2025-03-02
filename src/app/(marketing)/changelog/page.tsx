@@ -21,7 +21,6 @@ export default async function ChangelogPage() {
                             <ChangelogEntry
                                 key={entry.id}
                                 entry={entry}
-                                isNew={false} // On the changelog page, we don't highlight as new
                             />
                         ))}
                     </div>
