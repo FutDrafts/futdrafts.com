@@ -22,6 +22,7 @@ import { authClient } from '@/lib/auth-client'
 import { toast } from 'sonner'
 import { redirect } from 'next/navigation'
 import ThemeSwitcher from '@/components/theme-switcher'
+import { ChangelogNotification } from '@/components/changelog/changelog-notification'
 
 interface Props {
     session: { user: User; session: Session } | null
@@ -75,6 +76,8 @@ export function DashboardNavbar({ session }: Props) {
                         </nav>
                     </div>
                     <div className="flex flex-1 items-center justify-end gap-2 space-x-4">
+                        <ChangelogNotification />
+
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
