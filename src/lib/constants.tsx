@@ -11,19 +11,18 @@ export const MARKETING_FOOTER_LINKS = {
         { href: '/auth/sign-up', label: 'Sign Up' },
         { href: '/auth/sign-in', label: 'Sign In' },
         { href: '/dashboard', label: 'Dashboard' },
-        { href: '/settings', label: 'Settings' },
+        { href: '/profile', label: 'Profile' },
     ],
     Resources: [
+        { href: '/changelog', label: 'Changelog' },
         { href: '/help', label: 'Help Center' },
         { href: '/api-docs', label: 'API Documentation' },
-        { href: '/blog', label: 'Blog' },
-        { href: '/status', label: 'System Status' },
+        { href: 'https://futdrafts.openstatus.dev', label: 'System Status' },
     ],
     Legal: [
         { href: '/policies/privacy', label: 'Privacy Policy' },
         { href: '/policies/terms', label: 'Terms of Service' },
         { href: '/policies/cookies', label: 'Cookie Policy' },
-        { href: '/contact', label: 'Contact Us' },
     ],
 }
 export const MARKETING_FEATURES = [
