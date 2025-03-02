@@ -10,7 +10,7 @@ import { eq } from 'drizzle-orm'
 
 export const auth = betterAuth({
     appName: 'FutDrafts',
-    baseURL: clientEnv.NEXT_PUBLIC_APP_URL,
+    baseURL: clientEnv.NEXT_PUBLIC_APP_URL as string,
     database: drizzleAdapter(db, {
         provider: 'pg',
     }),
@@ -55,7 +55,7 @@ export const auth = betterAuth({
             clientSecret: serverEnv.GITHUB_CLIENT_SECRET as string,
         },
     },
-    plugins: [admin({}), jwt(), nextCookies(), username()],
+    plugins: [admin(), jwt(), username(), nextCookies()],
     trustedOrigins: [
         clientEnv.NEXT_PUBLIC_APP_URL,
         clientEnv.NEXT_PUBLIC_API_URL,
@@ -65,6 +65,18 @@ export const auth = betterAuth({
         'https://localhost:3000',
     ],
     logger: {
-        disabled: process.env.NODE_ENV === 'production',
+        disabled: false,
+        level: "debug",
+        log: (level, message, ...args) => {
+          console.log(`[BETTER-AUTH] [${level.toUpperCase()}]: ${message}`, ...args)
+        },
+      },
+    advanced: {
+        useSecureCookies: true,
+
+        crossSubDomainCookies: {
+            enabled: true,
+            additionalCookies: ['__cf_bm'],
+        },
     },
 })
