@@ -5,6 +5,8 @@
   ---break---
 */
 @plugin 'tailwindcss-animate';
+@plugin '@tailwindcss/typography';
+
 
 @custom-variant dark (&:is(.dark *));
 
@@ -338,4 +340,54 @@
     .language-markdown {
         @apply text-gray-700 dark:text-gray-300;
     }
+}
+
+.mdx-content {
+    h1 {
+        @apply text-2xl font-bold mt-8 mb-4;
+    }
+
+    h2 {
+        @apply text-xl font-semibold mt-6 mb-3;
+    }
+    
+    h3 {
+        @apply text-lg font-medium mt-5 mb-2;
+    }
+
+    p {
+        @apply my-4 leading-relaxed;
+    }
+
+    ul, ol {
+        @apply my-4 pl-6;
+    }
+
+    ul {
+        @apply list-disc;
+    }
+
+    ol {
+        @apply list-decimal;
+    }
+
+    li {
+        @apply my-1;
+    }
+
+    a {
+        @apply text-primary hover:underline;
+      }
+      
+    blockquote {
+        @apply border-l-4 border-gray-300 dark:border-gray-700 pl-4 italic my-4;
+      }
+      
+    code {
+        @apply bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm;
+      }
+      
+    pre {
+        @apply bg-gray-100 dark:bg-gray-800 p-4 rounded-md overflow-x-auto my-4;
+      }
 }
