@@ -24,19 +24,19 @@ export function MarketingHero() {
                 <div className="flex flex-wrap justify-center gap-4">
                     <div className="animate-fade-up [animation-delay:600ms]">
                         <Link
-                            href="/auth/sign-up"
-                            className="bg-primary text-primary-foreground hover:bg-primary/90 group relative inline-flex items-center justify-center overflow-hidden rounded-lg px-8 py-3 font-medium transition"
-                        >
-                            Get Started
-                            <ArrowRightIcon className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                        </Link>
-                    </div>
-                    <div className="animate-fade-up [animation-delay:600ms]">
-                        <Link
                             href="/dashboard"
                             className="border-primary/20 bg-background/50 hover:bg-primary/10 dark:border-primary/10 dark:hover:bg-primary/20 inline-flex items-center justify-center rounded-lg border px-8 py-3 font-medium backdrop-blur-xs transition"
                         >
                             View Demo
+                        </Link>
+                    </div>
+                    <div className="animate-fade-up [animation-delay:600ms]">
+                        <Link
+                            href="#waitlist"
+                            className="bg-primary text-primary-foreground hover:bg-primary/90 group relative inline-flex items-center justify-center overflow-hidden rounded-lg px-8 py-3 font-medium transition"
+                        >
+                            Join Waitlist
+                            <ArrowRightIcon className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </Link>
                     </div>
                 </div>
@@ -66,7 +66,7 @@ export function MarketingHero() {
                 <div className="bg-secondary/10 dark:bg-secondary/5 mt-16 flex flex-wrap justify-center gap-8 rounded-2xl p-8">
                     {[
                         { value: '1000+', label: 'Global Leagues' },
-                        { value: '100K+', label: 'Active Users' },
+                        { value: '10k+', label: 'Active Players' },
                         { value: '24/7', label: 'Live Updates' },
                     ].map((stat, index) => (
                         <div
