@@ -12,7 +12,17 @@ import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { updateChangelogEntry, getAllChangelogEntries } from '@/actions/changelog'
-import { changelogSchema, ChangelogFormData } from '@/app/admin/(admin)/changelog/new/page'
+import { z } from 'zod'
+
+const changelogSchema = z.object({
+    title: z.string().min(3, { message: 'Title must be at least 3 characters' }),
+    description: z.string().min(10, { message: 'Description must be at least 10 characters' }),
+    version: z.string().optional(),
+    important: z.boolean().default(false),
+    published: z.boolean().default(false),
+})
+
+export type ChangelogFormData = z.infer<typeof changelogSchema>
 
 export default function EditChangelogEntryPage({ params }: { params: Promise<{ id: string }> }) {
     const [isSubmitting, setIsSubmitting] = useState(false)
