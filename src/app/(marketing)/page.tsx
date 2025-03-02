@@ -1,14 +1,16 @@
-import ThemeSwitcher from '@/components/theme-switcher'
 import { MarketingHero } from './_hero'
-import { MarketingFooter } from './_footer'
+import { BetaSignupForm } from './_waitlist'
 
-export default async function MarketingHomePage() {
+export default function MarketingHomePage() {
     return (
-        <main className="animate-fade-in from-background to-secondary/10 dark:from-background dark:to-secondary/5 relative min-h-screen bg-linear-to-b">
-            <ThemeSwitcher className="animate-fade-in absolute top-4 right-4 sm:top-8 sm:right-8" />
-
-            <MarketingHero />
-            <MarketingFooter />
-        </main>
+        <div className="animate-fade-in from-background to-secondary/10 dark:from-background dark:to-secondary/5 relative min-h-screen bg-linear-to-b">
+            <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
+                {/* Hero content from MarketingHero component */}
+                <div className="flex flex-col items-center justify-center space-y-8 text-center">
+                    <MarketingHero />
+                </div>
+                <BetaSignupForm />
+            </div>
+        </div>
     )
 }
