@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -14,11 +14,11 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { updateChangelogEntry, getAllChangelogEntries } from '@/actions/changelog'
 import { changelogSchema, ChangelogFormData } from '@/app/admin/(admin)/changelog/new/page'
 
-export default function EditChangelogEntryPage({ params }: { params: { id: string } }) {
+export default function EditChangelogEntryPage({ params }: { params: Promise<{ id: string }> }) {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const router = useRouter()
-    const { id } = params
+    const { id } = use(params)
 
     const form = useForm<ChangelogFormData>({
         resolver: zodResolver(changelogSchema),
