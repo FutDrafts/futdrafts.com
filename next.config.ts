@@ -56,6 +56,11 @@ const nextConfig: NextConfig = {
     ],
 }
 
-const withMDX = createMdx({})
+const withMDX = createMdx({
+    options: {
+        remarkPlugins: [],
+        rehypePlugins: [],
+    },
+})
 
 export default withMDX(nextConfig)
