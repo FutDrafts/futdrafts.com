@@ -4,7 +4,7 @@ import { Form } from '@/components/ui/form'
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Loader2, X } from 'lucide-react'
+import { Loader2Icon, UserIcon } from 'lucide-react'
 import { useState } from 'react'
 import Image from 'next/image'
 import { useForm } from 'react-hook-form'
@@ -13,17 +13,22 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { authClient } from '@/lib/auth-client'
 
 const signUpSchema = z.object({
-    firstName: z.string().min(1),
-    lastName: z.string().min(1),
+    firstName: z.string().min(3),
+    lastName: z.string().min(3),
+    username: z.string().min(6),
     email: z.string().email(),
     password: z.string().min(8),
     passwordConfirmation: z.string().min(8),
     image: z.string().optional(),
 })
+    .refine((data) => data.password === data.passwordConfirmation, {
+        message: "Passwords don't match",
+        path: ["passwordConfirmation"],
+    });
 
 export function SignUpForm() {
     const [imagePreview, setImagePreview] = useState<string | null>(null)
-    const [image, setImage] = useState<File | null>(null)
+    const imageState = useState<File | null>(null)
     const [loading, setLoading] = useState(false)
 
     const form = useForm<z.infer<typeof signUpSchema>>({
@@ -31,6 +36,7 @@ export function SignUpForm() {
         defaultValues: {
             firstName: '',
             lastName: '',
+            username: '',
             email: '',
             password: '',
             passwordConfirmation: '',
@@ -41,7 +47,7 @@ export function SignUpForm() {
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (file) {
-            setImage(file)
+            imageState[1](file)
             const reader = new FileReader()
             reader.onloadend = () => {
                 setImagePreview(reader.result as string)
@@ -52,11 +58,11 @@ export function SignUpForm() {
 
     const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
         setLoading(true)
-        console.log(image)
 
         await authClient.signUp.email({
             email: data.email,
             password: data.password,
+            username: data.username,
             name: `${data.firstName} ${data.lastName}`,
             image: data.image,
         })
@@ -65,6 +71,44 @@ export function SignUpForm() {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+                <div className="flex flex-col items-center mb-4">
+                    <div className="relative h-24 w-24 overflow-hidden rounded-full mb-2 bg-gray-100 flex items-center justify-center border">
+                        {imagePreview ? (
+                            <Image
+                                src={imagePreview}
+                                alt="Profile preview"
+                                fill
+                                className="object-cover"
+                            />
+                        ) : (
+                           <UserIcon className="w-10 h-10 text-black" />
+                        )}
+                    </div>
+                    <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => document.getElementById('profile-image-input')?.click()}
+                    >
+                        {imagePreview ? 'Change Image' : 'Add Profile Image'}
+                    </Button>
+                    {imagePreview && (
+                        <Button 
+                            type="button" 
+                            variant="ghost" 
+                            size="sm"
+                            className="text-red-500 mt-1"
+                            onClick={() => {
+                                form.setValue('image', '');
+                                imageState[1](null);
+                                setImagePreview(null);
+                            }}
+                        >
+                            Remove
+                        </Button>
+                    )}
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                     <FormField
                         control={form.control}
@@ -93,6 +137,20 @@ export function SignUpForm() {
                         )}
                     />
                 </div>
+
+                <FormField 
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Username</FormLabel>
+                            <FormControl>
+                                <Input type="text" placeholder="maxrobinson" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
                 <FormField
                     control={form.control}
@@ -145,42 +203,17 @@ export function SignUpForm() {
                     control={form.control}
                     name="image"
                     render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Profile Image (optional)</FormLabel>
+                        <FormItem className="hidden">
                             <FormControl>
-                                <div className="flex items-end gap-4">
-                                    {imagePreview && (
-                                        <div className="relative h-16 w-16 overflow-hidden rounded-sm">
-                                            <Image
-                                                src={imagePreview}
-                                                alt="Profile preview"
-                                                layout="fill"
-                                                objectFit="cover"
-                                            />
-                                        </div>
-                                    )}
-                                    <div className="flex w-full items-center gap-2">
-                                        <Input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => {
-                                                field.onChange(e)
-                                                handleImageChange(e)
-                                            }}
-                                            className="w-full"
-                                        />
-                                        {imagePreview && (
-                                            <X
-                                                className="cursor-pointer"
-                                                onClick={() => {
-                                                    field.onChange(null)
-                                                    setImage(null)
-                                                    setImagePreview(null)
-                                                }}
-                                            />
-                                        )}
-                                    </div>
-                                </div>
+                                <Input
+                                    id="profile-image-input"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        field.onChange(e);
+                                        handleImageChange(e);
+                                    }}
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -188,7 +221,7 @@ export function SignUpForm() {
                 />
 
                 <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? <Loader2 size={16} className="animate-spin" /> : 'Create an account'}
+                    {loading ? <Loader2Icon size={16} className="animate-spin" /> : 'Create an account'}
                 </Button>
             </form>
         </Form>
