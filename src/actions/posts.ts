@@ -52,8 +52,8 @@ export async function createPost(formData: PostFormData) {
 
     await db.insert(post).values(newPost)
 
-    revalidatePath('/news')
-    revalidatePath('/admin/news')
+    revalidatePath('/blog')
+    revalidatePath('/admin/blog')
 
     return { success: true, post: newPost }
 }
@@ -100,9 +100,9 @@ export async function updatePost(id: string, formData: PostFormData) {
 
     await db.update(post).set(updatedPost).where(eq(post.id, id))
 
-    revalidatePath('/news')
-    revalidatePath(`/news/${updatedPost.slug}`)
-    revalidatePath('/admin/news')
+    revalidatePath('/blog')
+    revalidatePath(`/blog/${updatedPost.slug}`)
+    revalidatePath('/admin/blog')
 
     return { success: true, post: { ...existingPost, ...updatedPost } }
 }
@@ -132,8 +132,8 @@ export async function deletePost(id: string) {
 
     await db.delete(post).where(eq(post.id, id))
 
-    revalidatePath('/news')
-    revalidatePath('/admin/news')
+    revalidatePath('/blog')
+    revalidatePath('/admin/blog')
 
     return { success: true }
 }

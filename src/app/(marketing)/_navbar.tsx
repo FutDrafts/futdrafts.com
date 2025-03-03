@@ -12,7 +12,7 @@ const MARKETING_NAV_ITEMS = [
     { href: '/', label: 'Home' },
     { href: '/features', label: 'Features' },
     { href: '/pricing', label: 'Pricing' },
-    { href: '/news', label: 'News' },
+    { href: '/blog', label: 'Blog' },
     { href: '/changelog', label: 'Changelog' },
 ]
 

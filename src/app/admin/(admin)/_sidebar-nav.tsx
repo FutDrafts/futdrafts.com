@@ -21,8 +21,8 @@ const SIDEBAR_ITEMS = [
         icon: LayoutDashboardIcon,
     },
     {
-        title: 'News Management',
-        href: '/admin/news',
+        title: 'Blog Management',
+        href: '/admin/blog',
         icon: NewspaperIcon,
     },
     {

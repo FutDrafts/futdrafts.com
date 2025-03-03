@@ -104,7 +104,7 @@ export default function AdminDashboard() {
             {/* Quick Actions */}
             <div className="flex flex-wrap gap-4">
                 <Button asChild>
-                    <Link href="/admin/news/create">
+                    <Link href="/admin/blog/create">
                         <Newspaper className="mr-2 h-4 w-4" />
                         Create Article
                     </Link>
@@ -239,7 +239,7 @@ export default function AdminDashboard() {
                                                     {article.views ?? 0} views
                                                 </div>
                                                 <Button variant="ghost" size="sm" asChild>
-                                                    <Link href={`/admin/news/edit/${article.id}`}>Edit</Link>
+                                                    <Link href={`/admin/blog/edit/${article.id}`}>Edit</Link>
                                                 </Button>
                                             </div>
                                         </div>

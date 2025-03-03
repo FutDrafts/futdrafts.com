@@ -7,7 +7,7 @@ import { getPostBySlug, getPublishedPosts } from '@/actions/posts'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { AdZone } from '@/app/news/_components/_ad-zone'
+import { AdZone } from '../_components/_ad-zone'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
 }
 
-export default async function NewsPostPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
     // Get the post by slug
     const { slug } = await Promise.resolve(params)
     const post = await getPostBySlug(slug)
@@ -65,9 +65,9 @@ export default async function NewsPostPage({ params }: { params: Promise<{ slug:
         <div className="container mx-auto max-w-4xl space-y-8 py-8">
             <div>
                 <Button variant="ghost" size="sm" asChild className="mb-4">
-                    <Link href="/news">
+                    <Link href="/blog">
                         <ArrowLeft className="mr-2 h-4 w-4" />
-                        Back to News
+                        Back to Blog
                     </Link>
                 </Button>
             </div>

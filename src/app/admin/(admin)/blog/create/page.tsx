@@ -69,7 +69,7 @@ export default function CreateArticle() {
 
             if (result.success) {
                 toast.success('Article created successfully')
-                router.push('/admin/news')
+                router.push('/admin/blog')
             } else {
                 toast.error('Failed to create article')
             }
@@ -88,22 +88,22 @@ export default function CreateArticle() {
                     <ArrowLeft className="h-5 w-5" />
                 </Button>
                 <div>
-                    <h1 className="text-3xl font-bold">Create Article</h1>
-                    <p className="text-muted-foreground">Create a new news article</p>
+                    <h1 className="text-3xl font-bold">Create Blog Post</h1>
+                    <p className="text-muted-foreground">Create a new blog post</p>
                 </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Article Details</CardTitle>
+                        <CardTitle>Post Details</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="space-y-2">
                             <Label htmlFor="title">Title</Label>
                             <Input
                                 id="title"
-                                placeholder="Enter article title"
+                                placeholder="Enter post title"
                                 value={formData.title}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                     setFormData({ ...formData, title: e.target.value })

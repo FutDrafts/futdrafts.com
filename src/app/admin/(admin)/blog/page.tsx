@@ -25,7 +25,7 @@ import { post } from '@/db/schema'
 
 type PostSchema = typeof post.$inferSelect
 
-export default function NewsManagement() {
+export default function BlogManagement() {
     const [articles, setArticles] = useState<PostSchema[]>([])
     const [loading, setLoading] = useState(true)
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -100,18 +100,18 @@ export default function NewsManagement() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold">News Management</h1>
-                    <p className="text-muted-foreground">Create and manage news articles</p>
+                    <h1 className="text-3xl font-bold">Blog Management</h1>
+                    <p className="text-muted-foreground">Create and manage blog articles</p>
                 </div>
                 <div className="flex gap-2">
                     <Button variant="outline" asChild>
-                        <Link href="/admin/news/drafts">
+                        <Link href="/admin/blog/drafts">
                             <FileText className="mr-2 h-4 w-4" />
                             View Drafts
                         </Link>
                     </Button>
                     <Button asChild>
-                        <Link href="/admin/news/create">
+                        <Link href="/admin/blog/create">
                             <Plus className="mr-2 h-4 w-4" />
                             Create Article
                         </Link>
@@ -149,7 +149,7 @@ export default function NewsManagement() {
                     {counts.draft > 0 && (
                         <div className="absolute right-0 bottom-0 p-4">
                             <Button size="sm" variant="ghost" asChild>
-                                <Link href="/admin/news/drafts">View All</Link>
+                                <Link href="/admin/blog/drafts">View All</Link>
                             </Button>
                         </div>
                     )}
@@ -159,7 +159,7 @@ export default function NewsManagement() {
             <Card>
                 <CardHeader>
                     <CardTitle>Articles</CardTitle>
-                    <CardDescription>Manage your news articles</CardDescription>
+                    <CardDescription>Manage your blog posts</CardDescription>
                 </CardHeader>
                 <CardContent>
                     {loading ? (
@@ -170,7 +170,7 @@ export default function NewsManagement() {
                         <div className="flex flex-col items-center justify-center py-8">
                             <p className="text-muted-foreground mb-4">No articles found</p>
                             <Button asChild>
-                                <Link href="/admin/news/create">
+                                <Link href="/admin/blog/create">
                                     <Plus className="mr-2 h-4 w-4" />
                                     Create your first article
                                 </Link>
@@ -223,19 +223,19 @@ export default function NewsManagement() {
                                                 <DropdownMenuContent align="end">
                                                     <DropdownMenuItem asChild>
                                                         {article.status === 'published' ? (
-                                                            <Link href={`/news/${article.slug}`}>
+                                                            <Link href={`/blog/${article.slug}`}>
                                                                 <Eye className="mr-2 h-4 w-4" />
                                                                 View
                                                             </Link>
                                                         ) : (
-                                                            <Link href={`/admin/news/drafts/${article.slug}`}>
+                                                            <Link href={`/admin/blog/drafts/${article.slug}`}>
                                                                 <Eye className="mr-2 h-4 w-4" />
                                                                 Preview
                                                             </Link>
                                                         )}
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem asChild>
-                                                        <Link href={`/admin/news/edit/${article.id}`}>
+                                                        <Link href={`/admin/blog/edit/${article.id}`}>
                                                             <Pencil className="mr-2 h-4 w-4" />
                                                             Edit
                                                         </Link>
