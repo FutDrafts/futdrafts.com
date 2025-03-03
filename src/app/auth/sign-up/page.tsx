@@ -1,8 +1,18 @@
+'use client'
+
 import Link from 'next/link'
 import { SignUpForm } from './_form'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
+import { redirect } from 'next/navigation'
 
 export default function SignUpPage() {
+    const flagEnabled = useFeatureFlagEnabled('user-registration')
+
+    if (!flagEnabled) {
+        redirect('/auth/sign-in')
+    }
+
     return (
         <Card className="z-50 mx-auto w-full max-w-md rounded-md rounded-t-none p-4 sm:p-6">
             <CardHeader>
