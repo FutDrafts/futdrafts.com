@@ -37,7 +37,7 @@ export default function DraftArticles() {
         <div className="space-y-6">
             <div className="flex items-center gap-4">
                 <Button variant="ghost" size="icon" asChild>
-                    <Link href="/admin/news">
+                    <Link href="/admin/blog">
                         <ArrowLeftIcon className="h-5 w-5" />
                     </Link>
                 </Button>
@@ -56,7 +56,7 @@ export default function DraftArticles() {
                     <CardContent className="flex flex-col items-center justify-center py-12">
                         <p className="text-muted-foreground mb-4">No draft articles found</p>
                         <Button asChild>
-                            <Link href="/admin/news/create">Create a new article</Link>
+                            <Link href="/admin/blog/create">Create a new article</Link>
                         </Button>
                     </CardContent>
                 </Card>
@@ -90,13 +90,13 @@ export default function DraftArticles() {
                             </CardHeader>
                             <CardFooter className="flex justify-between">
                                 <Button variant="outline" size="sm" asChild>
-                                    <Link href={`/admin/news/drafts/${draft.slug}`}>
+                                    <Link href={`/admin/blog/drafts/${draft.slug}`}>
                                         <EyeIcon className="mr-2 h-4 w-4" />
                                         Preview
                                     </Link>
                                 </Button>
                                 <Button variant="outline" size="sm" asChild>
-                                    <Link href={`/admin/news/edit/${draft.id}`}>
+                                    <Link href={`/admin/blog/edit/${draft.id}`}>
                                         <EditIcon className="mr-2 h-4 w-4" />
                                         Edit
                                     </Link>

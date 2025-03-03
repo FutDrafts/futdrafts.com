@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 
-interface NewsCardProps {
+interface BlogCardProps {
     title: string
     category: string
     imageUrl: string
@@ -12,9 +12,9 @@ interface NewsCardProps {
     slug: string
 }
 
-export function NewsCard({ title, category, imageUrl, author, publishedAt, slug }: NewsCardProps) {
+export function BlogCard({ title, category, imageUrl, author, publishedAt, slug }: BlogCardProps) {
     return (
-        <Link href={`/news/${slug}`} className="group block">
+        <Link href={`/blog/${slug}`} className="group block">
             <Card className="flex flex-col">
                 <CardHeader>
                     <div className="aspect-video overflow-hidden rounded-lg">
