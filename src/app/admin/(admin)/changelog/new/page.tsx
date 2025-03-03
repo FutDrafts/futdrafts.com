@@ -14,7 +14,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { createChangelogEntry } from '@/actions/changelog'
 import { z } from 'zod'
 
-export const changelogSchema = z.object({
+const changelogSchema = z.object({
     title: z.string().min(3, { message: 'Title must be at least 3 characters' }),
     description: z.string().min(10, { message: 'Description must be at least 10 characters' }),
     version: z.string().optional(),
