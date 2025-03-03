@@ -19,8 +19,6 @@ export function ClientPostHogProvider({ children }: { children: React.ReactNode 
                 person_profiles: 'always',
             })
         }
-
-        
     }, [])
 
     return <PostHogProvider client={posthog}>{children}</PostHogProvider>
