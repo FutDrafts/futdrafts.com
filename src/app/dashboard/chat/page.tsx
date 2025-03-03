@@ -36,12 +36,24 @@ export default function ChatPage() {
     const [newMessage, setNewMessage] = useState('')
     const [activeLeague, setActiveLeague] = useState<string | null>(null)
     const [showArchived, setShowArchived] = useState(false)
-    
+
     // Mock data for leagues
     const [leagues] = useState<League[]>([
-        { id: 'league1', name: 'Fantasy Premier League', image: 'https://via.placeholder.com/50', isArchived: false, unreadCount: 3 },
+        {
+            id: 'league1',
+            name: 'Fantasy Premier League',
+            image: 'https://via.placeholder.com/50',
+            isArchived: false,
+            unreadCount: 3,
+        },
         { id: 'league2', name: 'NBA Fantasy', image: 'https://via.placeholder.com/50', isArchived: false },
-        { id: 'league3', name: 'NFL Fantasy', image: 'https://via.placeholder.com/50', isArchived: false, unreadCount: 1 },
+        {
+            id: 'league3',
+            name: 'NFL Fantasy',
+            image: 'https://via.placeholder.com/50',
+            isArchived: false,
+            unreadCount: 1,
+        },
         { id: 'league4', name: 'MLB 2023', image: 'https://via.placeholder.com/50', isArchived: true },
         { id: 'league5', name: 'NHL 2023', image: 'https://via.placeholder.com/50', isArchived: true },
     ])
@@ -99,71 +111,72 @@ export default function ChatPage() {
     return (
         <div className="flex h-screen overflow-hidden">
             {/* Sidebar */}
-            <div className="w-72 border-r flex flex-col h-full">
-                <div className="p-4 border-b">
-                    <h2 className="font-bold text-lg">League Chats</h2>
+            <div className="flex h-full w-72 flex-col border-r">
+                <div className="border-b p-4">
+                    <h2 className="text-lg font-bold">League Chats</h2>
                 </div>
-                
+
                 <ScrollArea className="flex-1">
                     <div className="p-2">
                         <div className="space-y-1">
                             {leagues
-                                .filter(league => !league.isArchived)
-                                .map(league => (
+                                .filter((league) => !league.isArchived)
+                                .map((league) => (
                                     <Button
                                         key={league.id}
-                                        variant={activeLeague === league.id ? "secondary" : "ghost"}
+                                        variant={activeLeague === league.id ? 'secondary' : 'ghost'}
                                         className="w-full justify-start"
                                         onClick={() => setActiveLeague(league.id)}
                                     >
-                                        <div className="flex items-center w-full">
+                                        <div className="flex w-full items-center">
                                             {league.image && (
-                                                <Avatar className="h-6 w-6 mr-2">
+                                                <Avatar className="mr-2 h-6 w-6">
                                                     <AvatarImage src={league.image} alt={league.name} />
                                                     <AvatarFallback>{league.name.charAt(0)}</AvatarFallback>
                                                 </Avatar>
                                             )}
                                             <span className="truncate">{league.name}</span>
                                             {league.unreadCount && (
-                                                <span className="ml-auto bg-primary text-primary-foreground text-xs rounded-full px-2 py-0.5">
+                                                <span className="bg-primary text-primary-foreground ml-auto rounded-full px-2 py-0.5 text-xs">
                                                     {league.unreadCount}
                                                 </span>
                                             )}
                                         </div>
                                     </Button>
-                                ))
-                            }
+                                ))}
                         </div>
-                        
+
                         <div className="mt-6">
-                            <Button 
-                                variant="ghost" 
-                                className="w-full justify-between items-center"
+                            <Button
+                                variant="ghost"
+                                className="w-full items-center justify-between"
                                 onClick={() => setShowArchived(!showArchived)}
                             >
                                 <div className="flex items-center">
-                                    <ArchiveIcon className="h-4 w-4 mr-2" />
+                                    <ArchiveIcon className="mr-2 h-4 w-4" />
                                     <span>Archived</span>
                                 </div>
-                                <ChevronDownIcon className={cn("h-4 w-4 transition-transform", {
-                                    "transform rotate-180": showArchived
-                                })} />
+                                <ChevronDownIcon
+                                    className={cn('h-4 w-4 transition-transform', {
+                                        'rotate-180 transform': showArchived,
+                                    })}
+                                />
                             </Button>
-                            
+
                             {showArchived && (
                                 <div className="mt-2 space-y-1 pl-2">
                                     {leagues
-                                        .filter(league => league.isArchived)
-                                        .map(league => (
+                                        .filter((league) => league.isArchived)
+                                        .map((league) => (
                                             <Button
                                                 key={`${league.id}-archived`}
-                                                variant={activeLeague === league.id ? "secondary" : "ghost"}
+                                                variant={activeLeague === league.id ? 'secondary' : 'ghost'}
                                                 className="w-full justify-start"
                                                 onClick={() => setActiveLeague(league.id)}
                                             >
-                                                <div className="flex items-center w-full">
+                                                <div className="flex w-full items-center">
                                                     {league.image && (
-                                                        <Avatar className="h-6 w-6 mr-2">
+                                                        <Avatar className="mr-2 h-6 w-6">
                                                             <AvatarImage src={league.image} alt={league.name} />
                                                             <AvatarFallback>{league.name.charAt(0)}</AvatarFallback>
                                                         </Avatar>
@@ -171,21 +184,20 @@ export default function ChatPage() {
                                                     <span className="truncate">{league.name}</span>
                                                 </div>
                                             </Button>
-                                        ))
-                                    }
+                                        ))}
                                 </div>
                             )}
                         </div>
                     </div>
                 </ScrollArea>
             </div>
-            
+
             {/* Main Chat Area */}
-            <div className="flex-1 flex flex-col h-full">
-                <div className="flex items-center justify-between p-4 border-b shrink-0">
+            <div className="flex h-full flex-1 flex-col">
+                <div className="flex shrink-0 items-center justify-between border-b p-4">
                     <h1 className="text-xl font-bold">
-                        {activeLeague 
-                            ? leagues.find(l => l.id === activeLeague)?.name || 'Chat'
+                        {activeLeague
+                            ? leagues.find((l) => l.id === activeLeague)?.name || 'Chat'
                             : 'Select a league chat'}
                     </h1>
                 </div>
@@ -299,7 +311,7 @@ export default function ChatPage() {
                     </div>
                 </ScrollArea>
 
-                <div className="border-t p-4 shrink-0">
+                <div className="shrink-0 border-t p-4">
                     <form onSubmit={handleSendMessage}>
                         <div className="flex gap-2">
                             <Input

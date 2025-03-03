@@ -59,7 +59,7 @@ const mockMessages: Message[] = [
     },
     {
         id: '3',
-        content: "The thing about Arsenal is, they always try to walk it in!",
+        content: 'The thing about Arsenal is, they always try to walk it in!',
         sender: {
             id: '1',
             name: 'John Doe',
@@ -87,8 +87,11 @@ export function LeagueChatSidebar({ isOpen, onClose }: LeagueChatSidebarProps) {
         if (diffInHours < 24) {
             return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         } else {
-            return date.toLocaleDateString([], { month: 'short', day: 'numeric' }) + 
-                   ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            return (
+                date.toLocaleDateString([], { month: 'short', day: 'numeric' }) +
+                ' ' +
+                date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            )
         }
     }
 
@@ -101,7 +104,7 @@ export function LeagueChatSidebar({ isOpen, onClose }: LeagueChatSidebarProps) {
                     if (!updatedReactions[emoji]) {
                         updatedReactions[emoji] = []
                     }
-                    
+
                     // Toggle reaction
                     const currentUserId = '1' // Replace with actual user ID
                     if (updatedReactions[emoji].includes(currentUserId)) {
@@ -112,11 +115,11 @@ export function LeagueChatSidebar({ isOpen, onClose }: LeagueChatSidebarProps) {
                     } else {
                         updatedReactions[emoji].push(currentUserId)
                     }
-                    
+
                     return { ...msg, reactions: updatedReactions }
                 }
                 return msg
-            })
+            }),
         )
     }
 
@@ -151,23 +154,23 @@ export function LeagueChatSidebar({ isOpen, onClose }: LeagueChatSidebarProps) {
         }
     }, [messages])
 
-    if (!isOpen) return null;
+    if (!isOpen) return null
 
     return (
-        <div className="h-full w-80 border-l bg-background shadow-md md:w-96">
+        <div className="bg-background h-full w-80 border-l shadow-md md:w-96">
             <div className="flex h-full flex-col pt-16">
                 <div className="flex items-center justify-between border-b p-4">
                     <h2 className="text-lg font-semibold">League Chat</h2>
                     <div className="flex flex-row gap-1">
-                    <Button asChild variant={"outline"}>
-                        <Link href={`/dashboard/chat`}>
-                            <MessageSquareIcon className="h-5 w-5" />
-                            All Chats
-                        </Link>
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={onClose}>
-                        <X className="h-5 w-5" />
-                    </Button>
+                        <Button asChild variant={'outline'}>
+                            <Link href={`/dashboard/chat`}>
+                                <MessageSquareIcon className="h-5 w-5" />
+                                All Chats
+                            </Link>
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={onClose}>
+                            <X className="h-5 w-5" />
+                        </Button>
                     </div>
                 </div>
 
@@ -299,4 +302,4 @@ export function LeagueChatSidebar({ isOpen, onClose }: LeagueChatSidebarProps) {
             </div>
         </div>
     )
-} 
+}
