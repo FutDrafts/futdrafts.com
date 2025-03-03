@@ -15,8 +15,8 @@ import { GithubIcon } from '@/components/svgs/github-icon'
 import { useState } from 'react'
 
 const signInSchema = z.object({
-    email: z.string().email(),
-    password: z.string().min(8),
+    identifier: z.string().min(1, "Email or username is required"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
     rememberMe: z.boolean().optional(),
 })
 
@@ -25,15 +25,33 @@ export function SignInForm() {
     const form = useForm<z.infer<typeof signInSchema>>({
         resolver: zodResolver(signInSchema),
         defaultValues: {
-            email: '',
+            identifier: '',
             password: '',
         },
     })
 
     const onSubmit = async (data: z.infer<typeof signInSchema>) => {
         setLoading(true)
-        await authClient.signIn.email({ email: data.email, password: data.password })
-        setLoading(false)
+        try {
+            // Check if the identifier is an email or username
+            const isEmail = data.identifier.includes('@')
+            
+            if (isEmail) {
+                await authClient.signIn.email({ 
+                    email: data.identifier, 
+                    password: data.password 
+                })
+            } else {
+                await authClient.signIn.username({ 
+                    username: data.identifier, 
+                    password: data.password 
+                })
+            }
+        } catch (error) {
+            console.error('Sign in error:', error)
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
@@ -41,12 +59,15 @@ export function SignInForm() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
                 <FormField
                     control={form.control}
-                    name="email"
+                    name="identifier"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel>Email or Username</FormLabel>
                             <FormControl>
-                                <Input type="email" placeholder="m@example.com" {...field} />
+                                <Input 
+                                    placeholder="m@example.com or username" 
+                                    {...field} 
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -65,7 +86,7 @@ export function SignInForm() {
                                 </Link>
                             </div>
                             <FormControl>
-                                <Input type="password" placeholder="password" autoComplete="password" {...field} />
+                                <Input type="password" placeholder="password" autoComplete="current-password" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
