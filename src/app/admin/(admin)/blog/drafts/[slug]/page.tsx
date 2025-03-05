@@ -65,14 +65,14 @@ export default function DraftPreview({ params }: { params: Promise<{ slug: strin
 
                 if (!result) {
                     toast.error('Post not found')
-                    router.push('/admin/news/drafts')
+                    router.push('/admin/blog/drafts')
                     return
                 }
 
                 // Check if the post is a draft
                 if (result.status !== 'draft') {
                     toast.info('This post is not a draft. Redirecting to published post.')
-                    router.push(`/news/${result.slug}`)
+                    router.push(`/blog/${result.slug}`)
                     return
                 }
 
@@ -81,7 +81,7 @@ export default function DraftPreview({ params }: { params: Promise<{ slug: strin
             } catch (error) {
                 console.error('Failed to load post:', error)
                 toast.error('Failed to load post')
-                router.push('/admin/news/drafts')
+                router.push('/admin/blog/drafts')
             }
         }
 
@@ -130,14 +130,14 @@ export default function DraftPreview({ params }: { params: Promise<{ slug: strin
 
             <div className="flex items-center justify-between">
                 <Button variant="ghost" size="sm" asChild className="mb-4">
-                    <Link href="/admin/news/drafts">
+                    <Link href="/admin/blog/drafts">
                         <ArrowLeftIcon className="mr-2 h-4 w-4" />
                         Back to Drafts
                     </Link>
                 </Button>
 
                 <Button asChild>
-                    <Link href={`/admin/news/edit/${post?.id}`}>
+                    <Link href={`/admin/blog/edit/${post?.id}`}>
                         <EditIcon className="mr-2 h-4 w-4" />
                         Edit Draft
                     </Link>
@@ -292,7 +292,7 @@ export default function DraftPreview({ params }: { params: Promise<{ slug: strin
                         <p className="text-muted-foreground">Make this article visible to all users</p>
                     </div>
                     <Button asChild>
-                        <Link href={`/admin/news/edit/${post?.id}`}>Edit and Publish</Link>
+                        <Link href={`/admin/blog/edit/${post?.id}`}>Edit and Publish</Link>
                     </Button>
                 </div>
             </Card>

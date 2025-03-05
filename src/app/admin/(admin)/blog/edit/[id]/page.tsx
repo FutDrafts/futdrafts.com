@@ -70,7 +70,7 @@ export default function EditArticle({ params }: { params: Promise<{ id: string }
 
                 if (!post) {
                     toast.error('Post not found')
-                    router.push('/admin/news')
+                    router.push('/admin/blog')
                     return
                 }
 
@@ -88,7 +88,7 @@ export default function EditArticle({ params }: { params: Promise<{ id: string }
             } catch (error) {
                 console.error('Failed to load post:', error)
                 toast.error('Failed to load post')
-                router.push('/admin/news')
+                router.push('/admin/blog')
             }
         }
 
@@ -104,7 +104,7 @@ export default function EditArticle({ params }: { params: Promise<{ id: string }
 
             if (result.success) {
                 toast.success('Article updated successfully')
-                router.push('/admin/news')
+                router.push('/admin/blog')
             } else {
                 toast.error('Failed to update article')
             }
@@ -131,22 +131,22 @@ export default function EditArticle({ params }: { params: Promise<{ id: string }
                     <ArrowLeft className="h-5 w-5" />
                 </Button>
                 <div>
-                    <h1 className="text-3xl font-bold">Edit Article</h1>
-                    <p className="text-muted-foreground">Update an existing news article</p>
+                    <h1 className="text-3xl font-bold">Edit Blog Post</h1>
+                    <p className="text-muted-foreground">Update an existing blog post</p>
                 </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Article Details</CardTitle>
+                        <CardTitle>Post Details</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="space-y-2">
                             <Label htmlFor="title">Title</Label>
                             <Input
                                 id="title"
-                                placeholder="Enter article title"
+                                placeholder="Enter post title"
                                 value={formData.title}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                     setFormData({ ...formData, title: e.target.value })
@@ -159,7 +159,7 @@ export default function EditArticle({ params }: { params: Promise<{ id: string }
                             <Label htmlFor="slug">Slug</Label>
                             <Input
                                 id="slug"
-                                placeholder="article-url-slug"
+                                placeholder="post-url-slug"
                                 value={formData.slug}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                     setFormData({ ...formData, slug: e.target.value })

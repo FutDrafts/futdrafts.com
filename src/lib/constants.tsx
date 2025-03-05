@@ -4,7 +4,7 @@ export const MARKETING_FOOTER_LINKS = {
     Product: [
         { href: '/features', label: 'Features' },
         { href: '/pricing', label: 'Pricing' },
-        { href: '/news', label: 'News' },
+        { href: '/blog', label: 'Blog' },
         { href: '/pwa', label: 'Download App' },
     ],
     Account: [
