@@ -78,12 +78,12 @@ export const auth = betterAuth({
             console.log(`[BETTER-AUTH] [${level.toUpperCase()}]: ${message}`, ...args)
         },
     },
-    advanced: {
-        useSecureCookies: true,
+    // advanced: {
+    //     useSecureCookies: true,
 
-        crossSubDomainCookies: {
-            enabled: true,
-            additionalCookies: ['__cf_bm'],
-        },
-    },
+    //     crossSubDomainCookies: {
+    //         enabled: true,
+    //         additionalCookies: ['__cf_bm'],
+    //     },
+    // },
 })
