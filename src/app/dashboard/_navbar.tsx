@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { DASHBOARD_NAVIGATION_ITEMS } from '@/lib/constants'
-import { XIcon, MenuIcon } from 'lucide-react'
+import { XIcon, MenuIcon, MessageSquareIcon } from 'lucide-react'
 import {
     DropdownMenu,
     DropdownMenuTrigger,
@@ -76,6 +76,10 @@ export function DashboardNavbar({ session }: Props) {
                         </nav>
                     </div>
                     <div className="flex flex-1 items-center justify-end gap-2 space-x-4">
+                        <Button variant="ghost" size="icon" className="relative" aria-label="League Chats" disabled>
+                            <MessageSquareIcon className="h-5 w-5" />
+                        </Button>
+
                         <ChangelogNotification />
 
                         <DropdownMenu>
