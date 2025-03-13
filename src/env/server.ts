@@ -12,6 +12,7 @@ export const env = createEnv({
         POSTHOG_PROJECT_ID: z.string(),
         POSTHOG_API_KEY: z.string(),
         UPLOADTHING_TOKEN: z.string(),
+        RESEND_API_KEY: z.string(),
     },
     experimental__runtimeEnv: process.env,
 })
