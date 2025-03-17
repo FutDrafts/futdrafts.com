@@ -5,11 +5,13 @@ import { SignUpForm } from './_form'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { redirect } from 'next/navigation'
+import { use } from 'react'
 
-export default function SignUpPage() {
+export default function SignUpPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
+    const { ref } = use(searchParams)
     const flagEnabled = useFeatureFlagEnabled('user-registration')
 
-    if (!flagEnabled) {
+    if (flagEnabled) {
         redirect('/auth/sign-in')
     }
 
@@ -30,7 +32,7 @@ export default function SignUpPage() {
                 <p className="text-muted-foreground mb-4 text-xs">
                     Already have an account? <Link href="/auth/sign-in">Sign in</Link>
                 </p>
-                <SignUpForm />
+                <SignUpForm referrer={ref ?? '/dashboard'} />
             </CardContent>
             <CardFooter className="px-0">
                 <p className="text-muted-foreground text-xs">

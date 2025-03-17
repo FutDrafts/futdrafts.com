@@ -2,7 +2,13 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { SignInForm } from './_form'
 import Link from 'next/link'
 
-export default function SignInPage() {
+export default async function SignInPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ [key: string]: string | undefined }>
+}) {
+    const { ref } = await searchParams
+
     return (
         <Card className="z-50 mx-auto w-full max-w-md rounded-md rounded-t-none p-4 sm:p-6">
             <CardHeader>
@@ -20,7 +26,7 @@ export default function SignInPage() {
                 <p className="text-muted-foreground mb-4 text-xs">
                     Don&apos;t have an account? <Link href="/auth/sign-up">Sign up</Link>
                 </p>
-                <SignInForm />
+                <SignInForm referrer={ref ?? '/dashboard'} />
             </CardContent>
         </Card>
     )

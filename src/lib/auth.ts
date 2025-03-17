@@ -22,7 +22,6 @@ export const auth = betterAuth({
     }),
     emailAndPassword: {
         enabled: true,
-        requireEmailVerification: true,
         autoSignIn: true,
         maxPasswordLength: 32,
         async sendResetPassword(data, request) {
@@ -41,6 +40,7 @@ export const auth = betterAuth({
             lastLogin: {
                 type: 'date',
                 input: false,
+                defaultValue: new Date(),
                 required: true,
             },
         },
