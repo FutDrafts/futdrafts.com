@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { authClient } from '@/lib/auth-client'
-
+import { useRouter } from 'next/navigation'
 const signUpSchema = z
     .object({
         firstName: z.string().min(3),
@@ -27,7 +27,8 @@ const signUpSchema = z
         path: ['passwordConfirmation'],
     })
 
-export function SignUpForm() {
+export function SignUpForm({ referrer }: { referrer: string }) {
+    const router = useRouter()
     const [imagePreview, setImagePreview] = useState<string | null>(null)
     const imageState = useState<File | null>(null)
     const [loading, setLoading] = useState(false)
@@ -60,13 +61,25 @@ export function SignUpForm() {
     const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
         setLoading(true)
 
-        await authClient.signUp.email({
-            email: data.email,
-            password: data.password,
-            username: data.username,
-            name: `${data.firstName} ${data.lastName}`,
-            image: data.image,
-        })
+        await authClient.signUp.email(
+            {
+                email: data.email,
+                password: data.password,
+                username: data.username,
+                name: `${data.firstName} ${data.lastName}`,
+                image: data.image,
+            },
+            {
+                onSuccess() {
+                    setLoading(false)
+                    router.push(referrer)
+                },
+                onError(context) {
+                    setLoading(false)
+                    console.error(context)
+                },
+            },
+        )
     }
 
     return (
