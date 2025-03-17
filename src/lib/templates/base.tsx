@@ -97,7 +97,13 @@ export default function BaseTemplate({
             <Body style={STYLES.body}>
                 <Container style={STYLES.container}>
                     <Section style={STYLES.card}>
-                        <Img style={STYLES.logo} width="120" height="40" alt="FutDrafts" src="" />
+                        <Img
+                            style={STYLES.logo}
+                            width="120"
+                            height="120"
+                            alt="FutDrafts"
+                            src="https://4z1m6cqolm.ufs.sh/f/e50LOf69dOrqRdtFb7tKDVBOkJbt4lCuv5oxSiUXegZQPcqj"
+                        />
                         {children}
                         <Hr style={STYLES.hr} />
                         <Text style={STYLES.footer}>
