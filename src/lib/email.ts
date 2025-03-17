@@ -4,33 +4,24 @@ import * as React from 'react'
 
 export const resend = new Resend(env.RESEND_API_KEY as string)
 
-export interface EmailTemplateProps {
-    firstName: string
-    lastName: string
-    username: string
-}
-
-export async function sendEmail<T extends Record<string, unknown>>({
+export async function sendEmail({
     to,
     subject,
     Template,
-    templateProps,
 }: {
     to: string
     subject: string
-    Template: React.ComponentType<T>
-    templateProps: T
+    Template: React.ReactNode
 }): Promise<{
     success: boolean
     error?: ErrorResponse | Error | null | string
 }> {
     try {
-        const email = React.createElement(Template, templateProps)
         const { error } = await resend.emails.send({
             from: 'futdrafts@alastisolutions.org',
             to,
             subject,
-            react: email,
+            react: Template,
         })
 
         if (error) {
