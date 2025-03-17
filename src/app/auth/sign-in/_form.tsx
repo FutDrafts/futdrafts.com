@@ -13,14 +13,15 @@ import { authClient } from '@/lib/auth-client'
 import Link from 'next/link'
 import { GithubIcon } from '@/components/svgs/github-icon'
 import { useState } from 'react'
-
+import { useRouter } from 'next/navigation'
 const signInSchema = z.object({
     identifier: z.string().min(1, 'Email or username is required'),
     password: z.string().min(8, 'Password must be at least 8 characters'),
     rememberMe: z.boolean().optional(),
 })
 
-export function SignInForm() {
+export function SignInForm({ referrer }: { referrer: string }) {
+    const router = useRouter()
     const [loading, setLoading] = useState(false)
     const form = useForm<z.infer<typeof signInSchema>>({
         resolver: zodResolver(signInSchema),
@@ -37,15 +38,29 @@ export function SignInForm() {
             const isEmail = data.identifier.includes('@')
 
             if (isEmail) {
-                await authClient.signIn.email({
-                    email: data.identifier,
-                    password: data.password,
-                })
+                await authClient.signIn.email(
+                    {
+                        email: data.identifier,
+                        password: data.password,
+                    },
+                    {
+                        onSuccess() {
+                            router.push(referrer)
+                        },
+                    },
+                )
             } else {
-                await authClient.signIn.username({
-                    username: data.identifier,
-                    password: data.password,
-                })
+                await authClient.signIn.username(
+                    {
+                        username: data.identifier,
+                        password: data.password,
+                    },
+                    {
+                        onSuccess() {
+                            router.push(referrer)
+                        },
+                    },
+                )
             }
         } catch (error) {
             console.error('Sign in error:', error)
