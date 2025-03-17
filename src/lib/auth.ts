@@ -20,14 +20,15 @@ export const auth = betterAuth({
     database: drizzleAdapter(db, {
         provider: 'pg',
     }),
+    emailVerification: {
+        sendOnSignUp: true,
+    },
     emailAndPassword: {
         enabled: true,
         autoSignIn: true,
         maxPasswordLength: 32,
-        async sendResetPassword(data, request) {
-            // TODO: Implement
-            console.log('sendResetPassword')
-            console.log(data, request)
+        async sendResetPassword({ user, url, token }, request) {
+            console.log(user, url, token, request)
         },
     },
     account: {
