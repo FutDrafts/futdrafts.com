@@ -2,6 +2,8 @@
 
 import { db } from '@/db'
 import { waitlistUsers } from '@/db/schema'
+import { sendEmail } from '@/lib/email'
+import WaitlistConfirmation from '@/lib/templates/waitlist'
 import { z } from 'zod'
 
 // Define schema for validation
@@ -33,6 +35,12 @@ export async function joinWaitlist(data: WaitlistFormData) {
         await db.insert(waitlistUsers).values({
             email: result.data.email,
             signupDate: new Date(),
+        })
+
+        await sendEmail({
+            to: result.data.email,
+            subject: 'Welcome to the waitlist',
+            Template: <WaitlistConfirmation estimatedLaunchDate='1st May 2025'/>
         })
 
         return { success: true }
