@@ -12,19 +12,20 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { authClient } from '@/lib/auth-client'
 
-const signUpSchema = z.object({
-    firstName: z.string().min(3),
-    lastName: z.string().min(3),
-    username: z.string().min(6),
-    email: z.string().email(),
-    password: z.string().min(8),
-    passwordConfirmation: z.string().min(8),
-    image: z.string().optional(),
-})
+const signUpSchema = z
+    .object({
+        firstName: z.string().min(3),
+        lastName: z.string().min(3),
+        username: z.string().min(6),
+        email: z.string().email(),
+        password: z.string().min(8),
+        passwordConfirmation: z.string().min(8),
+        image: z.string().optional(),
+    })
     .refine((data) => data.password === data.passwordConfirmation, {
         message: "Passwords don't match",
-        path: ["passwordConfirmation"],
-    });
+        path: ['passwordConfirmation'],
+    })
 
 export function SignUpForm() {
     const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -71,37 +72,32 @@ export function SignUpForm() {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                <div className="flex flex-col items-center mb-4">
-                    <div className="relative h-24 w-24 overflow-hidden rounded-full mb-2 bg-gray-100 flex items-center justify-center border">
+                <div className="mb-4 flex flex-col items-center">
+                    <div className="relative mb-2 flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border bg-gray-100">
                         {imagePreview ? (
-                            <Image
-                                src={imagePreview}
-                                alt="Profile preview"
-                                fill
-                                className="object-cover"
-                            />
+                            <Image src={imagePreview} alt="Profile preview" fill className="object-cover" />
                         ) : (
-                           <UserIcon className="w-10 h-10 text-black" />
+                            <UserIcon className="h-10 w-10 text-black" />
                         )}
                     </div>
-                    <Button 
-                        type="button" 
-                        variant="outline" 
+                    <Button
+                        type="button"
+                        variant="outline"
                         size="sm"
                         onClick={() => document.getElementById('profile-image-input')?.click()}
                     >
                         {imagePreview ? 'Change Image' : 'Add Profile Image'}
                     </Button>
                     {imagePreview && (
-                        <Button 
-                            type="button" 
-                            variant="ghost" 
+                        <Button
+                            type="button"
+                            variant="ghost"
                             size="sm"
-                            className="text-red-500 mt-1"
+                            className="mt-1 text-red-500"
                             onClick={() => {
-                                form.setValue('image', '');
-                                imageState[1](null);
-                                setImagePreview(null);
+                                form.setValue('image', '')
+                                imageState[1](null)
+                                setImagePreview(null)
                             }}
                         >
                             Remove
@@ -138,7 +134,7 @@ export function SignUpForm() {
                     />
                 </div>
 
-                <FormField 
+                <FormField
                     control={form.control}
                     name="username"
                     render={({ field }) => (
@@ -210,8 +206,8 @@ export function SignUpForm() {
                                     type="file"
                                     accept="image/*"
                                     onChange={(e) => {
-                                        field.onChange(e);
-                                        handleImageChange(e);
+                                        field.onChange(e)
+                                        handleImageChange(e)
                                     }}
                                 />
                             </FormControl>
