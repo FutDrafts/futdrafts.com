@@ -40,7 +40,7 @@ export async function joinWaitlist(data: WaitlistFormData) {
         await sendEmail({
             to: result.data.email,
             subject: 'Welcome to the waitlist',
-            Template: <WaitlistConfirmation estimatedLaunchDate='1st May 2025'/>
+            Template: <WaitlistConfirmation estimatedLaunchDate="1st May 2025" />,
         })
 
         return { success: true }
