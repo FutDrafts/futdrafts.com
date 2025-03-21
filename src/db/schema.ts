@@ -21,6 +21,10 @@ const postCategories = ['transfers', 'match-reports', 'analysis', 'interviews', 
 export type PostCategory = (typeof postCategories)[number]
 export const postCategoryEnum = pgEnum('post_category', postCategories)
 
+const leagueStatuses = ['active', 'upcoming', 'disabled'] as const
+export type LeagueStatus = (typeof leagueStatuses)[number]
+export const leagueStatusEnum = pgEnum('league_status', leagueStatuses)
+
 export const post = pgTable('post', {
     id: text('id').primaryKey(),
     title: text('title').notNull(),
@@ -146,32 +150,42 @@ export const changelog = pgTable('changelog', {
 })
 
 export const league = pgTable('league', {
-    id: uuid('id').notNull().defaultRandom(),
+    id: text('id').primaryKey().notNull().unique(),
     name: text('name').notNull(),
     country: text('country').notNull(),
     logo: text('logo').notNull(),
     flag: text('flag').notNull(),
     season: numeric('season').notNull(),
+    status: leagueStatusEnum('status').default('disabled'),
 })
 
+export const leagueRelations = relations(league, ({ many }) => ({
+    teams: many(team),
+    players: many(player),
+    fixtures: many(fixture),
+}))
+
 export const team = pgTable('team', {
-    id: uuid('id').primaryKey().defaultRandom(),
+    id: text('id').primaryKey().unique(),
+    league: text('league_id')
+        .unique()
+        .references(() => league.id),
     name: text('name').notNull(),
     logo: text('logo').notNull(),
 })
 
 export const fixture = pgTable('fixture', {
-    id: uuid('id').primaryKey().defaultRandom(),
-    home: uuid('home')
+    id: text('id').primaryKey().unique(),
+    home: text('home')
         .notNull()
         .references(() => team.id),
-    away: uuid('away')
+    away: text('away')
         .notNull()
         .references(() => team.id),
 })
 
 export const player = pgTable('player', {
-    id: uuid('id').primaryKey().defaultRandom(),
+    id: text('id').primaryKey().unique(),
     name: text('name').notNull(),
     birthday: date('birthday').notNull(),
     nationality: text('nationality').notNull(),
@@ -183,13 +197,13 @@ export const player = pgTable('player', {
 
 export const playerStatistics = pgTable('player_statistics', {
     id: uuid('id').defaultRandom().primaryKey(),
-    playerId: uuid('user_id')
+    playerId: text('user_id')
         .notNull()
         .references(() => player.id),
-    teamId: uuid('team_id')
+    teamId: text('team_id')
         .notNull()
         .references(() => team.id),
-    leagueId: uuid('league_id')
+    leagueId: text('league_id')
         .notNull()
         .references(() => league.id),
     games: jsonb('games')
