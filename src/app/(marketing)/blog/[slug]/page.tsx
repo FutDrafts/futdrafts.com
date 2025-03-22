@@ -39,15 +39,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
 
     return {
-        title: post.title,
-        description: post.excerpt || `Read about ${post.title}`,
+        title: `${post.title} | FutDrafts Blog`,
+        description: post.excerpt,
         openGraph: {
             title: post.title,
             description: post.excerpt || `Read about ${post.title}`,
             type: 'article',
-            publishedTime: post.publishedAt?.toString(),
-            modifiedTime: post.updatedAt.toString(),
-            images: post.featuredImage ? [post.featuredImage] : [],
+            authors: [post.author.name],
         },
     }
 }
