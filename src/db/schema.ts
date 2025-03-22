@@ -1,5 +1,17 @@
 import { relations } from 'drizzle-orm'
-import { pgTable, text, timestamp, boolean, json, pgEnum, serial } from 'drizzle-orm/pg-core'
+import {
+    pgTable,
+    text,
+    timestamp,
+    boolean,
+    json,
+    jsonb,
+    pgEnum,
+    serial,
+    date,
+    numeric,
+    uuid,
+} from 'drizzle-orm/pg-core'
 
 const postStatuses = ['draft', 'published', 'archived'] as const
 export type PostStatus = (typeof postStatuses)[number]
@@ -8,6 +20,10 @@ export const postStatusEnum = pgEnum('post_status', postStatuses)
 const postCategories = ['transfers', 'match-reports', 'analysis', 'interviews', 'news'] as const
 export type PostCategory = (typeof postCategories)[number]
 export const postCategoryEnum = pgEnum('post_category', postCategories)
+
+const leagueStatuses = ['active', 'upcoming', 'disabled'] as const
+export type LeagueStatus = (typeof leagueStatuses)[number]
+export const leagueStatusEnum = pgEnum('league_status', leagueStatuses)
 
 export const post = pgTable('post', {
     id: text('id').primaryKey(),
@@ -132,6 +148,187 @@ export const changelog = pgTable('changelog', {
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
+
+export const league = pgTable('league', {
+    id: text('id').primaryKey().notNull().unique(),
+    name: text('name').notNull(),
+    country: text('country').notNull(),
+    logo: text('logo').notNull(),
+    flag: text('flag').notNull(),
+    season: numeric('season').notNull(),
+    status: leagueStatusEnum('status').default('disabled'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
+export const leagueRelations = relations(league, ({ many }) => ({
+    teams: many(team),
+    playerStatistics: many(playerStatistics),
+    fixtures: many(fixture),
+}))
+
+export const team = pgTable('team', {
+    id: text('id').primaryKey().unique(),
+    leagueId: text('league_id'),
+    name: text('name').notNull(),
+    logo: text('logo').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
+export const teamRelations = relations(team, ({ one }) => ({
+    league: one(league, {
+        fields: [team.leagueId],
+        references: [league.id],
+    }),
+}))
+
+export const fixture = pgTable('fixture', {
+    id: text('id').primaryKey().unique(),
+    leagueId: text('id').notNull(),
+    home: text('home')
+        .notNull()
+        .references(() => team.id),
+    away: text('away')
+        .notNull()
+        .references(() => team.id),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
+export const fixtureRelations = relations(fixture, ({ one }) => ({
+    league: one(league, {
+        fields: [fixture.leagueId],
+        references: [league.id],
+    }),
+}))
+
+export const player = pgTable('player', {
+    id: text('id').primaryKey().unique(),
+    name: text('name').notNull(),
+    birthday: date('birthday').notNull(),
+    nationality: text('nationality').notNull(),
+    height: numeric('height').notNull(),
+    weight: numeric('weight').notNull(),
+    isInjured: boolean('injured').notNull(),
+    profilePicture: text('profile_picture').notNull(),
+    statisticsId: uuid('statistics_id').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
+export const playerRelations = relations(player, ({ one }) => ({
+    statistics: one(playerStatistics, {
+        fields: [player.statisticsId],
+        references: [playerStatistics.id],
+    }),
+}))
+
+export const playerStatistics = pgTable('player_statistics', {
+    id: uuid('id').defaultRandom().primaryKey(),
+    playerId: text('user_id')
+        .notNull()
+        .references(() => player.id),
+    teamId: text('team_id')
+        .notNull()
+        .references(() => team.id),
+    leagueId: text('league_id')
+        .notNull()
+        .references(() => league.id),
+    games: jsonb('games')
+        .$type<{
+            appearences: number
+            lineups: number
+            minutes: number
+            number: number | null
+            position: string
+            rating: string
+            captain: boolean
+        }>()
+        .default({
+            appearences: 0,
+            lineups: 0,
+            minutes: 0,
+            number: null,
+            position: 'undefined',
+            rating: '0.0',
+            captain: false,
+        }),
+    substitutes: jsonb('substitues')
+        .$type<{ in: number; out: number; bench: number }>()
+        .default({ in: 0, out: 0, bench: 0 }),
+    shots: jsonb('shots').$type<{ total: number; on_target: number }>().default({ total: 0, on_target: 0 }),
+    goals: jsonb('goals').$type<{ total: number; conceded: number; assists: number; saves: number }>().default({
+        total: 0,
+        conceded: 0,
+        assists: 0,
+        saves: 0,
+    }),
+    passes: jsonb('passes')
+        .$type<{ total: number; key_assist: number; accuracy: number | null }>()
+        .default({ total: 0, key_assist: 0, accuracy: 0 }),
+    tackles: jsonb('tackles')
+        .$type<{
+            total: number
+            blocks: number
+            interceptions: number
+        }>()
+        .default({ total: 0, blocks: 0, interceptions: 0 }),
+    duels: jsonb('duels').$type<{ total: number; won: number }>().default({ total: 0, won: 0 }),
+    dribbles: jsonb('dribbles').$type<{ attempts: number; success: number; past: number | null }>().default({
+        attempts: 0,
+        success: 0,
+        past: null,
+    }),
+    fouls: jsonb('fouls')
+        .$type<{
+            drawn: number
+            committed: number
+        }>()
+        .default({
+            drawn: 0,
+            committed: 0,
+        }),
+    cards: jsonb('cards')
+        .$type<{
+            yellow: number
+            yellowToRed: number
+            red: number
+        }>()
+        .default({ yellow: 0, yellowToRed: 0, red: 0 }),
+    penalty: jsonb('penalty')
+        .$type<{
+            won: number | null
+            committed: number | null
+            scored: number | null
+            missed: number | null
+            saved: number | null
+        }>()
+        .default({
+            won: null,
+            committed: null,
+            scored: 0,
+            missed: 0,
+            saved: null,
+        }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
+export const playerStatisticsRelations = relations(playerStatistics, ({ one }) => ({
+    player: one(player, {
+        fields: [playerStatistics.playerId],
+        references: [player.id],
+    }),
+    team: one(team, {
+        fields: [playerStatistics.teamId],
+        references: [team.id],
+    }),
+    league: one(league, {
+        fields: [playerStatistics.leagueId],
+        references: [league.id],
+    }),
+}))
 
 // SCHEMA GENERATED BY BETTER-AUTH
 // DO NOT EDIT TABLES UNDER THIS COMMENT
