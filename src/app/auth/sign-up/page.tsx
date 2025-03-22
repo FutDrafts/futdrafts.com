@@ -11,7 +11,7 @@ export default function SignUpPage({ searchParams }: { searchParams: Promise<{ [
     const { ref } = use(searchParams)
     const flagEnabled = useFeatureFlagEnabled('user-registration')
 
-    if (flagEnabled) {
+    if (!flagEnabled) {
         redirect('/auth/sign-in')
     }
 
