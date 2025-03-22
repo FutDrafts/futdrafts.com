@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { DashboardNavbar } from './_navbar'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
+import posthog from 'posthog-js'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
     const session = await auth.api.getSession({
@@ -11,6 +12,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
     if (!session) {
         redirect('/')
     }
+
+    posthog.identify(session.user.id, {
+        name: session.user.name,
+        email: session.user.email,
+    })
 
     return (
         <div className="bg-background min-h-screen">
