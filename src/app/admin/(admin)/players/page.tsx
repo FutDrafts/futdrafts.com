@@ -8,7 +8,7 @@ import { toast } from 'sonner'
 export default async function PlayersPage() {
     const { totalPlayers, injuredPlayers, error: playerCountError } = await getPlayerCount()
 
-    if(playerCountError) {
+    if (playerCountError) {
         toast.error(playerCountError)
     }
 
@@ -26,9 +26,17 @@ export default async function PlayersPage() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-3">
-                <AdminQuickStatCard title="Total Players" description='All Football Players supported' statistic={totalPlayers ?? 0}/>
-                <AdminQuickStatCard title="Injured Players" description='Injured Players' statistic={injuredPlayers ?? 0}/>
-                <AdminQuickStatCard title="" description='' statistic={0}/>
+                <AdminQuickStatCard
+                    title="Total Players"
+                    description="All Football Players supported"
+                    statistic={totalPlayers ?? 0}
+                />
+                <AdminQuickStatCard
+                    title="Injured Players"
+                    description="Injured Players"
+                    statistic={injuredPlayers ?? 0}
+                />
+                <AdminQuickStatCard title="" description="" statistic={0} />
             </div>
             <PlayersTable />
         </div>
