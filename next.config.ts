@@ -20,6 +20,10 @@ const nextConfig: NextConfig = {
                 hostname: '4z1m6cqolm.ufs.sh',
                 protocol: 'https',
             },
+            {
+                hostname: 'media.api-sports.io',
+                protocol: 'https',
+            },
         ],
     },
     headers: async () => [
