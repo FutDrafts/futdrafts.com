@@ -55,7 +55,8 @@ export const metadata: Metadata = {
     twitter: {
         card: 'summary_large_image',
         title: 'FutDrafts - Global Fantasy Football Drafts',
-        description: 'Create, manage, and compete in fantasy football drafts with friends, colleagues, and others from around the world.',
+        description:
+            'Create, manage, and compete in fantasy football drafts with friends, colleagues, and others from around the world.',
         creator: '@futdraftsapp',
         images: ['/android-chrome-512x512.png'],
     },
