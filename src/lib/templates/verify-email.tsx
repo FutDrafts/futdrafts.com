@@ -23,7 +23,7 @@ export default function EmailVerificationTemplate({ username, verificationLink, 
                 </Link>
             </Section>
             <Text style={STYLES.text}>
-                This verification link will expire in {expiryHours} hours. If you didn&apos;t create an account, you can
+                This verification link will expire in {expiryHours} minutes. If you didn&apos;t create an account, you can
                 safely ignore this email.
             </Text>
             <Text style={STYLES.text}>

@@ -73,6 +73,7 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile }: 
                                 await authClient.sendVerificationEmail(
                                     {
                                         email: session?.user.email || '',
+                                        callbackURL: '/dashboard/profile',
                                     },
                                     {
                                         onRequest() {

@@ -25,6 +25,7 @@ export const auth = betterAuth({
     emailVerification: {
         sendOnSignUp: true,
         expiresIn: 600,
+        callbackURL: '/dashboard/profile',
         async sendVerificationEmail({ user, url }) {
             sendEmail({
                 to: user.email,
