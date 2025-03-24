@@ -10,10 +10,11 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { authClient } from '@/lib/auth-client'
-import Link from 'next/link'
 import { GithubIcon } from '@/components/svgs/github-icon'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { ForgotPasswordDialog } from '@/components/forgot-password-dialog'
+
 const signInSchema = z.object({
     identifier: z.string().min(1, 'Email or username is required'),
     password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -23,6 +24,7 @@ const signInSchema = z.object({
 export function SignInForm({ referrer }: { referrer: string }) {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
+    const [open, setOpen] = useState(false)
     const form = useForm<z.infer<typeof signInSchema>>({
         resolver: zodResolver(signInSchema),
         defaultValues: {
@@ -71,6 +73,7 @@ export function SignInForm({ referrer }: { referrer: string }) {
 
     return (
         <Form {...form}>
+            <ForgotPasswordDialog open={open} setOpen={setOpen} />
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
                 <FormField
                     control={form.control}
@@ -93,9 +96,14 @@ export function SignInForm({ referrer }: { referrer: string }) {
                         <FormItem>
                             <div className="flex items-center">
                                 <FormLabel>Password</FormLabel>
-                                <Link href="#" className="ml-auto inline-block text-sm underline">
+                                <Button
+                                    type="button"
+                                    variant={'link'}
+                                    onClick={() => setOpen(true)}
+                                    className="ml-auto inline-block text-sm underline"
+                                >
                                     Forgot your password?
-                                </Link>
+                                </Button>
                             </div>
                             <FormControl>
                                 <Input
