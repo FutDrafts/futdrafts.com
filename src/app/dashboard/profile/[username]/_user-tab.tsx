@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 const mockLeagues = [
     {
@@ -107,12 +108,26 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile }: 
                         <CardDescription>View user profile information</CardDescription>
                     </div>
                     {isOwnProfile && (
-                        <Button asChild variant="outline" size="sm">
-                            <Link href="/dashboard/profile/edit">
-                                <PencilIcon className="mr-2 h-4 w-4" />
-                                Edit Profile
-                            </Link>
-                        </Button>
+                        <div className="flex flex-row gap-1">
+                            <Button asChild variant="outline" size="sm">
+                                <Link href="/dashboard/profile/edit">
+                                    <PencilIcon className="mr-2 h-4 w-4" />
+                                    Edit Profile
+                                </Link>
+                            </Button>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button variant="destructive" size="sm" disabled>
+                                            Delete Account
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Coming soon</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
                     )}
                 </CardHeader>
                 <CardContent className="flex flex-col gap-6 md:flex-row">
