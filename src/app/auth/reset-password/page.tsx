@@ -24,7 +24,7 @@ const formSchema = z
         path: ['confirmPassword'],
     })
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
     const searchParams = useSearchParams()
@@ -112,6 +112,14 @@ export default function ResetPasswordPage() {
                     </Form>
                 </div>
             </div>
+        </Suspense>
+    )
+}
+
+export default function ResetPasswordPage() {
+    return (
+        <Suspense>
+            <ResetPasswordForm />
         </Suspense>
     )
 }
