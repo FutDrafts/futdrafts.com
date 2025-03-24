@@ -2,6 +2,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { changelog } from '@/db/schema'
+import ReactMarkdown from 'react-markdown'
 
 type ChangelogEntry = typeof changelog.$inferSelect
 
@@ -25,7 +26,9 @@ export function ChangelogEntry({ entry }: ChangelogEntryProps) {
                     )}
                 </div>
             </div>
-            <p className="text-muted-foreground mb-2 text-sm">{entry.description}</p>
+            <div className="prose dark:prose-invert prose-sm max-w-none mb-2">
+                <ReactMarkdown>{entry.description}</ReactMarkdown>
+            </div>
             <p className="text-muted-foreground text-xs">{formattedDate}</p>
         </div>
     )

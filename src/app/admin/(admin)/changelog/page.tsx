@@ -13,6 +13,7 @@ import { deleteChangelogEntry } from '@/actions/changelog'
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import ReactMarkdown from 'react-markdown'
 
 // This would be fetched from the server in a real implementation
 import { getAllChangelogEntries } from '@/actions/changelog'
@@ -205,7 +206,7 @@ export default function ChangelogAdminPage() {
                     </DialogHeader>
                     <div className="mt-2 space-y-4">
                         <div className="prose dark:prose-invert max-w-none">
-                            <p>{previewEntry?.description}</p>
+                            <ReactMarkdown>{previewEntry?.description || ''}</ReactMarkdown>
                         </div>
                         <div className="flex gap-2">
                             {previewEntry?.important && (

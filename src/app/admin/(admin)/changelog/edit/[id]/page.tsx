@@ -8,11 +8,11 @@ import { toast } from 'sonner'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { updateChangelogEntry, getAllChangelogEntries } from '@/actions/changelog'
 import { z } from 'zod'
+import { MarkdownEditor } from '@/components/ui/markdown-editor'
 
 const changelogSchema = z.object({
     title: z.string().min(3, { message: 'Title must be at least 3 characters' }),
@@ -131,10 +131,12 @@ export default function EditChangelogEntryPage({ params }: { params: Promise<{ i
                                     <FormItem>
                                         <FormLabel>Description</FormLabel>
                                         <FormControl>
-                                            <Textarea className="min-h-32" {...field} />
+                                            <MarkdownEditor
+                                                {...field}
+                                            />
                                         </FormControl>
                                         <FormDescription>
-                                            Provide a detailed explanation of what changed
+                                            Provide a detailed explanation of what changed. Supports markdown formatting.
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
