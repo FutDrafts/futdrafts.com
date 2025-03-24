@@ -97,7 +97,8 @@ export default function NewChangelogEntryPage() {
                                             />
                                         </FormControl>
                                         <FormDescription>
-                                            Provide a detailed explanation of what changed. Supports markdown formatting.
+                                            Provide a detailed explanation of what changed. Supports markdown
+                                            formatting.
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>

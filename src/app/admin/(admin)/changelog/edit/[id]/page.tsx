@@ -131,12 +131,11 @@ export default function EditChangelogEntryPage({ params }: { params: Promise<{ i
                                     <FormItem>
                                         <FormLabel>Description</FormLabel>
                                         <FormControl>
-                                            <MarkdownEditor
-                                                {...field}
-                                            />
+                                            <MarkdownEditor {...field} />
                                         </FormControl>
                                         <FormDescription>
-                                            Provide a detailed explanation of what changed. Supports markdown formatting.
+                                            Provide a detailed explanation of what changed. Supports markdown
+                                            formatting.
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>

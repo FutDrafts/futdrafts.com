@@ -26,7 +26,7 @@ export function ChangelogEntry({ entry }: ChangelogEntryProps) {
                     )}
                 </div>
             </div>
-            <div className="prose dark:prose-invert prose-sm max-w-none mb-2">
+            <div className="prose dark:prose-invert prose-sm mb-2 max-w-none">
                 <ReactMarkdown>{entry.description}</ReactMarkdown>
             </div>
             <p className="text-muted-foreground text-xs">{formattedDate}</p>
