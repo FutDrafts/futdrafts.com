@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { redirect, useRouter, useSearchParams } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -67,49 +67,51 @@ export default function ResetPasswordPage() {
     }
 
     return (
-        <div className="container mx-auto max-w-md py-8">
-            <div className="space-y-6">
-                <div className="space-y-2 text-center">
-                    <h1 className="text-2xl font-bold">Reset Password</h1>
-                    <p className="text-gray-500">Enter your new password below.</p>
+        <Suspense>
+            <div className="container mx-auto max-w-md py-8">
+                <div className="space-y-6">
+                    <div className="space-y-2 text-center">
+                        <h1 className="text-2xl font-bold">Reset Password</h1>
+                        <p className="text-gray-500">Enter your new password below.</p>
+                    </div>
+
+                    {error && <div className="rounded-md bg-red-100 p-3 text-red-600">{decodeURIComponent(error)}</div>}
+
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>New Password</FormLabel>
+                                        <FormControl>
+                                            <Input type="password" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="confirmPassword"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Confirm Password</FormLabel>
+                                        <FormControl>
+                                            <Input type="password" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <Button type="submit" className="w-full" disabled={isLoading}>
+                                {isLoading ? 'Resetting...' : 'Reset Password'}
+                            </Button>
+                        </form>
+                    </Form>
                 </div>
-
-                {error && <div className="rounded-md bg-red-100 p-3 text-red-600">{decodeURIComponent(error)}</div>}
-
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>New Password</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="confirmPassword"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Confirm Password</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <Button type="submit" className="w-full" disabled={isLoading}>
-                            {isLoading ? 'Resetting...' : 'Reset Password'}
-                        </Button>
-                    </form>
-                </Form>
             </div>
-        </div>
+        </Suspense>
     )
 }
