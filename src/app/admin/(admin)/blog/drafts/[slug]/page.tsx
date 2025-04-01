@@ -84,8 +84,8 @@ export default function DraftPreview({ params }: { params: Promise<{ slug: strin
                     ...result,
                     author: {
                         displayUsername: result.author.displayUsername || undefined,
-                        image: result.author.image || undefined
-                    }
+                        image: result.author.image || undefined,
+                    },
                 }
 
                 setPost(processedPost)

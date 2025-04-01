@@ -169,9 +169,9 @@ export async function getPosts(options?: {
                 columns: {
                     displayUsername: true,
                     image: true,
-                }
+                },
             },
-        }
+        },
     })
 
     return posts
@@ -186,7 +186,7 @@ export async function getPostById(id: string) {
                 columns: {
                     displayUsername: true,
                     image: true,
-                }
+                },
             },
         },
     })
@@ -206,7 +206,7 @@ export async function getPostBySlug(slug: string) {
                     columns: {
                         displayUsername: true,
                         image: true,
-                    }
+                    },
                 },
             },
         })
@@ -238,9 +238,9 @@ export async function getPublishedPosts(options?: { page?: number; limit?: numbe
                 columns: {
                     displayUsername: true,
                     image: true,
-                }
+                },
             },
-        }
+        },
     })
 
     return posts
