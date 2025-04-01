@@ -2,8 +2,9 @@
 
 import { TabsContent } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { TrophyIcon, Loader2Icon, PencilIcon } from 'lucide-react'
+import { TrophyIcon, Loader2Icon, PencilIcon, MoreHorizontalIcon, FlagIcon } from 'lucide-react'
 import { AuthSession, Session, User } from '@/lib/types'
 import { useState } from 'react'
 import { authClient } from '@/lib/auth-client'
@@ -16,6 +17,7 @@ import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { ReportUserDialog } from '@/components/report-user-dialog'
 
 const mockLeagues = [
     {
@@ -56,6 +58,7 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile }: 
     const currentSession = data || session
 
     const [emailVerificationPending, setEmailVerificationPending] = useState<boolean>(false)
+    const [isReportDialogOpen, setIsReportDialogOpen] = useState<boolean>(false)
 
     return (
         <TabsContent value="overview" className="space-y-6">
@@ -107,7 +110,7 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile }: 
                         <CardTitle>Profile</CardTitle>
                         <CardDescription>View user profile information</CardDescription>
                     </div>
-                    {isOwnProfile && (
+                    {isOwnProfile ? (
                         <div className="flex flex-row gap-1">
                             <Button asChild variant="outline" size="sm">
                                 <Link href="/dashboard/profile/edit">
@@ -127,6 +130,22 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile }: 
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
+                        </div>
+                    ) : (
+                        <div className="flex flex-row gap-1">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" aria-label="More options">
+                                        <MoreHorizontalIcon className="h-4 w-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => setIsReportDialogOpen(true)}>
+                                        <FlagIcon className="mr-2 h-4 w-4 text-red-600" />
+                                        <span className="text-red-600">Report User</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                     )}
                 </CardHeader>
@@ -222,38 +241,6 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile }: 
                         <CardDescription>Manage your active login sessions</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {/* <div className="space-y-4">
-                            {activeSessions.map((activeSession) => (
-                                <div key={activeSession.id} className="flex items-center justify-between rounded-lg border p-4">
-                                    <div className="flex items-center gap-4">
-                                        <DeviceIcon className="text-muted-foreground h-5 w-5" />
-                                        <div>
-                                            <p className="font-medium">
-                                                {activeSession.userAgent?.browser?.name || 'Unknown Browser'}{' '}
-                                                {activeSession.userAgent?.os?.name
-                                                    ? `on ${activeSession.userAgent.os.name}`
-                                                    : 'on Unknown Device'}
-                                            </p>
-                                            <p className="text-muted-foreground text-sm">
-                                                {activeSession.ipAddress ? `IP: ${activeSession.ipAddress}` : 'Unknown IP'} •{' '}
-                                                {activeSession.createdAt
-                                                    ? formatDistanceToNow(new Date(activeSession.createdAt), { addSuffix: true })
-                                                    : 'Unknown time'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => handleSignOut(activeSession.id)}
-                                        disabled={activeSession.id === currentSession.session.id}
-                                    >
-                                        <LogOutIcon className="mr-2 h-4 w-4" />
-                                        {activeSession.id === currentSession.session.id ? 'Current Session' : 'Sign Out'}
-                                    </Button>
-                                </div>
-                            ))}
-                        </div> */}
                         <ActiveSessionsList
                             activeSessions={activeSessions}
                             currentSessionId={currentSession.session.id}
@@ -261,6 +248,12 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile }: 
                     </CardContent>
                 </Card>
             )}
+
+            <ReportUserDialog
+                open={isReportDialogOpen}
+                onOpenChange={setIsReportDialogOpen}
+                reportedUser={profileUser}
+            />
         </TabsContent>
     )
 }
