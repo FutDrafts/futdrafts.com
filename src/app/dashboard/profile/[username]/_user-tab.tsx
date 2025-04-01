@@ -153,10 +153,10 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile }: 
 
                     <div className="md:w-2/3">
                         <div className="space-y-4">
-                            <div>
+                            { isOwnProfile && <div>
                                 <h4 className="mb-2 font-medium">Email</h4>
                                 <p className="text-muted-foreground">{profileUser.email}</p>
-                            </div>
+                            </div> }
                             <div>
                                 <h4 className="mb-2 font-medium">Member Since</h4>
                                 <p className="text-muted-foreground">
