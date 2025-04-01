@@ -159,13 +159,20 @@ export async function getPosts(options?: {
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined
 
-    const posts = await db
-        .select()
-        .from(post)
-        .where(whereClause)
-        .orderBy(desc(post.createdAt))
-        .limit(limit)
-        .offset((page - 1) * limit)
+    const posts = await db.query.post.findMany({
+        where: whereClause,
+        orderBy: desc(post.createdAt),
+        limit: limit,
+        offset: (page - 1) * limit,
+        with: {
+            author: {
+                columns: {
+                    displayUsername: true,
+                    image: true,
+                }
+            },
+        }
+    })
 
     return posts
 }
@@ -175,7 +182,12 @@ export async function getPostById(id: string) {
     const result = await db.query.post.findFirst({
         where: eq(post.id, id),
         with: {
-            author: true,
+            author: {
+                columns: {
+                    displayUsername: true,
+                    image: true,
+                }
+            },
         },
     })
 
@@ -190,7 +202,12 @@ export async function getPostBySlug(slug: string) {
         const result = await db.query.post.findFirst({
             where: eq(post.slug, slug),
             with: {
-                author: true,
+                author: {
+                    columns: {
+                        displayUsername: true,
+                        image: true,
+                    }
+                },
             },
         })
 
@@ -211,13 +228,20 @@ export async function getPublishedPosts(options?: { page?: number; limit?: numbe
         conditions.push(eq(post.category, category))
     }
 
-    const posts = await db
-        .select()
-        .from(post)
-        .where(and(...conditions))
-        .orderBy(desc(post.publishedAt))
-        .limit(limit)
-        .offset((page - 1) * limit)
+    const posts = await db.query.post.findMany({
+        where: and(...conditions),
+        orderBy: desc(post.publishedAt),
+        limit: limit,
+        offset: (page - 1) * limit,
+        with: {
+            author: {
+                columns: {
+                    displayUsername: true,
+                    image: true,
+                }
+            },
+        }
+    })
 
     return posts
 }
