@@ -58,7 +58,7 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile }: 
     const currentSession = data || session
 
     const [emailVerificationPending, setEmailVerificationPending] = useState<boolean>(false)
-    const [isReportDialogOpen, setIsReportDialogOpen] = useState<boolean>(false);
+    const [isReportDialogOpen, setIsReportDialogOpen] = useState<boolean>(false)
 
     return (
         <TabsContent value="overview" className="space-y-6">
@@ -114,7 +114,7 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile }: 
                         <div className="flex flex-row gap-1">
                             <Button asChild variant="outline" size="sm">
                                 <Link href="/dashboard/profile/edit">
-                                    <PencilIcon className="mr-2 h-4 w-4" /> 
+                                    <PencilIcon className="mr-2 h-4 w-4" />
                                     Edit Profile
                                 </Link>
                             </Button>
@@ -142,7 +142,7 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile }: 
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuItem onClick={() => setIsReportDialogOpen(true)}>
                                         <FlagIcon className="mr-2 h-4 w-4 text-red-600" />
-                                        <span className='text-red-600'>Report User</span>
+                                        <span className="text-red-600">Report User</span>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -249,7 +249,11 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile }: 
                 </Card>
             )}
 
-            <ReportUserDialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen} reportedUser={profileUser}/>
+            <ReportUserDialog
+                open={isReportDialogOpen}
+                onOpenChange={setIsReportDialogOpen}
+                reportedUser={profileUser}
+            />
         </TabsContent>
     )
 }
