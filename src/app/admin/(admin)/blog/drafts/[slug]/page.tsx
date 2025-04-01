@@ -22,7 +22,10 @@ import React from 'react'
 import { post, user } from '@/db/schema'
 
 type PostSchema = typeof post.$inferSelect & {
-    author: typeof user.$inferSelect
+    author: {
+        displayUsername: string | undefined
+        image: string | undefined
+    }
 }
 
 // Function to preprocess markdown content to handle callouts
@@ -76,7 +79,16 @@ export default function DraftPreview({ params }: { params: Promise<{ slug: strin
                     return
                 }
 
-                setPost(result)
+                // Transform the result to match the PostSchema type
+                const processedPost: PostSchema = {
+                    ...result,
+                    author: {
+                        displayUsername: result.author.displayUsername || undefined,
+                        image: result.author.image || undefined
+                    }
+                }
+
+                setPost(processedPost)
                 setLoading(false)
             } catch (error) {
                 console.error('Failed to load post:', error)
@@ -167,13 +179,13 @@ export default function DraftPreview({ params }: { params: Promise<{ slug: strin
                             {post?.author.image && (
                                 <Image
                                     src={post?.author.image}
-                                    alt={post?.author.name}
+                                    alt={post?.author.displayUsername ?? post.authorId}
                                     width={40}
                                     height={40}
                                     className="rounded-full"
                                 />
                             )}
-                            <span>By {post?.author.name}</span>
+                            <span>By {post?.author.displayUsername}</span>
                         </div>
                     )}
                 </div>

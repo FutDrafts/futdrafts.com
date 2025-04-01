@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             title: post.title,
             description: post.excerpt || `Read about ${post.title}`,
             type: 'article',
-            authors: [post.author.name],
+            authors: [post.author.displayUsername ?? post.authorId],
         },
     }
 }
@@ -94,13 +94,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                             {post.author.image && (
                                 <Image
                                     src={post.author.image}
-                                    alt={post.author.name}
+                                    alt={post.author.displayUsername ?? post.authorId}
                                     width={40}
                                     height={40}
                                     className="rounded-full"
                                 />
                             )}
-                            <span>By {post.author.name}</span>
+                            <span>By {post.author.displayUsername}</span>
                         </div>
                     )}
                 </div>
