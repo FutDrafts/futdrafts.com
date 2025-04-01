@@ -1,15 +1,31 @@
-'use client'
+import { auth } from '@/lib/auth'
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { getConfig } from '@/actions/admin/config'
+import { MobileRedirect } from '@/components/mobile-redirect'
 
-import { useIsMobile } from '@/hooks/use-mobile'
-import { redirect, usePathname } from 'next/navigation'
+export default async function AdminRootLayout({ children }: { children: React.ReactNode }) {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    })
 
-export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
-    const isMobile = useIsMobile()
-    const pathname = usePathname()
-
-    if (isMobile && pathname !== '/admin/error/mobile') {
-        redirect('/admin/error/mobile')
+    if (!session) {
+        redirect('/auth/sign-in')
     }
 
-    return <>{children}</>
+    if (session.user.role === 'user') {
+        redirect('/dashboard')
+    }
+
+    const { maintenance } = await getConfig()
+    if (maintenance && session.user.role !== 'admin') {
+        redirect('/maintenance')
+    }
+
+    return (
+        <>
+            <MobileRedirect />
+            {children}
+        </>
+    )
 }
