@@ -18,4 +18,4 @@ export const statusIcons = {
     pending: <ClockIcon className="h-4 w-4 text-yellow-500" />,
     resolved: <CheckCircle2Icon className="h-4 w-4 text-green-500" />,
     dismissed: <Trash2Icon className="text-muted-foreground h-4 w-4" />,
-} as const 
+} as const

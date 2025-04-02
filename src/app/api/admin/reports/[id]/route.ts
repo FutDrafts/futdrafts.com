@@ -5,12 +5,9 @@ import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 
-export async function GET(
-    request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const { id } = await params;
+        const { id } = await params
         const session = await auth.api.getSession({
             headers: await headers(),
         })
@@ -42,4 +39,4 @@ export async function GET(
         console.error('Error fetching report:', error)
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
-} 
+}
