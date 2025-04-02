@@ -37,17 +37,14 @@ export function ReportRow({ report, onViewDetails, onStatusChange, onBanUser }: 
                 <div className="flex items-center gap-2">
                     {statusIcons[report.status as keyof typeof statusIcons]}
                     <span
-                        className={cn(
-                            'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium',
-                            {
-                                'bg-yellow-100 text-yellow-700 dark:bg-yellow-700/20 dark:text-yellow-500':
-                                    report.status === 'pending',
-                                'bg-green-100 text-green-700 dark:bg-green-700/20 dark:text-green-500':
-                                    report.status === 'resolved',
-                                'bg-gray-100 text-gray-700 dark:bg-gray-700/20 dark:text-gray-500':
-                                    report.status === 'dismissed',
-                            },
-                        )}
+                        className={cn('inline-flex items-center rounded-full px-2 py-1 text-xs font-medium', {
+                            'bg-yellow-100 text-yellow-700 dark:bg-yellow-700/20 dark:text-yellow-500':
+                                report.status === 'pending',
+                            'bg-green-100 text-green-700 dark:bg-green-700/20 dark:text-green-500':
+                                report.status === 'resolved',
+                            'bg-gray-100 text-gray-700 dark:bg-gray-700/20 dark:text-gray-500':
+                                report.status === 'dismissed',
+                        })}
                     >
                         {report.status}
                     </span>
@@ -97,4 +94,4 @@ export function ReportRow({ report, onViewDetails, onStatusChange, onBanUser }: 
             </TableCell>
         </TableRow>
     )
-} 
+}

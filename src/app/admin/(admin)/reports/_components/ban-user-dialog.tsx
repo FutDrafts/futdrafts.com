@@ -99,4 +99,4 @@ export function BanUserDialog({
             </AlertDialogContent>
         </AlertDialog>
     )
-} 
+}

@@ -110,7 +110,9 @@ export function ReportDetailsDialog({
                                 <div className="flex items-start gap-4 rounded-lg border p-4">
                                     <Avatar className="h-10 w-10">
                                         <AvatarImage src={report.reportedByUser.image ?? ''} />
-                                        <AvatarFallback>{report.reportedByUser.name?.[0]?.toUpperCase()}</AvatarFallback>
+                                        <AvatarFallback>
+                                            {report.reportedByUser.name?.[0]?.toUpperCase()}
+                                        </AvatarFallback>
                                     </Avatar>
                                     <div className="flex-1 space-y-1">
                                         <p className="font-medium">{report.reportedByUser.name}</p>
@@ -130,7 +132,9 @@ export function ReportDetailsDialog({
                                             <div className="flex items-center gap-2">
                                                 <Avatar className="h-6 w-6">
                                                     <AvatarImage src={comment.admin.image ?? ''} />
-                                                    <AvatarFallback>{comment.admin.name?.[0]?.toUpperCase()}</AvatarFallback>
+                                                    <AvatarFallback>
+                                                        {comment.admin.name?.[0]?.toUpperCase()}
+                                                    </AvatarFallback>
                                                 </Avatar>
                                                 <span className="text-sm font-medium">{comment.admin.name}</span>
                                                 <span className="text-muted-foreground text-xs">
@@ -173,4 +177,4 @@ export function ReportDetailsDialog({
             </DialogContent>
         </Dialog>
     )
-} 
+}
