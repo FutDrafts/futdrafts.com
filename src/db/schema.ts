@@ -33,7 +33,7 @@ export const post = pgTable('post', {
     excerpt: text('excerpt'),
     status: postStatusEnum('status').notNull().default('draft'),
     category: postCategoryEnum('category').notNull(),
-    featuredImage: text('featured_image'),
+    featuredImage: text('featured_image').default("https://4z1m6cqolm.ufs.sh/f/e50LOf69dOrq8oaYBbjfANBJDxULOQeVPkXYuvlmMWnc6C3t"),
     authorId: text('author_id')
         .notNull()
         .references(() => user.id),
