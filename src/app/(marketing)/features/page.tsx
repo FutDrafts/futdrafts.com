@@ -53,15 +53,14 @@ export default function FeaturesPage() {
     return (
         <div className="container mx-auto px-4 py-16">
             {/* Hero Section */}
-            <div className="text-center mb-16">
+            <div className="mb-16 text-center">
                 <Badge variant="secondary" className="mb-4">
                     Platform Features
                 </Badge>
-                <h1 className="text-4xl font-bold tracking-tight mb-4">
-                    Everything you need for fantasy football
-                </h1>
-                <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                    Discover the tools and features that make FutDrafts the ultimate platform for fantasy football enthusiasts.
+                <h1 className="mb-4 text-4xl font-bold tracking-tight">Everything you need for fantasy football</h1>
+                <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
+                    Discover the tools and features that make FutDrafts the ultimate platform for fantasy football
+                    enthusiasts.
                 </p>
                 <div className="mt-8">
                     <Button asChild size="lg">
@@ -73,12 +72,12 @@ export default function FeaturesPage() {
             </div>
 
             {/* Features Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {features.map((feature) => (
-                    <Card key={feature.title} className="group hover:shadow-lg transition-shadow">
+                    <Card key={feature.title} className="group transition-shadow hover:shadow-lg">
                         <CardHeader>
-                            <div className="flex items-center gap-2 mb-2">
-                                <feature.icon className="h-6 w-6 text-primary" />
+                            <div className="mb-2 flex items-center gap-2">
+                                <feature.icon className="text-primary h-6 w-6" />
                                 <Badge variant="outline">{feature.badge}</Badge>
                             </div>
                             <CardTitle>{feature.title}</CardTitle>
@@ -90,14 +89,12 @@ export default function FeaturesPage() {
 
             {/* CTA Section */}
             <div className="mt-16 text-center">
-                <h2 className="text-2xl font-semibold mb-4">Ready to start your fantasy journey?</h2>
+                <h2 className="mb-4 text-2xl font-semibold">Ready to start your fantasy journey?</h2>
                 <p className="text-muted-foreground mb-6">
                     Join thousands of players who are already enjoying the FutDrafts experience.
                 </p>
                 <Button asChild size="lg" variant="outline">
-                    <Link href="/pricing">
-                        View Pricing Plans
-                    </Link>
+                    <Link href="/pricing">View Pricing Plans</Link>
                 </Button>
             </div>
         </div>
