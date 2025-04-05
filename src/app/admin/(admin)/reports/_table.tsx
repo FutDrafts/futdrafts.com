@@ -37,7 +37,7 @@ export default function ReportsTable() {
         queryKey: ['report', selectedReport?.id],
         queryFn: async () => {
             if (!selectedReport?.id) return null
-            const response = await fetch(`/api/admin/reports/${selectedReport.id}`)
+            const response = await fetch(`/server/api/admin/reports/${selectedReport.id}`)
             if (!response.ok) throw new Error('Failed to fetch report details')
             return response.json()
         },
@@ -55,7 +55,7 @@ export default function ReportsTable() {
                 search: searchQuery,
             })
 
-            const response = await fetch(`/api/admin/reports?${params}`)
+            const response = await fetch(`/server/api/admin/reports?${params}`)
             if (!response.ok) throw new Error('Failed to fetch reports')
 
             return response.json()
@@ -64,7 +64,7 @@ export default function ReportsTable() {
 
     const addCommentMutation = useMutation({
         mutationFn: async (data: { reportId: string; content: string }) => {
-            const response = await fetch('/api/admin/reports/comments', {
+            const response = await fetch('/server/api/admin/reports/comments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),

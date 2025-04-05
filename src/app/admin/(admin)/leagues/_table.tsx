@@ -45,7 +45,7 @@ export default function LeaguesTable() {
                 status: statusFilter,
             })
 
-            const response = await fetch(`/api/admin/leagues?${params}`)
+            const response = await fetch(`/server/api/admin/leagues?${params}`)
             if (!response.ok) throw new Error('Failed to fetch users.')
             return response.json()
         },

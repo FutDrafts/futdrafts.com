@@ -19,7 +19,7 @@ export function ConfigForm({ initialConfig }: { initialConfig: AppConfig }) {
         try {
             // Update each config value
             for (const [key, value] of Object.entries(config)) {
-                await fetch('/api/admin/settings', {
+                await fetch('/server/api/admin/settings', {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ key, value }),

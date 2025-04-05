@@ -10,7 +10,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { ReactQueryClientProvider } from '@/providers/react-query-provider'
 import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin'
 import { extractRouterConfig } from 'uploadthing/server'
-import { ourFileRouter } from './api/uploadthing/core'
+import { ourFileRouter } from './server/api/uploadthing/core'
 import { connection } from 'next/server'
 import { Suspense } from 'react'
 

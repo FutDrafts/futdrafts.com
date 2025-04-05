@@ -13,7 +13,7 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
-    const { data: session } = await betterFetch<Session>('/api/auth/get-session', {
+    const { data: session } = await betterFetch<Session>('/server/api/auth/get-session', {
         baseURL: new URL(request.url).origin,
         headers: {
             cookie: request.headers.get('cookie') || '',

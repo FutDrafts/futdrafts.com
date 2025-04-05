@@ -34,7 +34,7 @@ export default function AdminDashboard() {
         const fetchStats = async () => {
             try {
                 // Replace with your actual API endpoint
-                const response = await fetch('/api/admin/statistics')
+                const response = await fetch('/server/api/admin/statistics')
                 const data = await response.json()
 
                 setMetrics({
@@ -66,7 +66,7 @@ export default function AdminDashboard() {
         // Fetch recent articles
         const fetchRecentArticles = async () => {
             try {
-                const response = await fetch('/api/admin/recent-articles')
+                const response = await fetch('/server/api/admin/recent-articles')
                 const data = await response.json()
                 setRecentArticles(data.articles)
             } catch (error) {
@@ -79,7 +79,7 @@ export default function AdminDashboard() {
         // Fetch recent users
         const fetchRecentUsers = async () => {
             try {
-                const response = await fetch('/api/admin/recent-users')
+                const response = await fetch('/server/api/admin/recent-users')
                 const data = await response.json()
                 setRecentUsers(data.users)
             } catch (error) {

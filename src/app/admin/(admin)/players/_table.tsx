@@ -35,7 +35,7 @@ export default function PlayersTable() {
                 search: searchQuery,
             })
 
-            const response = await fetch(`/api/admin/players?${params}`)
+            const response = await fetch(`/server/api/admin/players?${params}`)
             if (!response.ok) throw new Error('Failed to fetch players.')
             return response.json()
         },
