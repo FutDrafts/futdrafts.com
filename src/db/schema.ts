@@ -11,7 +11,18 @@ import {
     date,
     numeric,
     uuid,
+    integer,
 } from 'drizzle-orm/pg-core'
+
+const reportCategories = [
+    'harassment',
+    'spam',
+    'inappropriate_behavior',
+    'hate_speech',
+    'cheating',
+    'impersonation',
+    'other',
+] as const
 
 const postStatuses = ['draft', 'published', 'archived'] as const
 export type PostStatus = (typeof postStatuses)[number]
@@ -24,6 +35,17 @@ export const postCategoryEnum = pgEnum('post_category', postCategories)
 const leagueStatuses = ['active', 'upcoming', 'disabled'] as const
 export type LeagueStatus = (typeof leagueStatuses)[number]
 export const leagueStatusEnum = pgEnum('league_status', leagueStatuses)
+
+export type ReportCategory = (typeof reportCategories)[number]
+export const reportCategoryEnum = pgEnum('report_category', reportCategories)
+
+const reportStatuses = ['pending', 'resolved', 'dismissed'] as const
+export type ReportStatus = (typeof reportStatuses)[number]
+export const reportStatusEnum = pgEnum('report_status', reportStatuses)
+
+const venueSurfaces = ['artificial turf'] as const
+export type VenueSurface = (typeof venueSurfaces)[number]
+export const venueSurfaceEnum = pgEnum('venue_surface', venueSurfaces)
 
 export const post = pgTable('post', {
     id: text('id').primaryKey(),
@@ -60,22 +82,6 @@ export const config = pgTable('config', {
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
-
-const reportCategories = [
-    'harassment',
-    'spam',
-    'inappropriate_behavior',
-    'hate_speech',
-    'cheating',
-    'impersonation',
-    'other',
-] as const
-export type ReportCategory = (typeof reportCategories)[number]
-export const reportCategoryEnum = pgEnum('report_category', reportCategories)
-
-const reportStatuses = ['pending', 'resolved', 'dismissed'] as const
-export type ReportStatus = (typeof reportStatuses)[number]
-export const reportStatusEnum = pgEnum('report_status', reportStatuses)
 
 export const report = pgTable('report', {
     id: text('id').primaryKey(),
@@ -172,8 +178,12 @@ export const leagueRelations = relations(league, ({ many }) => ({
 export const team = pgTable('team', {
     id: text('id').primaryKey().unique(),
     leagueId: text('league_id'),
+    venueId: text('venue_id'),
     name: text('name').notNull(),
+    code: text('code').notNull().unique(),
     logo: text('logo').notNull(),
+    founded: numeric('founded').notNull(),
+    isNational: boolean('is_national').notNull().default(false),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
@@ -182,6 +192,30 @@ export const teamRelations = relations(team, ({ one }) => ({
     league: one(league, {
         fields: [team.leagueId],
         references: [league.id],
+    }),
+    venue: one(venue, {
+        fields: [team.venueId],
+        references: [venue.id],
+    }),
+}))
+
+export const venue = pgTable('venue', {
+    id: text('id').primaryKey().notNull().unique(),
+    teamId: text('team_id').notNull(),
+    name: text('name').notNull().unique(),
+    address: text('address').unique().notNull(),
+    city: text('city').notNull(),
+    capacity: integer('capacity').notNull().default(0),
+    surface: venueSurfaceEnum('surface').notNull().default('artificial turf'),
+    image: text('image'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
+export const venueRelations = relations(venue, ({ one }) => ({
+    team: one(team, {
+        fields: [venue.teamId],
+        references: [team.id],
     }),
 }))
 
