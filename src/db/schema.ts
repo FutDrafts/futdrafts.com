@@ -11,6 +11,7 @@ import {
     date,
     numeric,
     uuid,
+    integer,
 } from 'drizzle-orm/pg-core'
 
 const reportCategories = [
@@ -42,7 +43,7 @@ const reportStatuses = ['pending', 'resolved', 'dismissed'] as const
 export type ReportStatus = (typeof reportStatuses)[number]
 export const reportStatusEnum = pgEnum('report_status', reportStatuses)
 
-const venueSurfaces = ['artifical turf'] as const
+const venueSurfaces = ['artificial turf'] as const
 export type VenueSurface = (typeof venueSurfaces)[number]
 export const venueSurfaceEnum = pgEnum('venue_surface', venueSurfaces)
 
@@ -177,11 +178,11 @@ export const leagueRelations = relations(league, ({ many }) => ({
 export const team = pgTable('team', {
     id: text('id').primaryKey().unique(),
     leagueId: text('league_id'),
-    venueId: text('venue_id').notNull(),
+    venueId: text('venue_id'),
     name: text('name').notNull(),
     code: text('code').notNull().unique(),
     logo: text('logo').notNull(),
-    founded: numeric('founeded').notNull(),
+    founded: numeric('founded').notNull(),
     isNational: boolean('is_national').notNull().default(false),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -203,9 +204,9 @@ export const venue = pgTable('venue', {
     teamId: text('team_id').notNull(),
     name: text('name').notNull().unique(),
     address: text('address').unique().notNull(),
-    city: text('city').notNull().unique(),
-    capacity: numeric('capacity').notNull().default('0'),
-    surface: venueSurfaceEnum('surface').notNull().default('artifical turf'),
+    city: text('city').notNull(),
+    capacity: integer('capacity').notNull().default(0),
+    surface: venueSurfaceEnum('surface').notNull().default('artificial turf'),
     image: text('image'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
