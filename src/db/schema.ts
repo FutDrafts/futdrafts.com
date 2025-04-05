@@ -177,9 +177,9 @@ export const leagueRelations = relations(league, ({ many }) => ({
 export const team = pgTable('team', {
     id: text('id').primaryKey().unique(),
     leagueId: text('league_id'),
-    venueId: text("venue_id").notNull(),
+    venueId: text('venue_id').notNull(),
     name: text('name').notNull(),
-    code: text("code").notNull().unique(),
+    code: text('code').notNull().unique(),
     logo: text('logo').notNull(),
     founded: numeric('founeded').notNull(),
     isNational: boolean('is_national').notNull().default(false),
@@ -194,18 +194,17 @@ export const teamRelations = relations(team, ({ one }) => ({
     }),
     venue: one(venue, {
         fields: [team.venueId],
-        references: [venue.id]
-    })
+        references: [venue.id],
+    }),
 }))
-
 
 export const venue = pgTable('venue', {
     id: text('id').primaryKey().notNull().unique(),
     teamId: text('team_id').notNull(),
-    name: text("name").notNull().unique(),
-    address: text("address").unique().notNull(),
-    city: text("city").notNull().unique(),
-    capacity: numeric('capacity').notNull().default("0"),
+    name: text('name').notNull().unique(),
+    address: text('address').unique().notNull(),
+    city: text('city').notNull().unique(),
+    capacity: numeric('capacity').notNull().default('0'),
     surface: venueSurfaceEnum('surface').notNull().default('artifical turf'),
     image: text('image'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -216,7 +215,7 @@ export const venueRelations = relations(venue, ({ one }) => ({
     team: one(team, {
         fields: [venue.teamId],
         references: [team.id],
-    })
+    }),
 }))
 
 export const fixture = pgTable('fixture', {
