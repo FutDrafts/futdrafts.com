@@ -176,7 +176,7 @@ export const leagueRelations = relations(league, ({ many }) => ({
 }))
 
 export const team = pgTable('team', {
-    id: text('id').primaryKey().unique(),
+    id: text('id').primaryKey().notNull().unique(),
     leagueId: text('league_id'),
     venueId: text('venue_id'),
     name: text('name').notNull(),
@@ -248,16 +248,12 @@ export const player = pgTable('player', {
     weight: numeric('weight').notNull(),
     isInjured: boolean('injured').notNull(),
     profilePicture: text('profile_picture').notNull(),
-    statisticsId: uuid('statistics_id').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const playerRelations = relations(player, ({ one }) => ({
-    statistics: one(playerStatistics, {
-        fields: [player.statisticsId],
-        references: [playerStatistics.id],
-    }),
+export const playerRelations = relations(player, ({ many }) => ({
+    statistics: many(playerStatistics),
 }))
 
 export const playerStatistics = pgTable('player_statistics', {
