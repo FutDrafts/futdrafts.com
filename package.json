@@ -57,6 +57,7 @@
         "cmdk": "^1.1.1",
         "date-fns": "^4.1.0",
         "drizzle-orm": "^0.41.0",
+        "eslint-plugin-react-hooks": "^5.2.0",
         "framer-motion": "^12.5.0",
         "jiti": "^2.4.2",
         "lucide-react": "^0.483.0",
