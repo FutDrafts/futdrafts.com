@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
-import TeamsTable from "./_table";
+import { Button } from '@/components/ui/button'
+import { PlusIcon } from 'lucide-react'
+import TeamsTable from './_table'
 
 export default async function TeamsPage() {
     return (
@@ -11,7 +11,7 @@ export default async function TeamsPage() {
                     <p className="text-muted-foreground">Manage real-world soccer teams</p>
                 </div>
                 <Button disabled>
-                    <PlusIcon className="mr-2 h-4 w-4"/>
+                    <PlusIcon className="mr-2 h-4 w-4" />
                     Add Team
                 </Button>
             </div>
