@@ -204,7 +204,7 @@ export const teamRelations = relations(team, ({ one }) => ({
 }))
 
 export const venue = pgTable('venue', {
-    id: text('id').primaryKey().notNull().unique(),
+    id: text('id').primaryKey().notNull(),
     teamId: text('team_id').notNull(),
     name: text('name').notNull().unique(),
     address: text('address').unique().notNull(),
