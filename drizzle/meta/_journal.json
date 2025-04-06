@@ -50,6 +50,20 @@
       "when": 1742645558917,
       "tag": "0006_bored_stranger",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1743926040291,
+      "tag": "0007_tricky_wildside",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1743927188973,
+      "tag": "0008_happy_tomas",
+      "breakpoints": true
     }
   ]
 }
