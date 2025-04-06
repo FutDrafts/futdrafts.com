@@ -23,32 +23,38 @@ export async function GET(request: NextRequest) {
     }
 
     const where = conditions.length > 0 ? and(...conditions) : undefined
-    const [teams, totalCount] = await Promise.all([
-        db.query.team.findMany({
-            where,
-            limit,
-            offset,
-            with: {
-                league: {
-                    columns: {
-                        country: true,
-                        name: true,
-                        flag: true,
-                    },
-                },
-                venue: {
-                    columns: {
-                        city: true,
-                    },
-                },
-            },
-            orderBy: (team, { desc }) => [desc(team.name)],
-        }),
-        db.$count(team, where),
-    ])
 
-    return NextResponse.json({
-        teams,
-        total: totalCount,
-    })
+    try {
+        const [teams, totalCount] = await Promise.all([
+            db.query.team.findMany({
+                where,
+                limit,
+                offset,
+                with: {
+                    league: {
+                        columns: {
+                            country: true,
+                            name: true,
+                            flag: true,
+                        },
+                    },
+                    venue: {
+                        columns: {
+                            city: true,
+                        },
+                    },
+                },
+                orderBy: (team, { desc }) => [desc(team.name)],
+            }),
+            db.$count(team, where),
+        ])
+
+        return NextResponse.json({
+            teams,
+            total: totalCount,
+        })
+    } catch (error) {
+        console.error('Error Fetching teams:', error)
+        return NextResponse.json({ error: 'Failed to fetch teams' }, { status: 500 })
+    }
 }
