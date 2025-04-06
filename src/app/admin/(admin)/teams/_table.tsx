@@ -183,7 +183,7 @@ export default function TeamsTable() {
                 <div className="mt-4 flex items-center justify-between">
                     <div className="text-muted-foreground text-sm">
                         Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
-                        {Math.min(currentPage * ITEMS_PER_PAGE, teams.length)} of {teams.length} results
+                        {Math.min(currentPage * ITEMS_PER_PAGE, total)} of {total} results
                     </div>
                     <div className="flex items-center gap-2">
                         <Button
