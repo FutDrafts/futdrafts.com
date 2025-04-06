@@ -138,9 +138,9 @@ export default function TeamsTable() {
                                         <TableCell>{team.code}</TableCell>
                                         <TableCell>{team.isNational === true ? 'International' : 'Domestic'}</TableCell>
                                         <TableCell>{team.founded}</TableCell>
-                                        <TableCell>{team.league.name}</TableCell>
-                                        <TableCell>{team.venue.city}</TableCell>
-                                        <TableCell>{team.league.country}</TableCell>
+                                        <TableCell>{team.league?.name || 'N/A'}</TableCell>
+                                        <TableCell>{team.venue?.city || 'N/A'}</TableCell>
+                                        <TableCell>{team.league?.country || 'N/A'}</TableCell>
                                         <TableCell>
                                             <Image
                                                 className="border"
