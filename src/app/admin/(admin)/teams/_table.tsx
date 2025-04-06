@@ -142,11 +142,11 @@ export default function TeamsTable() {
                                         <TableCell>{team.venue?.city || 'N/A'}</TableCell>
                                         <TableCell>{team.league?.country || 'N/A'}</TableCell>
                                         <TableCell>
-                                            {team.league?.flag ? (
+                                            {team.league && team.league.flag ? (
                                                 <Image
                                                     className="border"
                                                     src={team.league.flag}
-                                                    alt={`${team.league?.name || 'league'}-flag`}
+                                                    alt={`${team.league.name || 'league'}-flag`}
                                                     height="50"
                                                     width="50"
                                                 />
@@ -172,7 +172,7 @@ export default function TeamsTable() {
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem>
                                                         <Trash2Icon className="text-destructive focus:text-destructive mr-2 size-4" />
-                                                        Delete Player
+                                                        Delete Team
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
