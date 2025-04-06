@@ -21,7 +21,7 @@ export async function AdminSidebar() {
             }
         >
             {/* Sidebar Header */}
-            <div className="flex h-16 items-center justify-between border-b px-4">
+            <div className="flex h-16 items-center justify-between px-4">
                 <span className="text-lg font-semibold">FutDrafts Admin</span>
                 <Button variant="ghost" size="icon" className="ml-auto" disabled>
                     <ChevronLeftIcon className="h-5 w-5" />

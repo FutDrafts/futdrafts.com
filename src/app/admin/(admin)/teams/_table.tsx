@@ -10,6 +10,7 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@
 import { team } from '@/db/schema'
 import { useQuery } from '@tanstack/react-query'
 import { EditIcon, EyeIcon, Loader2Icon, MoreVerticalIcon, SearchIcon, Trash2Icon } from 'lucide-react'
+import { useDebounce } from '@/hooks/use-debounce'
 import Image from 'next/image'
 
 type TeamTable = typeof team.$inferSelect & {
@@ -25,18 +26,19 @@ type TeamTable = typeof team.$inferSelect & {
 
 export default function TeamsTable() {
     const [searchQuery, setSearchQuery] = useState<string>('')
+    const debouncedSearchQuery = useDebounce(searchQuery, 300)
     const [nationalFilter, setNationalFilter] = useState<string>('all')
     const [currentPage, setCurrentPage] = useState<number>(1)
 
     const ITEMS_PER_PAGE = 10
 
     const { data, isLoading, error } = useQuery({
-        queryKey: ['teams', currentPage, searchQuery, nationalFilter],
+        queryKey: ['teams', currentPage, debouncedSearchQuery, nationalFilter],
         queryFn: async (): Promise<{ teams: TeamTable[]; total: number }> => {
             const params = new URLSearchParams({
                 page: currentPage.toString(),
                 limit: ITEMS_PER_PAGE.toString(),
-                search: searchQuery,
+                search: debouncedSearchQuery,
                 national: nationalFilter,
             })
 
@@ -72,6 +74,7 @@ export default function TeamsTable() {
                             <SearchIcon className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
                             <Input
                                 placeholder="Search Teams..."
+                                aria-label="Search Teams"
                                 className="pl-8"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -192,16 +195,58 @@ export default function TeamsTable() {
                             Previous
                         </Button>
                         <div className="flex items-center gap-1">
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                <Button
-                                    key={page}
-                                    variant={currentPage === page ? 'default' : 'outline'}
-                                    size="sm"
-                                    onClick={() => setCurrentPage(page)}
-                                >
-                                    {page}
-                                </Button>
-                            ))}
+                            {(() => {
+                                const pageButtons = []
+                                const maxVisiblePages = 5
+
+                                if (totalPages > 0) {
+                                    pageButtons.push(
+                                        <Button
+                                            key={1}
+                                            variant={currentPage === 1 ? 'default' : 'outline'}
+                                            size="sm"
+                                            onClick={() => setCurrentPage(1)}
+                                        >
+                                            1
+                                        </Button>,
+                                    )
+                                }
+
+                                const startPage = Math.max(2, currentPage - Math.floor(maxVisiblePages / 2))
+                                const endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 2)
+
+                                for (let i = startPage; i <= endPage; i++) {
+                                    pageButtons.push(
+                                        <Button
+                                            key={i}
+                                            variant={currentPage === i ? 'default' : 'outline'}
+                                            size="sm"
+                                            onClick={() => setCurrentPage(i)}
+                                        >
+                                            {i}
+                                        </Button>,
+                                    )
+                                }
+
+                                if (endPage < totalPages - 1) {
+                                    pageButtons.push(<span key="ellipsis-end">...</span>)
+                                }
+
+                                if (totalPages > 1) {
+                                    pageButtons.push(
+                                        <Button
+                                            key={totalPages}
+                                            variant={currentPage === totalPages ? 'default' : 'outline'}
+                                            size="sm"
+                                            onClick={() => setCurrentPage(totalPages)}
+                                        >
+                                            {totalPages}
+                                        </Button>,
+                                    )
+                                }
+
+                                return pageButtons
+                            })()}
                         </div>
                         <Button
                             variant="outline"
