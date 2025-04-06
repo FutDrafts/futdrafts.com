@@ -142,13 +142,17 @@ export default function TeamsTable() {
                                         <TableCell>{team.venue?.city || 'N/A'}</TableCell>
                                         <TableCell>{team.league?.country || 'N/A'}</TableCell>
                                         <TableCell>
-                                            <Image
-                                                className="border"
-                                                src={team.league.flag}
-                                                alt={`${team.league.name}-flag`}
-                                                height="50"
-                                                width="50"
-                                            />
+                                            {team.league?.flag ? (
+                                                <Image
+                                                    className="border"
+                                                    src={team.league.flag}
+                                                    alt={`${team.league?.name || 'league'}-flag`}
+                                                    height="50"
+                                                    width="50"
+                                                />
+                                            ) : (
+                                                <span>No Flag</span>
+                                            )}
                                         </TableCell>
                                         <TableCell>
                                             <DropdownMenu>
