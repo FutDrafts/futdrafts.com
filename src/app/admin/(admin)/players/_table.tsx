@@ -7,15 +7,20 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { useQuery } from '@tanstack/react-query'
-import { league, player, playerStatistics, team } from '@/db/schema'
+import { player } from '@/db/schema'
 import { EditIcon, EyeIcon, Loader2Icon, MoreVerticalIcon, SearchIcon, Trash2Icon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 
 type PlayerTable = typeof player.$inferSelect & {
-    statistics: typeof playerStatistics.$inferSelect & {
-        team: typeof team.$inferSelect
-        league: typeof league.$inferSelect
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    statistics: { games: any } & {
+        team: {
+            name: string
+        }
+        league: {
+            name: string
+        }
     }
 }
 
