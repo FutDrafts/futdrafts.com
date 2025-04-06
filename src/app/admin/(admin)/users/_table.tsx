@@ -74,7 +74,7 @@ export default function UsersTable() {
                 search: searchQuery,
             })
 
-            const response = await fetch(`/api/admin/users?${params}`)
+            const response = await fetch(`/server/api/admin/users?${params}`)
             if (!response.ok) throw new Error('Failed to fetch users')
 
             return response.json()

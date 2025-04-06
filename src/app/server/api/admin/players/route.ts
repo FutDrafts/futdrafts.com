@@ -40,9 +40,20 @@ export async function GET(request: NextRequest) {
             offset,
             with: {
                 statistics: {
+                    columns: {
+                        games: true,
+                    },
                     with: {
-                        team: true,
-                        league: true,
+                        team: {
+                            columns: {
+                                name: true,
+                            },
+                        },
+                        league: {
+                            columns: {
+                                name: true,
+                            },
+                        },
                     },
                 },
             },
