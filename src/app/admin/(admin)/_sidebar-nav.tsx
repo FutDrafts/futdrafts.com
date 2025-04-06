@@ -105,7 +105,7 @@ export function AdminSidebarNavigation({ reportCount }: Props) {
                                             : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
                                     )}
                                 >
-                                    <Icon className="h-5 w-5" />
+                                    <Icon className="size-5" />
                                     <span className="flex-1">{item.title}</span>
                                     {item.href === '/admin/reports' && reportCount > 0 && (
                                         <span className="bg-destructive text-destructive-foreground flex h-5 w-5 items-center justify-center rounded-full text-xs">
