@@ -171,7 +171,7 @@ export default function TeamsTable() {
                                                         Edit Team
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem>
-                                                        <Trash2Icon className="text-destructive focus:text-destructive" />
+                                                        <Trash2Icon className="text-destructive focus:text-destructive mr-2 size-4" />
                                                         Delete Player
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
