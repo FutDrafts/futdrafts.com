@@ -32,7 +32,7 @@ const imageUploadHandler = async (file: File): Promise<string> => {
         formData.append('file', file)
 
         // TODO: Replace with your actual image upload endpoint
-        const response = await fetch('/api/upload', {
+        const response = await fetch('/server/api/upload', {
             method: 'POST',
             body: formData,
         })

@@ -1,157 +1,198 @@
 'use client'
 
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
-import { useQuery } from '@tanstack/react-query'
-import { player } from '@/db/schema'
-import { EditIcon, EyeIcon, Loader2Icon, MoreVerticalIcon, SearchIcon, Trash2Icon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import Image from 'next/image'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent } from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table'
+import { fantasy } from '@/db/schema'
+import { useDebounce } from '@/hooks/use-debounce'
+import { useQuery } from '@tanstack/react-query'
+import {
+    EditIcon,
+    EyeIcon,
+    GlobeIcon,
+    Loader2Icon,
+    LockIcon,
+    MoreVerticalIcon,
+    SearchIcon,
+    Trash2Icon,
+    TrophyIcon,
+} from 'lucide-react'
+import { useState } from 'react'
 
-type PlayerTable = typeof player.$inferSelect & {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    statistics: { games: any } & {
-        team: {
-            name: string
-        }
-        league: {
-            name: string
-        }
+type FantasyLeaguesTable = typeof fantasy.$inferSelect & {
+    owner: {
+        name: string
+    }
+    league: {
+        name: string
     }
 }
 
-export default function PlayersTable() {
-    // const queryClient = useQueryClient()
+export default function FantasyLeaguesTable() {
     const [searchQuery, setSearchQuery] = useState('')
+    const debouncedSearchQuery = useDebounce(searchQuery, 300)
     const [currentPage, setCurrentPage] = useState(1)
-    // const [selectedPlayer, setSelectedPlayer] = useState<PlayerTable | null>(null)
+    const [statusFilter, setStatusFilter] = useState<string>('all')
+
     const ITEMS_PER_PAGE = 10
 
     const { data, isLoading, error } = useQuery({
-        queryKey: ['players', currentPage, searchQuery],
-        queryFn: async (): Promise<{ players: PlayerTable[]; total: number }> => {
+        queryKey: ['fantasy', 'fantasyleagues', currentPage, debouncedSearchQuery, statusFilter],
+        queryFn: async (): Promise<{ fantasyLeagues: FantasyLeaguesTable[]; total: number }> => {
             const params = new URLSearchParams({
                 page: currentPage.toString(),
                 limit: ITEMS_PER_PAGE.toString(),
-                search: searchQuery,
+                search: debouncedSearchQuery,
+                status: statusFilter,
             })
 
-            const response = await fetch(`/server/api/admin/players?${params}`)
-            if (!response.ok) throw new Error('Failed to fetch players.')
+            const response = await fetch(`/server/api/admin/fantasy?${params}`)
+            if (!response.ok) throw new Error('Failed to fetch Fantasy Leagues')
             return response.json()
         },
     })
 
-    const { players = [], total = 0 } = data || {}
+    const { fantasyLeagues = [], total = 0 } = data || {}
     const totalPages = Math.ceil(total / ITEMS_PER_PAGE)
 
     if (error) {
         return (
             <Card>
                 <CardContent className="py-10 text-center">
-                    <p className="text-destructive">Error loading players. Please try again later.</p>
+                    <p className="text-destructive">Error loading fantasy leagues. Please try again later.</p>
                 </CardContent>
             </Card>
         )
     }
 
+    const colorStatusCell = (status: string) => {
+        let c
+
+        switch (status) {
+            case 'active':
+                c = (
+                    <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-700/20 dark:text-green-500">
+                        {status.toUpperCase()}
+                    </span>
+                )
+                break
+            case 'pending':
+                c = (
+                    <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700 dark:bg-yellow-700/20 dark:text-yellow-500">
+                        {status.toUpperCase()}
+                    </span>
+                )
+                break
+            case 'cancelled':
+                c = (
+                    <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700 dark:bg-red-700/20 dark:text-red-500">
+                        {status.toUpperCase()}
+                    </span>
+                )
+                break
+            case 'ended':
+                c = (
+                    <span className="inline-flex items-center rounded-full bg-orange-100 px-2 py-1 text-xs font-medium text-orange-700 dark:bg-orange-700/20 dark:text-orange-500">
+                        {status.toUpperCase()}
+                    </span>
+                )
+                break
+            default:
+                c = (
+                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 dark:bg-gray-700/20 dark:text-gray-500">
+                        {status.toUpperCase()}
+                    </span>
+                )
+        }
+
+        return c
+    }
+
     return (
         <Card>
             <CardHeader>
-                <CardTitle>All Players</CardTitle>
-                <CardDescription>View and manage players across all leagues</CardDescription>
+                <CardTitle>Fantasy Leagues</CardTitle>
+                <CardDescription>View and manage all fantasy Leagues</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div className="flex flex-1 items-center gap-4">
                         <div className="relative flex-1 md:max-w-sm">
-                            <SearchIcon className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
+                            <SearchIcon className="text-muted-foreground absolute top-2.5 left-2 size-4" />
                             <Input
-                                placeholder="Search players..."
+                                placeholder="Search Fantasy Leagues..."
                                 className="pl-8"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
-                        {/* <Select value={roleFilter} onValueChange={setRoleFilter}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Filter by role" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Roles</SelectItem>
-                                <SelectItem value="admin">Admin</SelectItem>
-                                <SelectItem value="user">User</SelectItem>
-                            </SelectContent>
-                        </Select>
                         <Select value={statusFilter} onValueChange={setStatusFilter}>
                             <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Filter by status" />
+                                <SelectValue placeholder="Filter by Status" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">All Status</SelectItem>
                                 <SelectItem value="active">Active</SelectItem>
-                                <SelectItem value="banned">Banned</SelectItem>
+                                <SelectItem value="pending">Pending</SelectItem>
+                                <SelectItem value="ended">Ended</SelectItem>
+                                <SelectItem value="cancelled">Cancelled</SelectItem>
                             </SelectContent>
-                        </Select> */}
+                        </Select>
                     </div>
                 </div>
 
                 <div className="relative min-h-[300px]">
                     {isLoading ? (
                         <div className="bg-background/50 absolute inset-0 flex items-center justify-center">
-                            <Loader2Icon className="text-muted-foreground h-8 w-8 animate-spin" />
+                            <Loader2Icon className="text-muted-foreground size-8 animate-spin" />
                         </div>
-                    ) : players.length === 0 ? (
+                    ) : fantasyLeagues.length === 0 ? (
                         <div className="text-muted-foreground py-20 text-center">
-                            <p>No users found.</p>
-                            {searchQuery ? <p className="mt-1 text-sm">Try adjusting your filters.</p> : null}
+                            <p>No Fantasy Leagues Found.</p>
+                            {searchQuery || statusFilter !== 'all' ? (
+                                <p className="mt-1 text-sm">Try adjusting your filters.</p>
+                            ) : null}
                         </div>
                     ) : (
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="w-[100px]"></TableHead>
                                     <TableHead>Name</TableHead>
-                                    <TableHead>Nationality</TableHead>
-                                    <TableHead>Team</TableHead>
-                                    <TableHead>League</TableHead>
-                                    <TableHead>Position</TableHead>
                                     <TableHead>Status</TableHead>
+                                    <TableHead>Private</TableHead>
+                                    <TableHead>Owner</TableHead>
+                                    <TableHead>League</TableHead>
                                     <TableHead className="w-[50px]"></TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {players.map((player) => (
-                                    <TableRow key={player.id}>
+                                {fantasyLeagues.map((league) => (
+                                    <TableRow key={league.id}>
                                         <TableCell>
-                                            <Image
-                                                src={player.profilePicture}
-                                                alt={`${player.name}`}
-                                                width="50"
-                                                height="50"
-                                                className="rounded-md"
-                                            />
+                                            <div className="flex items-center gap-2">
+                                                <TrophyIcon className="text-primary size-4" />
+                                                <span className="font-medium">{league.name}</span>
+                                            </div>
                                         </TableCell>
-                                        <TableCell className="font-medium">{player.name}</TableCell>
-                                        <TableCell>{player.nationality}</TableCell>
-                                        <TableCell>{player.statistics.team.name}</TableCell>
-                                        <TableCell>{player.statistics.league.name}</TableCell>
-                                        <TableCell>{player.statistics.games?.position}</TableCell>
+                                        <TableCell>{colorStatusCell(league.status)}</TableCell>
                                         <TableCell>
-                                            <span
-                                                className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                                                    !player.isInjured
-                                                        ? 'bg-green-100 text-green-700 dark:bg-green-700/20 dark:text-green-500'
-                                                        : 'bg-red-100 text-red-700 dark:bg-red-700/20 dark:text-red-500'
-                                                }`}
-                                            >
-                                                {player.isInjured ? 'Injured' : 'Healthy'}
-                                            </span>
+                                            {league.isPrivate ? (
+                                                <span className="flex items-center gap-1 rounded-full bg-red-100/30 px-2 py-1 text-xs text-red-600">
+                                                    <LockIcon className="size-3" />
+                                                    Private
+                                                </span>
+                                            ) : (
+                                                <span className="flex items-center gap-1 rounded-full bg-green-100/30 px-2 py-1 text-xs text-green-600">
+                                                    <GlobeIcon className="size-3" />
+                                                    Public
+                                                </span>
+                                            )}
                                         </TableCell>
+                                        <TableCell>{league.owner.name}</TableCell>
+                                        <TableCell>{league.league.name}</TableCell>
                                         <TableCell>
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
@@ -166,11 +207,11 @@ export default function PlayersTable() {
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem>
                                                         <EditIcon className="mr-2 h-4 w-4" />
-                                                        Edit Player
+                                                        Edit League
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem className="text-destructive focus:text-destructive">
                                                         <Trash2Icon className="mr-2 h-4 w-4" />
-                                                        Delete Player
+                                                        Delete League
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
@@ -182,11 +223,10 @@ export default function PlayersTable() {
                     )}
                 </div>
 
-                {/* Pagination Controls */}
                 <div className="mt-4 flex items-center justify-between">
                     <div className="text-muted-foreground text-sm">
                         Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
-                        {Math.min(currentPage * ITEMS_PER_PAGE, players.length)} of {players.length} results
+                        {Math.min(currentPage * ITEMS_PER_PAGE, total)} of {total} results
                     </div>
                     <div className="flex items-center gap-2">
                         <Button

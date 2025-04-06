@@ -11,7 +11,18 @@ import {
     date,
     numeric,
     uuid,
+    integer,
 } from 'drizzle-orm/pg-core'
+
+const reportCategories = [
+    'harassment',
+    'spam',
+    'inappropriate_behavior',
+    'hate_speech',
+    'cheating',
+    'impersonation',
+    'other',
+] as const
 
 const postStatuses = ['draft', 'published', 'archived'] as const
 export type PostStatus = (typeof postStatuses)[number]
@@ -24,6 +35,21 @@ export const postCategoryEnum = pgEnum('post_category', postCategories)
 const leagueStatuses = ['active', 'upcoming', 'disabled'] as const
 export type LeagueStatus = (typeof leagueStatuses)[number]
 export const leagueStatusEnum = pgEnum('league_status', leagueStatuses)
+
+export type ReportCategory = (typeof reportCategories)[number]
+export const reportCategoryEnum = pgEnum('report_category', reportCategories)
+
+const reportStatuses = ['pending', 'resolved', 'dismissed'] as const
+export type ReportStatus = (typeof reportStatuses)[number]
+export const reportStatusEnum = pgEnum('report_status', reportStatuses)
+
+const venueSurfaces = ['artificial turf'] as const
+export type VenueSurface = (typeof venueSurfaces)[number]
+export const venueSurfaceEnum = pgEnum('venue_surface', venueSurfaces)
+
+const fantasyStatuses = ['pending', 'active', 'ended', 'cancelled'] as const
+export type FantasyStatus = (typeof fantasyStatuses)[number]
+export const fantasyStatusEnum = pgEnum('fantasy_status', fantasyStatuses)
 
 export const post = pgTable('post', {
     id: text('id').primaryKey(),
@@ -60,22 +86,6 @@ export const config = pgTable('config', {
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
-
-const reportCategories = [
-    'harassment',
-    'spam',
-    'inappropriate_behavior',
-    'hate_speech',
-    'cheating',
-    'impersonation',
-    'other',
-] as const
-export type ReportCategory = (typeof reportCategories)[number]
-export const reportCategoryEnum = pgEnum('report_category', reportCategories)
-
-const reportStatuses = ['pending', 'resolved', 'dismissed'] as const
-export type ReportStatus = (typeof reportStatuses)[number]
-export const reportStatusEnum = pgEnum('report_status', reportStatuses)
 
 export const report = pgTable('report', {
     id: text('id').primaryKey(),
@@ -170,10 +180,14 @@ export const leagueRelations = relations(league, ({ many }) => ({
 }))
 
 export const team = pgTable('team', {
-    id: text('id').primaryKey().unique(),
+    id: text('id').primaryKey().notNull().unique(),
     leagueId: text('league_id'),
+    venueId: text('venue_id'),
     name: text('name').notNull(),
+    code: text('code').notNull().unique(),
     logo: text('logo').notNull(),
+    founded: numeric('founded').notNull(),
+    isNational: boolean('is_national').notNull().default(false),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
@@ -182,6 +196,30 @@ export const teamRelations = relations(team, ({ one }) => ({
     league: one(league, {
         fields: [team.leagueId],
         references: [league.id],
+    }),
+    venue: one(venue, {
+        fields: [team.venueId],
+        references: [venue.id],
+    }),
+}))
+
+export const venue = pgTable('venue', {
+    id: text('id').primaryKey().notNull(),
+    teamId: text('team_id').notNull(),
+    name: text('name').notNull().unique(),
+    address: text('address').unique().notNull(),
+    city: text('city').notNull(),
+    capacity: integer('capacity').notNull().default(0),
+    surface: venueSurfaceEnum('surface').notNull().default('artificial turf'),
+    image: text('image'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
+export const venueRelations = relations(venue, ({ one }) => ({
+    team: one(team, {
+        fields: [venue.teamId],
+        references: [team.id],
     }),
 }))
 
@@ -213,8 +251,8 @@ export const player = pgTable('player', {
     height: numeric('height').notNull(),
     weight: numeric('weight').notNull(),
     isInjured: boolean('injured').notNull(),
-    profilePicture: text('profile_picture').notNull(),
     statisticsId: uuid('statistics_id').notNull(),
+    profilePicture: text('profile_picture').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
@@ -331,6 +369,54 @@ export const playerStatisticsRelations = relations(playerStatistics, ({ one }) =
         references: [league.id],
     }),
 }))
+
+export const fantasy = pgTable('fantasy', {
+    id: text('id').notNull().primaryKey(),
+    name: text('name').notNull().unique(),
+    ownerId: text('owner_id')
+        .notNull()
+        .references(() => user.id),
+    leagueId: text('league_id')
+        .notNull()
+        .references(() => league.id),
+    scoreRulesId: text('score_rules_id')
+        .notNull()
+        .references(() => scoreRules.id),
+    status: fantasyStatusEnum('status').notNull().default('pending'),
+    minPlayer: integer('minimum_player').notNull().default(2),
+    maxPlayer: integer('maximum_player').notNull().default(8),
+    isPrivate: boolean('is_private').notNull().default(false),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
+export const fantasyRelations = relations(fantasy, ({ one }) => ({
+    owner: one(user, {
+        fields: [fantasy.ownerId],
+        references: [user.id],
+    }),
+    league: one(league, {
+        fields: [fantasy.leagueId],
+        references: [league.id],
+    }),
+    scoreRules: one(scoreRules, {
+        fields: [fantasy.scoreRulesId],
+        references: [scoreRules.id],
+    }),
+}))
+
+export const scoreRules = pgTable('score_rules', {
+    id: text('id').notNull().primaryKey(),
+    goals: integer('goals'),
+    ownGoal: integer('own_goal'),
+    cleanSheet: integer('clean_sheet'),
+    penaltySave: integer('penalty_save'),
+    penaltyMiss: integer('penalty_miss'),
+    yellowCard: integer('yellow_card'),
+    redCard: integer('red_card'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
 
 // SCHEMA GENERATED BY BETTER-AUTH
 // DO NOT EDIT TABLES UNDER THIS COMMENT

@@ -41,7 +41,7 @@ export function ReportUserDialog({ open, onOpenChange, reportedUser }: ReportUse
         setIsSubmitting(true)
 
         try {
-            const response = await fetch('/api/reports', {
+            const response = await fetch('/server/api/reports', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
