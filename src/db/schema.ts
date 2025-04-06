@@ -383,6 +383,8 @@ export const fantasy = pgTable('fantasy', {
         .notNull()
         .references(() => scoreRules.id),
     status: fantasyStatusEnum('status').notNull().default('pending'),
+    slug: text('slug').notNull(),
+    joinCode: text('join_code').notNull(),
     minPlayer: integer('minimum_player').notNull().default(2),
     maxPlayer: integer('maximum_player').notNull().default(8),
     isPrivate: boolean('is_private').notNull().default(false),
