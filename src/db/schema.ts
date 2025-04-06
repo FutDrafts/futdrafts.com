@@ -372,7 +372,7 @@ export const fantasy = pgTable('fantasy', {
     ownerId: text('owner_id')
         .notNull()
         .references(() => user.id),
-    leagueId: text('leageu_id')
+    leagueId: text('league_id')
         .notNull()
         .references(() => league.id),
     scoreRulesId: text('score_rules_id')
@@ -384,12 +384,27 @@ export const fantasy = pgTable('fantasy', {
     isPrivate: boolean('is_private').notNull().default(false),
 })
 
+export const fantasyRelations = relations(fantasy, ({ one }) => ({
+    owner: one(user, {
+        fields: [fantasy.ownerId],
+        references: [user.id],
+    }),
+    league: one(league, {
+        fields: [fantasy.leagueId],
+        references: [league.id],
+    }),
+    scoreRules: one(scoreRules, {
+        fields: [fantasy.scoreRulesId],
+        references: [scoreRules.id],
+    }),
+}))
+
 export const scoreRules = pgTable('score_rules', {
     id: text('id').notNull().primaryKey(),
     goals: integer('goals'),
     ownGoal: integer('own_goal'),
     cleanSheet: integer('clean_sheet'),
-    pentaltySave: integer('penalty_save'),
+    penaltySave: integer('penalty_save'),
     penaltyMiss: integer('penalty_miss'),
     yellowCard: integer('yellow_card'),
     redCard: integer('red_card'),
