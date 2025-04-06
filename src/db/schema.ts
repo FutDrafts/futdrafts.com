@@ -258,7 +258,10 @@ export const player = pgTable('player', {
 })
 
 export const playerRelations = relations(player, ({ one }) => ({
-    statistics: one(playerStatistics),
+    statistics: one(playerStatistics, {
+        fields: [player.statisticsId],
+        references: [playerStatistics.id],
+    }),
 }))
 
 export const playerStatistics = pgTable('player_statistics', {
