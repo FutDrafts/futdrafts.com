@@ -11,33 +11,7 @@ import { user } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-
-const mockPastLeagues = [
-    {
-        id: '1',
-        name: 'Premier Fantasy Masters 2023',
-        position: 1,
-        points: 450,
-        season: '2023/24',
-        status: 'completed',
-    },
-    {
-        id: '2',
-        name: 'La Liga Fantasy Elite',
-        position: 3,
-        points: 380,
-        season: '2023/24',
-        status: 'active',
-    },
-    {
-        id: '3',
-        name: 'Bundesliga Fantasy Cup',
-        position: 5,
-        points: 420,
-        season: '2023/24',
-        status: 'completed',
-    },
-]
+import { getUserFantasyLeagues } from '@/actions/dashboard/fantasy'
 
 const mockStats = {
     leaguesJoined: 12,
@@ -49,13 +23,15 @@ const mockStats = {
 
 export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
     const { username } = await params
-    const [session, activeSessions] = await Promise.all([
+    const [session, activeSessions, userLeagues, oldLeagues] = await Promise.all([
         auth.api.getSession({
             headers: await headers(),
         }),
         auth.api.listSessions({
             headers: await headers(),
         }),
+        getUserFantasyLeagues(username, false),
+        getUserFantasyLeagues(username, true),
     ]).catch(() => redirect('/auth/sign-in'))
 
     if (!session || !activeSessions) {
@@ -114,9 +90,16 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
                     activeSessions={activeSessions}
                     profileUser={userExists}
                     isOwnProfile={isOwnProfile}
+                    leagues={userLeagues}
                 />
 
                 <TabsContent value="statistics" className="space-y-6">
+                    <div className="mb-8 rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-800 dark:border-amber-900/50 dark:bg-amber-900/20 dark:text-amber-400">
+                        <p className="text-sm">
+                            <strong>Note:</strong>{' '}
+                            {`The Statistics page is still under development. So enjoy some fake data!`}
+                        </p>
+                    </div>
                     <div className="grid gap-4 md:grid-cols-3">
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -173,35 +156,45 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {mockPastLeagues.map((league) => (
-                                    <div
-                                        key={league.id}
-                                        className="flex items-center justify-between rounded-lg border p-4"
-                                    >
-                                        <div className="space-y-1">
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-medium">{league.name}</span>
-                                                <Badge
-                                                    variant={league.status === 'completed' ? 'secondary' : 'default'}
-                                                >
-                                                    {league.status}
-                                                </Badge>
-                                            </div>
-                                            <div className="text-muted-foreground text-sm">Season: {league.season}</div>
-                                        </div>
-                                        <div className="flex items-center gap-4">
-                                            <div className="text-right">
-                                                <div className="font-medium">Position: {league.position}</div>
+                                {oldLeagues.length > 0 ? (
+                                    oldLeagues.map((league) => (
+                                        <div
+                                            key={league.id}
+                                            className="flex items-center justify-between rounded-lg border p-4"
+                                        >
+                                            <div className="space-y-1">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-medium">{league.name}</span>
+                                                    <Badge
+                                                        variant={
+                                                            league.status === 'ended' ? 'secondary' : 'destructive'
+                                                        }
+                                                    >
+                                                        {league.status}
+                                                    </Badge>
+                                                </div>
                                                 <div className="text-muted-foreground text-sm">
-                                                    {league.points} points
+                                                    Season: {league.endDate?.getFullYear() ?? new Date().getFullYear()}
                                                 </div>
                                             </div>
-                                            {league.position === 1 && (
-                                                <TrophyIcon className="h-5 w-5 text-yellow-500" />
-                                            )}
+                                            <div className="flex items-center gap-4">
+                                                <div className="text-right">
+                                                    <div className="font-medium">
+                                                        Position: {league.players && league.players[0].rank}
+                                                    </div>
+                                                    <div className="text-muted-foreground text-sm">
+                                                        {league.players && league.players[0].points} points
+                                                    </div>
+                                                </div>
+                                                {league.players[0].rank === 1 && (
+                                                    <TrophyIcon className="h-5 w-5 text-yellow-500" />
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))
+                                ) : (
+                                    <span>User has no past leagues!</span>
+                                )}
                             </div>
                         </CardContent>
                     </Card>

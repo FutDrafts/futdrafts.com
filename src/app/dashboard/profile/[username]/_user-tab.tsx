@@ -4,7 +4,7 @@ import { TabsContent } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { TrophyIcon, Loader2Icon, PencilIcon, MoreHorizontalIcon, FlagIcon } from 'lucide-react'
+import { TrophyIcon, Loader2Icon, PencilIcon, MoreHorizontalIcon, FlagIcon, InfoIcon } from 'lucide-react'
 import { AuthSession, Session, User } from '@/lib/types'
 import { useState } from 'react'
 import { authClient } from '@/lib/auth-client'
@@ -18,42 +18,24 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { ReportUserDialog } from '@/components/report-user-dialog'
+import { fantasy } from '@/db/schema'
 
-const mockLeagues = [
-    {
-        id: '1',
-        name: 'Premier Fantasy Masters 2023',
-        position: 1,
-        points: 450,
-        season: '2023/24',
-        status: 'completed',
-    },
-    {
-        id: '2',
-        name: 'La Liga Fantasy Elite',
-        position: 3,
-        points: 380,
-        season: '2023/24',
-        status: 'active',
-    },
-    {
-        id: '3',
-        name: 'Bundesliga Fantasy Cup',
-        position: 5,
-        points: 420,
-        season: '2023/24',
-        status: 'completed',
-    },
-]
+type FantasyTable = typeof fantasy.$inferSelect & {
+    players?: {
+        rank: number | null
+        points: number | null
+    }[]
+}
 
 interface UserTabProps {
     session: AuthSession | null
     activeSessions: Session[]
     profileUser: User
     isOwnProfile: boolean
+    leagues: FantasyTable[]
 }
 
-export function UserTab({ session, activeSessions, profileUser, isOwnProfile }: UserTabProps) {
+export function UserTab({ session, activeSessions, profileUser, isOwnProfile, leagues }: UserTabProps) {
     const { data } = authClient.useSession()
     const currentSession = data || session
 
@@ -206,9 +188,10 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile }: 
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
-                        {mockLeagues
-                            .filter((league) => league.status === 'active')
-                            .map((league) => (
+                        {leagues.length < 1 ? (
+                            <p>User is not in any active leagues</p>
+                        ) : (
+                            leagues.map((league) => (
                                 <div
                                     key={league.id}
                                     className="flex items-center justify-between rounded-lg border p-4"
@@ -218,17 +201,34 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile }: 
                                             <span className="font-medium">{league.name}</span>
                                             <Badge variant="default">{league.status}</Badge>
                                         </div>
-                                        <div className="text-muted-foreground text-sm">Season: {league.season}</div>
+                                        <div className="text-muted-foreground text-sm">
+                                            Season: {league.endDate?.getFullYear() ?? new Date().getFullYear()}
+                                        </div>
                                     </div>
+                                    d
                                     <div className="flex items-center gap-4">
                                         <div className="text-right">
-                                            <div className="font-medium">Position: {league.position}</div>
-                                            <div className="text-muted-foreground text-sm">{league.points} points</div>
+                                            <div className="font-medium">
+                                                Position: {league.players && league.players[0].rank}
+                                            </div>
+                                            <div className="text-muted-foreground text-sm">
+                                                {league.players && league.players[0].points} points
+                                            </div>
                                         </div>
-                                        {league.position === 1 && <TrophyIcon className="h-5 w-5 text-yellow-500" />}
+                                        {league.players && league.players[0].rank === 1 && (
+                                            <TrophyIcon className="h-5 w-5 text-yellow-500" />
+                                        )}
+                                        {!league.isPrivate && (
+                                            <Button asChild size="icon" variant="link">
+                                                <Link href={`/dashboard/leagues/${league.slug}`}>
+                                                    <InfoIcon />
+                                                </Link>
+                                            </Button>
+                                        )}
                                     </div>
                                 </div>
-                            ))}
+                            ))
+                        )}
                     </div>
                 </CardContent>
             </Card>
