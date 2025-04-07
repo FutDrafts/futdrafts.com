@@ -51,6 +51,22 @@ const fantasyStatuses = ['pending', 'active', 'ended', 'cancelled'] as const
 export type FantasyStatus = (typeof fantasyStatuses)[number]
 export const fantasyStatusEnum = pgEnum('fantasy_status', fantasyStatuses)
 
+const messageTypes = ['text', 'system', 'notification'] as const
+export type MessageType = (typeof messageTypes)[number]
+export const messageTypeEnum = pgEnum('message_type', messageTypes)
+
+const messageStatuses = ['sent', 'delivered', 'read'] as const
+export type MessageStatus = (typeof messageStatuses)[number]
+export const messageStatusEnum = pgEnum('message_status', messageStatuses)
+
+const participantRoles = ['owner', 'admin', 'player'] as const
+export type ParticipantRole = (typeof participantRoles)[number]
+export const participantRoleEnum = pgEnum('participant_role', participantRoles)
+
+const participantStatuses = ['pending', 'active', 'banned'] as const
+export type ParticipantStatus = (typeof participantStatuses)[number]
+export const participantStatusEnum = pgEnum('participant_status', participantStatuses)
+
 export const post = pgTable('post', {
     id: text('id').primaryKey(),
     title: text('title').notNull(),
@@ -388,11 +404,21 @@ export const fantasy = pgTable('fantasy', {
     minPlayer: integer('minimum_player').notNull().default(2),
     maxPlayer: integer('maximum_player').notNull().default(8),
     isPrivate: boolean('is_private').notNull().default(false),
+    description: text('description'),
+    startDate: timestamp('start_date'),
+    endDate: timestamp('end_date'),
+    // prizePool: numeric('prize_pool').default('0'),
+    // entryFee: numeric('entry_fee').default('0'),
+    // teamBudget: numeric('team_budget').notNull().default('100'),
+    // transferWindowStart: timestamp('transfer_window_start'),
+    // transferWindowEnd: timestamp('transfer_window_end'),
+    // maxTransfersPerWindow: integer('max_transfers_per_window').default(3),
+    draftStart: timestamp('draft_start'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const fantasyRelations = relations(fantasy, ({ one }) => ({
+export const fantasyRelations = relations(fantasy, ({ one, many }) => ({
     owner: one(user, {
         fields: [fantasy.ownerId],
         references: [user.id],
@@ -405,6 +431,7 @@ export const fantasyRelations = relations(fantasy, ({ one }) => ({
         fields: [fantasy.scoreRulesId],
         references: [scoreRules.id],
     }),
+    players: many(fantasyParticipant),
 }))
 
 export const scoreRules = pgTable('score_rules', {
@@ -419,6 +446,68 @@ export const scoreRules = pgTable('score_rules', {
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
+
+export const chatMessage = pgTable('chat_message', {
+    id: text('id').primaryKey(),
+    leagueId: text('league_id')
+        .notNull()
+        .references(() => fantasy.id),
+    senderId: text('sender_id')
+        .notNull()
+        .references(() => user.id),
+    content: text('content').notNull(),
+    type: messageTypeEnum('type').notNull().default('text'),
+    status: messageStatusEnum('status').notNull().default('sent'),
+    replyToId: text('reply_to_id'),
+    metadata: jsonb('metadata'),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
+export const chatMessageRelations = relations(chatMessage, ({ one }) => ({
+    fantasy: one(fantasy, {
+        fields: [chatMessage.leagueId],
+        references: [fantasy.id],
+    }),
+    sender: one(user, {
+        fields: [chatMessage.senderId],
+        references: [user.id],
+    }),
+    replyTo: one(chatMessage, {
+        fields: [chatMessage.replyToId],
+        references: [chatMessage.id],
+    }),
+}))
+
+export const fantasyParticipant = pgTable('fantasy_participant', {
+    id: text('id').primaryKey(),
+    fantasyId: text('fantasy_id')
+        .notNull()
+        .references(() => fantasy.id),
+    userId: text('user_id')
+        .notNull()
+        .references(() => user.id),
+    role: participantRoleEnum('role').notNull().default('player'),
+    status: participantStatusEnum('status').notNull().default('pending'),
+    teamName: text('team_name'),
+    points: integer('points').default(0),
+    rank: integer('rank'),
+    lastActive: timestamp('last_active'),
+    joinedAt: timestamp('joined_at').notNull().defaultNow(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
+export const fantasyParticipantRelations = relations(fantasyParticipant, ({ one }) => ({
+    fantasy: one(fantasy, {
+        fields: [fantasyParticipant.fantasyId],
+        references: [fantasy.id],
+    }),
+    user: one(user, {
+        fields: [fantasyParticipant.userId],
+        references: [user.id],
+    }),
+}))
 
 // SCHEMA GENERATED BY BETTER-AUTH
 // DO NOT EDIT TABLES UNDER THIS COMMENT
