@@ -205,7 +205,6 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile, le
                                             Season: {league.endDate?.getFullYear() ?? new Date().getFullYear()}
                                         </div>
                                     </div>
-                                    d
                                     <div className="flex items-center gap-4">
                                         <div className="text-right">
                                             <div className="font-medium">
