@@ -1,4 +1,4 @@
-import { Globe2Icon, HomeIcon, Search, SparklesIcon, TrophyIcon, BarChart3Icon, UserIcon } from 'lucide-react'
+import { Globe2Icon, HomeIcon, SparklesIcon, TrophyIcon, UserIcon } from 'lucide-react'
 
 export const MARKETING_FOOTER_LINKS = {
     Product: [
@@ -59,18 +59,18 @@ export const DASHBOARD_NAVIGATION_ITEMS = [
         icon: TrophyIcon,
         description: 'Browse and join leagues',
     },
-    {
-        title: 'Search',
-        href: '/dashboard/search',
-        icon: Search,
-        description: 'Find leagues and players',
-    },
-    {
-        title: 'Stats',
-        href: '/dashboard/stats',
-        icon: BarChart3Icon,
-        description: 'Player and team statistics',
-    },
+    // {
+    //     title: 'Search',
+    //     href: '/dashboard/search',
+    //     icon: Search,
+    //     description: 'Find leagues and players',
+    // },
+    // {
+    //     title: 'Stats',
+    //     href: '/dashboard/stats',
+    //     icon: BarChart3Icon,
+    //     description: 'Player and team statistics',
+    // },
     {
         title: 'Profile',
         href: '/dashboard/profile',
