@@ -27,10 +27,10 @@ const leagueData = {
     inviteRequired: true,
 }
 
-export default function JoinLeaguePage({ params }: { params: Promise<{ code: string }> }) {
+export default function JoinLeaguePage({ params }: { params: Promise<{ slug: string }> }) {
     const router = useRouter()
 
-    const { code } = use(params)
+    const { slug } = use(params)
     const [loading, setLoading] = useState(false)
     const [inviteCode, setInviteCode] = useState('')
     const [error, setError] = useState<string | null>(null)
@@ -43,7 +43,7 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ code: str
         try {
             // TODO: Implement league join API call
             // await joinLeague(code, inviteCode)
-            router.push(`/dashboard/leagues/${code}`)
+            router.push(`/dashboard/leagues/${slug}`)
         } catch (error) {
             setError('Failed to join league. Please check your invite code and try again.')
             console.error(error)
@@ -56,7 +56,7 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ code: str
         <div className="mx-auto max-w-2xl space-y-6">
             <div className="flex items-center gap-4">
                 <Button variant="ghost" size="icon" asChild>
-                    <Link href={`/dashboard/leagues/${code}`}>
+                    <Link href={`/dashboard/leagues/${slug}`}>
                         <ArrowLeft className="h-5 w-5" />
                     </Link>
                 </Button>
@@ -64,7 +64,7 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ code: str
                     <div className="flex items-center gap-2">
                         <h1 className="text-3xl font-bold">Join League</h1>
                         <Badge variant="outline" className="font-mono">
-                            {formatLeagueCode(code)}
+                            {formatLeagueCode(slug)}
                         </Badge>
                     </div>
                     <p className="text-muted-foreground">Join {leagueData.name}</p>
@@ -131,7 +131,7 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ code: str
 
                         <div className="flex justify-end gap-4">
                             <Button variant="outline" asChild>
-                                <Link href={`/dashboard/leagues/${code}`}>Cancel</Link>
+                                <Link href={`/dashboard/leagues/${slug}`}>Cancel</Link>
                             </Button>
                             <Button type="submit" disabled={loading}>
                                 {loading ? (
