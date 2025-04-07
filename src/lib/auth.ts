@@ -20,6 +20,7 @@ const isFeatureFlagEnabled = (featureFlag: string) => {
 export const auth = betterAuth({
     appName: 'FutDrafts',
     baseURL: clientEnv.NEXT_PUBLIC_APP_URL as string,
+    basePath: '/server/api/auth',
     database: drizzleAdapter(db, {
         provider: 'pg',
     }),
