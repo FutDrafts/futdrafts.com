@@ -232,8 +232,7 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile, le
                 </CardContent>
             </Card>
 
-            {/* TODO: Allow admins to view all users active sessions */}
-            {isOwnProfile && currentSession && (
+            {(isOwnProfile || data?.user.role === "admin") && currentSession && (
                 <Card>
                     <CardHeader>
                         <CardTitle>Active Sessions</CardTitle>
