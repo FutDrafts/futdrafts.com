@@ -137,9 +137,23 @@ export async function getActiveFantasyLeagues({
 }
 
 export async function getFantasyLeagueByCode(slug: string) {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    })
+
+    if (!session) {
+        throw new Error('Unauthorized')
+    }
+
     try {
+        const league = await db.query.fantasy.findFirst({ where: eq(fantasy.slug, slug) })
+
+        if (!league) {
+            throw new Error("League doesn't exist")
+        }
+
         const fantasyLeague = await db.query.fantasy.findFirst({
-            where: eq(fantasy.slug, slug),
+            where: eq(fantasy.id, league.id),
             with: {
                 owner: {
                     columns: {
@@ -172,6 +186,19 @@ export async function getFantasyLeagueByCode(slug: string) {
                     },
                 },
             },
+        })
+
+        return fantasyLeague
+    } catch (error) {
+        console.error('Error fetching fantasy league:', error)
+        throw new Error('Failed to fetch fantasy league')
+    }
+}
+
+export async function getFantasyLeagueById(id: string) {
+    try {
+        const fantasyLeague = await db.query.fantasy.findFirst({
+            where: eq(fantasy.id, id),
         })
 
         if (!fantasyLeague) {
@@ -216,6 +243,65 @@ export async function getUserFantasyLeagues(username: string, old: boolean) {
     } catch (error) {
         console.error('Error getting user active fantasy leagues', error)
         throw error
+    }
+}
+
+export async function getFantasyLeagueParticipants(leagueId: string) {
+    try {
+        const [participants, total] = await Promise.all([
+            await db.query.fantasyParticipant.findMany({
+                where: eq(fantasyParticipant.fantasyId, leagueId),
+                with: {
+                    user: true,
+                    fantasy: true,
+                },
+            }),
+            await db.$count(fantasyParticipant, eq(fantasyParticipant.fantasyId, leagueId)),
+        ])
+
+        return {
+            participants,
+            total,
+        }
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed to get League Participants')
+    }
+}
+
+export async function getFantasyLeagueParticipantsBySlug(slug: string) {
+    try {
+        const fantasyLeague = await db.query.fantasy.findFirst({
+            where: eq(fantasy.slug, slug),
+        })
+
+        if (!fantasyLeague) {
+            throw new Error('No League with that slug')
+        }
+
+        const [participants, total] = await Promise.all([
+            await db.query.fantasyParticipant.findMany({
+                where: eq(fantasyParticipant.fantasyId, fantasyLeague.id),
+                with: {
+                    user: true,
+                    fantasy: true,
+                    draftPicks: {
+                        with: {
+                            player: true,
+                        },
+                    },
+                },
+            }),
+            await db.$count(fantasyParticipant, eq(fantasyParticipant.fantasyId, fantasyLeague.id)),
+        ])
+
+        return {
+            participants,
+            total,
+        }
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed to get League Participants')
     }
 }
 
