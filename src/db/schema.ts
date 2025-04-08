@@ -10,7 +10,6 @@ import {
     serial,
     date,
     numeric,
-    uuid,
     integer,
 } from 'drizzle-orm/pg-core'
 
@@ -288,21 +287,22 @@ export const player = pgTable('player', {
     height: numeric('height').notNull(),
     weight: numeric('weight').notNull(),
     isInjured: boolean('injured').notNull(),
-    statisticsId: uuid('statistics_id').notNull(),
+    statisticsId: text('statistics_id').notNull(),
     profilePicture: text('profile_picture').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const playerRelations = relations(player, ({ one }) => ({
+export const playerRelations = relations(player, ({ one, many }) => ({
     statistics: one(playerStatistics, {
         fields: [player.statisticsId],
         references: [playerStatistics.id],
     }),
+    draftPick: many(draftPick),
 }))
 
 export const playerStatistics = pgTable('player_statistics', {
-    id: uuid('id').defaultRandom().primaryKey(),
+    id: text('id').primaryKey(),
     playerId: text('user_id')
         .notNull()
         .references(() => player.id),
@@ -420,6 +420,7 @@ export const fantasy = pgTable('fantasy', {
         .notNull()
         .references(() => scoreRules.id),
     draftStatus: boolean('draft_status').default(false),
+    pickNumber: integer('pick_number').default(1),
     status: fantasyStatusEnum('status').notNull().default('pending'),
     slug: text('slug').notNull().unique(),
     joinCode: text('join_code').notNull(),
@@ -454,6 +455,7 @@ export const fantasyRelations = relations(fantasy, ({ one, many }) => ({
         references: [scoreRules.id],
     }),
     players: many(fantasyParticipant),
+    draftPicks: many(draftPick),
 }))
 
 export const scoreRules = pgTable('score_rules', {
@@ -521,7 +523,7 @@ export const fantasyParticipant = pgTable('fantasy_participant', {
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
 
-export const fantasyParticipantRelations = relations(fantasyParticipant, ({ one }) => ({
+export const fantasyParticipantRelations = relations(fantasyParticipant, ({ one, many }) => ({
     fantasy: one(fantasy, {
         fields: [fantasyParticipant.fantasyId],
         references: [fantasy.id],
@@ -530,6 +532,7 @@ export const fantasyParticipantRelations = relations(fantasyParticipant, ({ one 
         fields: [fantasyParticipant.userId],
         references: [user.id],
     }),
+    draftPicks: many(draftPick),
 }))
 
 export const draftPick = pgTable('drafts_picks', {
