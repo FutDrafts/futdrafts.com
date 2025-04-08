@@ -3,6 +3,7 @@
 import { db } from '@/db'
 import { fantasy, fantasyParticipant, fantasyStatusEnum, user } from '@/db/schema'
 import { auth } from '@/lib/auth'
+import { generateSlug } from '@/lib/utils'
 import { and, eq, ilike, or } from 'drizzle-orm'
 import { headers } from 'next/headers'
 
@@ -257,7 +258,7 @@ export async function createFantasyLeague({
             name,
             leagueId,
             scoreRulesId: '5Etfk9Y467NO1Ph3JFhGM',
-            slug: slug,
+            slug: slug ? generateSlug(slug) : generateSlug(name),
             joinCode,
             minPlayer,
             maxPlayer,
