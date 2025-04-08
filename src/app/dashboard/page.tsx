@@ -1,11 +1,10 @@
-'use client'
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Trophy, Users, Star, TrendingUp, Calendar, Search, Plus, ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import Link from 'next/link'
+import { getDashboardActiveLeagues } from '@/actions/dashboard/dashboard'
 
 // Mock data - replace with real data fetching
 const userStats = {
@@ -34,48 +33,9 @@ const upcomingMatches = [
     },
 ]
 
-const activeLeagues = [
-    {
-        id: '1',
-        name: 'Premier Fantasy Masters',
-        position: 2,
-        totalParticipants: 20,
-        pointsBehind: 5,
-    },
-    {
-        id: '2',
-        name: 'Champions League Fantasy',
-        position: 1,
-        totalParticipants: 15,
-        pointsBehind: 0,
-    },
-    {
-        id: '3',
-        name: 'La Liga Elite',
-        position: 5,
-        totalParticipants: 25,
-        pointsBehind: 15,
-    },
-]
+export default async function DashboardPage() {
+    const [{ fantasyLeagues: activeLeagues }] = await Promise.all([getDashboardActiveLeagues(3)])
 
-const recommendedLeagues = [
-    {
-        id: '1',
-        name: 'Bundesliga Fantasy Cup',
-        participants: 45,
-        startDate: '2024-02-25',
-        type: 'public',
-    },
-    {
-        id: '2',
-        name: 'Serie A Masters League',
-        participants: 32,
-        startDate: '2024-02-28',
-        type: 'private',
-    },
-]
-
-export default function DashboardPage() {
     return (
         <div className="space-y-8">
             {/* Welcome Section */}
@@ -167,19 +127,22 @@ export default function DashboardPage() {
                                     <div className="space-y-1">
                                         <p className="font-medium">{league.name}</p>
                                         <p className="text-muted-foreground text-sm">
-                                            Position {league.position} of {league.totalParticipants}
+                                            Position {league.players[0].rank} of {league.maxPlayer}
                                         </p>
                                     </div>
                                     <div className="flex items-center gap-4">
-                                        {league.pointsBehind === 0 ? (
-                                            <Trophy className="h-5 w-5 text-yellow-500" />
+                                        {league.players[0].rank === 1 ? (
+                                            <Badge>
+                                                <Trophy className="h-5 w-5 text-yellow-500" />
+                                                <span>1st Place!</span>
+                                            </Badge>
                                         ) : (
                                             <p className="text-muted-foreground text-sm">
-                                                {league.pointsBehind} pts behind
+                                                {league.players[0].points} pts
                                             </p>
                                         )}
                                         <Button variant="ghost" size="sm" asChild>
-                                            <Link href={`/dashboard/leagues/${league.id}`}>View</Link>
+                                            <Link href={`/dashboard/leagues/${league.slug}`}>View</Link>
                                         </Button>
                                     </div>
                                 </div>
@@ -230,7 +193,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Recommended Leagues */}
-            <Card>
+            {/* <Card>
                 <CardHeader>
                     <CardTitle>Recommended Leagues</CardTitle>
                     <CardDescription>Popular leagues you might be interested in joining</CardDescription>
@@ -258,7 +221,7 @@ export default function DashboardPage() {
                         ))}
                     </div>
                 </CardContent>
-            </Card>
+            </Card> */}
         </div>
     )
 }

@@ -2,7 +2,10 @@
 
 import { db } from '@/db'
 import { fantasy, fantasyParticipant, fantasyStatusEnum, user } from '@/db/schema'
+import { auth } from '@/lib/auth'
+import { generateSlug } from '@/lib/utils'
 import { and, eq, ilike, or } from 'drizzle-orm'
+import { headers } from 'next/headers'
 
 export type FantasyLeague = typeof fantasy.$inferSelect & {
     owner: {
@@ -28,6 +31,67 @@ export async function getFantasyLeagues({
 }) {
     const offset = (page - 1) * limit
     const conditions = []
+
+    if (status && status !== 'all') {
+        conditions.push(eq(fantasy.status, status))
+    }
+
+    if (search) {
+        conditions.push(ilike(fantasy.name, `%${search}%`))
+    }
+
+    const where = conditions.length > 0 ? and(...conditions) : undefined
+
+    try {
+        const [fantasyLeagues, totalCount] = await Promise.all([
+            db.query.fantasy.findMany({
+                where,
+                limit,
+                offset,
+                orderBy: (fantasy, { desc }) => [desc(fantasy.createdAt)],
+                with: {
+                    owner: {
+                        columns: {
+                            name: true,
+                        },
+                    },
+                    league: {
+                        columns: {
+                            name: true,
+                        },
+                    },
+                },
+            }),
+            db.$count(fantasy, where),
+        ])
+
+        return {
+            fantasyLeagues,
+            total: totalCount,
+        }
+    } catch (error) {
+        console.error('Error fetching fantasy leagues:', error)
+        throw new Error('Failed to fetch fantasy leagues')
+    }
+}
+
+export async function getActiveFantasyLeagues({
+    search,
+    status,
+    page = 1,
+    limit = 10,
+}: {
+    search?: string
+    status?: FantasyStatus | 'all'
+    page?: number
+    limit?: number
+}) {
+    const offset = (page - 1) * limit
+    const conditions = []
+
+    if (status === 'all') {
+        conditions.push(or(eq(fantasy.status, 'active'), eq(fantasy.status, 'pending')))
+    }
 
     if (status && status !== 'all') {
         conditions.push(eq(fantasy.status, status))
@@ -152,5 +216,76 @@ export async function getUserFantasyLeagues(username: string, old: boolean) {
     } catch (error) {
         console.error('Error getting user active fantasy leagues', error)
         throw error
+    }
+}
+
+export async function createFantasyLeague({
+    name,
+    leagueId,
+    slug,
+    joinCode,
+    minPlayer = 2,
+    maxPlayer = 8,
+    isPrivate,
+    description = '',
+    startDate,
+    endDate,
+    teamName,
+}: {
+    name: string
+    leagueId: string
+    slug: string
+    joinCode: string
+    minPlayer: number
+    maxPlayer: number
+    isPrivate: boolean
+    description?: string | undefined
+    startDate?: Date | undefined
+    endDate?: Date | undefined
+    teamName: string
+}) {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    })
+
+    if (!session) {
+        throw new Error('Unauthorized')
+    }
+
+    try {
+        await db.insert(fantasy).values({
+            id: crypto.randomUUID(),
+            name,
+            leagueId,
+            scoreRulesId: '5Etfk9Y467NO1Ph3JFhGM',
+            slug: slug ? generateSlug(slug) : generateSlug(name),
+            joinCode,
+            minPlayer,
+            maxPlayer,
+            isPrivate,
+            description,
+            startDate,
+            endDate,
+            ownerId: session.user.id,
+            status: 'pending',
+        })
+
+        await db.insert(fantasyParticipant).values({
+            id: crypto.randomUUID(),
+            userId: session.user.id,
+            fantasyId: crypto.randomUUID(),
+            rank: 1,
+            points: 0,
+            role: 'owner',
+            status: 'active',
+            teamName,
+        })
+
+        return {
+            message: 'Successfully created new fantasy league',
+        }
+    } catch (error) {
+        console.error('Error creating fantasy league:', error)
+        throw new Error('Failed to create fantasy league')
     }
 }

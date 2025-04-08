@@ -67,6 +67,10 @@ const participantStatuses = ['pending', 'active', 'banned'] as const
 export type ParticipantStatus = (typeof participantStatuses)[number]
 export const participantStatusEnum = pgEnum('participant_status', participantStatuses)
 
+const fixtureStatuses = ['upcoming', 'in_progress', 'finished', 'cancelled'] as const
+export type FixtureStatus = (typeof fixtureStatuses)[number]
+export const fixtureStatusEnum = pgEnum('fixture_status', fixtureStatuses)
+
 export const post = pgTable('post', {
     id: text('id').primaryKey(),
     title: text('title').notNull(),
@@ -241,22 +245,35 @@ export const venueRelations = relations(venue, ({ one }) => ({
 
 export const fixture = pgTable('fixture', {
     id: text('id').primaryKey().unique(),
+    matchday: timestamp('matchday').notNull(),
+    halftime: timestamp('halftime').notNull(),
+    venueId: text('venue_id').notNull(),
     leagueId: text('league_id').notNull(),
-    home: text('home')
-        .notNull()
-        .references(() => team.id),
-    away: text('away')
-        .notNull()
-        .references(() => team.id),
+    homeTeamId: text('home_team_id').notNull(),
+    awayTeamId: text('away_team_id').notNull(),
+    score: jsonb('score').$type<{ home: number; away: number }>().default({ home: 0, away: 0 }),
+    status: fixtureStatusEnum('status').notNull().default('upcoming'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const fixtureRelations = relations(fixture, ({ one }) => ({
+export const fixtureRelations = relations(fixture, ({one}) => ({
+    venue: one(venue, {
+        fields: [fixture.venueId],
+        references: [venue.id],
+    }),
     league: one(league, {
         fields: [fixture.leagueId],
         references: [league.id],
     }),
+    homeTeam: one(team, {
+        fields: [fixture.homeTeamId],
+        references: [team.id],
+    }),
+    awayTeam: one(team, {
+        fields: [fixture.awayTeamId],
+        references: [team.id],
+    })
 }))
 
 export const player = pgTable('player', {
