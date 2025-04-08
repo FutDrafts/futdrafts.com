@@ -25,12 +25,14 @@ import { getFantasyLeagueByCode } from '@/actions/dashboard/fantasy'
 import { Loader2 } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { startDraft } from '@/actions/dashboard/draft'
 
 export default function LeagueDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params)
     const [copied, setCopied] = useState(false)
     const [isChatOpen, setIsChatOpen] = useState(false)
     const [activeTab, setActiveTab] = useState('overview')
+    const [started, setStarted] = useState(false)
 
     const { data: fantasyLeague, isLoading } = useQuery({
         queryKey: ['fantasy', 'league', slug],
@@ -45,6 +47,11 @@ export default function LeagueDetailsPage({ params }: { params: Promise<{ slug: 
 
     const toggleChat = () => {
         setIsChatOpen(!isChatOpen)
+    }
+
+    const handleDraft = () => {
+        startDraft(fantasyLeague!.id)
+        setStarted(true)
     }
 
     const formatDate = (date: Date | null) => {
@@ -117,9 +124,13 @@ export default function LeagueDetailsPage({ params }: { params: Promise<{ slug: 
                                     Settings
                                 </Link>
                             </Button>
-                            <Button asChild>
-                                <Link href={`/dashboard/leagues/${slug}/draft`}>Start Draft</Link>
-                            </Button>
+                            {!started ? (
+                                <Button onClick={() => handleDraft()}>Start Draft</Button>
+                            ) : (
+                                <Button asChild>
+                                    <Link href={`/dashboard/leagues/${slug}/draft`}>Go To Draft</Link>
+                                </Button>
+                            )}
                         </div>
                     </div>
 
