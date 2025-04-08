@@ -8,24 +8,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
-import { Trophy, Users, ArrowLeft, AlertTriangle, Loader2 } from 'lucide-react'
+import { Users, ArrowLeft, AlertTriangle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
-import { formatLeagueCode } from '@/lib/utils'
-
-// Mock data - replace with real data fetching
-const leagueData = {
-    code: 'PREM-2X4Y-9Z7W',
-    name: 'Premier Fantasy Masters',
-    description: 'The ultimate Premier League fantasy experience',
-    type: 'private',
-    maxParticipants: 100,
-    currentParticipants: 45,
-    entryFee: 1000,
-    prizePool: 50000,
-    startDate: '2024-02-25',
-    endDate: '2024-05-19',
-    inviteRequired: true,
-}
+import { useQuery } from '@tanstack/react-query'
+import { getFantasyLeagueByCode } from '@/actions/dashboard/fantasy'
 
 export default function JoinLeaguePage({ params }: { params: Promise<{ slug: string }> }) {
     const router = useRouter()
@@ -34,6 +20,31 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ slug: str
     const [loading, setLoading] = useState(false)
     const [inviteCode, setInviteCode] = useState('')
     const [error, setError] = useState<string | null>(null)
+
+    const { data: leagueData, isLoading } = useQuery({
+        queryKey: ['fantasy', 'league', slug],
+        queryFn: () => getFantasyLeagueByCode(slug),
+    })
+
+    if (isLoading) {
+        return (
+            <div className="flex h-screen items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+        )
+    }
+
+    if (!leagueData) {
+        return (
+            <div className="flex h-screen items-center justify-center">
+                <Card>
+                    <CardContent className="p-6">
+                        <p className="text-destructive">Fantasy league not found</p>
+                    </CardContent>
+                </Card>
+            </div>
+        )
+    }
 
     const handleJoin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -64,7 +75,7 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ slug: str
                     <div className="flex items-center gap-2">
                         <h1 className="text-3xl font-bold">Join League</h1>
                         <Badge variant="outline" className="font-mono">
-                            {formatLeagueCode(slug)}
+                            {slug}
                         </Badge>
                     </div>
                     <p className="text-muted-foreground">Join {leagueData.name}</p>
@@ -78,20 +89,20 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ slug: str
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="grid gap-4 md:grid-cols-2">
-                        <div className="space-y-2">
+                        {/* <div className="space-y-2">
                             <Label>Entry Fee</Label>
                             <div className="flex items-center gap-2">
                                 <Trophy className="text-muted-foreground h-4 w-4" />
                                 <span className="font-medium">{leagueData.entryFee.toLocaleString()} points</span>
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="space-y-2">
                             <Label>Participants</Label>
                             <div className="flex items-center gap-2">
                                 <Users className="text-muted-foreground h-4 w-4" />
                                 <span className="font-medium">
-                                    {leagueData.currentParticipants}/{leagueData.maxParticipants} players
+                                    {leagueData.players.length}/{leagueData.maxPlayer} players
                                 </span>
                             </div>
                         </div>
@@ -102,13 +113,13 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ slug: str
                         <AlertTitle>Important</AlertTitle>
                         <AlertDescription>
                             By joining this league, you agree to commit until{' '}
-                            {new Date(leagueData.endDate).toLocaleDateString()}. The entry fee will be deducted from
-                            your points balance.
+                            {leagueData.endDate && new Date(leagueData.endDate).toLocaleDateString()}. The entry fee
+                            will be deducted from your points balance.
                         </AlertDescription>
                     </Alert>
 
                     <form onSubmit={handleJoin} className="space-y-4">
-                        {leagueData.inviteRequired && (
+                        {leagueData.isPrivate && (
                             <div className="space-y-2">
                                 <Label htmlFor="inviteCode">Invite Code</Label>
                                 <Input

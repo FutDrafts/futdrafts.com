@@ -21,7 +21,7 @@ type StatusOption = FantasyStatus | 'All Statuses'
 const competitions = ['All Competitions', 'Premier League', 'La Liga', 'Bundesliga', 'Serie A', 'UEFA Champions League']
 const regions = ['Global', 'Europe', 'Americas', 'Asia', 'Africa']
 const types = ['All Types', 'public', 'private']
-const statuses = ['All Statuses', ...fantasyStatusEnum.enumValues] as const
+const statuses = ['All Statuses', 'pending', 'active'] as const
 
 export default function LeaguesPage() {
     const [searchQuery, setSearchQuery] = useState('')
