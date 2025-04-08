@@ -15,33 +15,47 @@ import * as z from 'zod'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Combobox } from '@/components/ui/combobox'
 import { DateTimeRangePicker } from '@/components/ui/date-time-range-picker'
-
-const competitions = [
-    { label: 'Premier League', value: 'premier-league' },
-    { label: 'La Liga', value: 'la-liga' },
-    { label: 'Bundesliga', value: 'bundesliga' },
-    { label: 'Serie A', value: 'serie-a' },
-    { label: 'UEFA Champions League', value: 'uefa-champions-league' },
-]
+import { useQuery } from '@tanstack/react-query'
+import { getAllLeagueNames } from '@/actions/dashboard/leagues'
+import { createFantasyLeague } from '@/actions/dashboard/fantasy'
+import { toast } from 'sonner'
 
 const formSchema = z.object({
     name: z.string().min(3, 'League name must be at least 3 characters'),
     description: z.string().optional(),
     leagueId: z.string().min(1, 'Please select a league'),
-    scoreRulesId: z.string().min(1, 'Please select scoring rules'),
     status: z.enum(['pending', 'active', 'ended', 'cancelled']).default('pending'),
     slug: z.string().min(3, 'Slug must be at least 3 characters'),
     joinCode: z.string().min(6, 'Join code must be at least 6 characters'),
     minPlayer: z.number().min(2, 'Minimum players must be at least 2').max(8, 'Minimum players cannot exceed 8'),
     maxPlayer: z.number().min(2, 'Maximum players must be at least 2').max(8, 'Maximum players cannot exceed 8'),
     isPrivate: z.boolean().default(false),
-    startDate: z.date().optional(),
-    endDate: z.date().optional(),
-    draftStart: z.date().optional(),
+    startDate: z.date().default(new Date()),
+    endDate: z.date().default(new Date()),
+    teamName: z.string(),
 })
 
 export default function CreateLeaguePage() {
     const [loading, setLoading] = useState(false)
+
+    const { data, error } = useQuery({
+        queryKey: ['fantasy', 'leagues', 'soccer'],
+        queryFn: async () => {
+            return getAllLeagueNames()
+        },
+    })
+
+    if (error) {
+        ;<div className="flex items-center justify-center">
+            <p className="text-destructive">Error Loading Data. Please try again later</p>
+        </div>
+    }
+
+    const { leagues = [] } = data || {}
+    const transformedLeagues = leagues.map((league) => ({
+        label: league.name,
+        value: league.id,
+    }))
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -49,13 +63,15 @@ export default function CreateLeaguePage() {
             name: '',
             description: '',
             leagueId: '',
-            scoreRulesId: '',
             status: 'pending',
             slug: '',
             joinCode: generateLeagueCode(),
             minPlayer: 2,
             maxPlayer: 8,
             isPrivate: false,
+            startDate: new Date(),
+            endDate: new Date(),
+            teamName: '',
         },
     })
 
@@ -63,11 +79,11 @@ export default function CreateLeaguePage() {
         setLoading(true)
         try {
             console.log(values)
-            // TODO: Implement league creation API call
-            // await createLeague(values)
-            // router.push(`/dashboard/leagues/${values.slug}`)
+            const { message } = await createFantasyLeague(values)
+            toast.success(message)
         } catch (error) {
             console.error('Failed to create league:', error)
+            toast.error('An error occurred while creating the league.')
         } finally {
             setLoading(false)
         }
@@ -106,7 +122,33 @@ export default function CreateLeaguePage() {
                                                 <FormItem>
                                                     <FormLabel>League Name</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder="Enter league name" {...field} />
+                                                        <Input
+                                                            placeholder="Enter league name"
+                                                            {...field}
+                                                            onChange={(e) => {
+                                                                field.onChange(e.target.value)
+                                                                // Auto-generate slug from league name
+                                                                const slug = e.target.value
+                                                                    .toLowerCase()
+                                                                    .replace(/[^a-z0-9]+/g, '-')
+                                                                    .replace(/^-+|-+$/g, '')
+                                                                form.setValue('slug', slug)
+                                                            }}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <FormField
+                                            control={form.control}
+                                            name="slug"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>URL Slug</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="league-name" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -121,7 +163,7 @@ export default function CreateLeaguePage() {
                                                     <FormLabel>Competition</FormLabel>
                                                     <FormControl>
                                                         <Combobox
-                                                            options={competitions}
+                                                            options={transformedLeagues}
                                                             value={field.value}
                                                             onValueChange={field.onChange}
                                                             placeholder="Select a competition"
@@ -132,52 +174,47 @@ export default function CreateLeaguePage() {
                                                 </FormItem>
                                             )}
                                         />
+                                    </div>
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                        <FormField
+                                            control={form.control}
+                                            name="minPlayer"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Min Players</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            type="number"
+                                                            min="2"
+                                                            max="8"
+                                                            {...field}
+                                                            onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
 
-                                        <div className="grid gap-4 md:grid-cols-2">
-                                            <FormField
-                                                control={form.control}
-                                                name="minPlayer"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>Minimum Players</FormLabel>
-                                                        <FormControl>
-                                                            <Input
-                                                                type="number"
-                                                                min="2"
-                                                                max="8"
-                                                                {...field}
-                                                                onChange={(e) =>
-                                                                    field.onChange(parseInt(e.target.value))
-                                                                }
-                                                            />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-
-                                            <FormField
-                                                control={form.control}
-                                                name="maxPlayer"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>Maximum Players</FormLabel>
-                                                        <FormControl>
-                                                            <Input
-                                                                type="number"
-                                                                min="2"
-                                                                max="8"
-                                                                {...field}
-                                                                onChange={(e) =>
-                                                                    field.onChange(parseInt(e.target.value))
-                                                                }
-                                                            />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </div>
+                                        <FormField
+                                            control={form.control}
+                                            name="maxPlayer"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Max Players</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            type="number"
+                                                            min="2"
+                                                            max="8"
+                                                            {...field}
+                                                            onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
                                     </div>
 
                                     <FormField
@@ -241,15 +278,29 @@ export default function CreateLeaguePage() {
                                         <FormLabel>Start Date and Time</FormLabel>
                                         <FormControl>
                                             <DateTimeRangePicker
-                                                startDate={field.value}
-                                                endDate={form.getValues('endDate')}
+                                                startDate={field.value || new Date()}
+                                                endDate={form.getValues('endDate') || new Date()}
                                                 onStartDateChange={field.onChange}
-                                                onEndDateChange={(date) => form.setValue('endDate', date)}
+                                                onEndDateChange={(date) => form.setValue('endDate', date ?? new Date())}
                                             />
                                         </FormControl>
                                         <FormDescription>
                                             Select the start and end dates and times for your league
                                         </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="teamName"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Your Team Name</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder={"John's Amazing Team"} {...field} />
+                                        </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
