@@ -10,7 +10,6 @@ import {
     serial,
     date,
     numeric,
-    uuid,
     integer,
 } from 'drizzle-orm/pg-core'
 
@@ -70,6 +69,10 @@ export const participantStatusEnum = pgEnum('participant_status', participantSta
 const fixtureStatuses = ['upcoming', 'in_progress', 'finished', 'cancelled'] as const
 export type FixtureStatus = (typeof fixtureStatuses)[number]
 export const fixtureStatusEnum = pgEnum('fixture_status', fixtureStatuses)
+
+const draftPickStatuses = ['pending', 'completed'] as const
+export type DraftPickStatus = (typeof draftPickStatuses)[number]
+export const draftPickStatusEnum = pgEnum('draft_pick_stauts', draftPickStatuses)
 
 export const post = pgTable('post', {
     id: text('id').primaryKey(),
@@ -257,7 +260,7 @@ export const fixture = pgTable('fixture', {
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const fixtureRelations = relations(fixture, ({one}) => ({
+export const fixtureRelations = relations(fixture, ({ one }) => ({
     venue: one(venue, {
         fields: [fixture.venueId],
         references: [venue.id],
@@ -273,7 +276,7 @@ export const fixtureRelations = relations(fixture, ({one}) => ({
     awayTeam: one(team, {
         fields: [fixture.awayTeamId],
         references: [team.id],
-    })
+    }),
 }))
 
 export const player = pgTable('player', {
@@ -284,21 +287,22 @@ export const player = pgTable('player', {
     height: numeric('height').notNull(),
     weight: numeric('weight').notNull(),
     isInjured: boolean('injured').notNull(),
-    statisticsId: uuid('statistics_id').notNull(),
+    statisticsId: text('statistics_id').notNull(),
     profilePicture: text('profile_picture').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const playerRelations = relations(player, ({ one }) => ({
+export const playerRelations = relations(player, ({ one, many }) => ({
     statistics: one(playerStatistics, {
         fields: [player.statisticsId],
         references: [playerStatistics.id],
     }),
+    draftPick: many(draftPick),
 }))
 
 export const playerStatistics = pgTable('player_statistics', {
-    id: uuid('id').defaultRandom().primaryKey(),
+    id: text('id').primaryKey(),
     playerId: text('user_id')
         .notNull()
         .references(() => player.id),
@@ -415,6 +419,8 @@ export const fantasy = pgTable('fantasy', {
     scoreRulesId: text('score_rules_id')
         .notNull()
         .references(() => scoreRules.id),
+    draftStatus: boolean('draft_status').default(false),
+    pickNumber: integer('pick_number').default(1),
     status: fantasyStatusEnum('status').notNull().default('pending'),
     slug: text('slug').notNull().unique(),
     joinCode: text('join_code').notNull(),
@@ -449,6 +455,7 @@ export const fantasyRelations = relations(fantasy, ({ one, many }) => ({
         references: [scoreRules.id],
     }),
     players: many(fantasyParticipant),
+    draftPicks: many(draftPick),
 }))
 
 export const scoreRules = pgTable('score_rules', {
@@ -509,13 +516,14 @@ export const fantasyParticipant = pgTable('fantasy_participant', {
     teamName: text('team_name'),
     points: integer('points').default(0),
     rank: integer('rank'),
+    draftPosition: integer('draft_position'),
     lastActive: timestamp('last_active'),
     joinedAt: timestamp('joined_at').notNull().defaultNow(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
 
-export const fantasyParticipantRelations = relations(fantasyParticipant, ({ one }) => ({
+export const fantasyParticipantRelations = relations(fantasyParticipant, ({ one, many }) => ({
     fantasy: one(fantasy, {
         fields: [fantasyParticipant.fantasyId],
         references: [fantasy.id],
@@ -523,6 +531,39 @@ export const fantasyParticipantRelations = relations(fantasyParticipant, ({ one 
     user: one(user, {
         fields: [fantasyParticipant.userId],
         references: [user.id],
+    }),
+    draftPicks: many(draftPick),
+}))
+
+export const draftPick = pgTable('drafts_picks', {
+    id: text('id').primaryKey(),
+    fantasyLeagueId: text('fantasy_league_id').notNull(),
+    playerId: text('player_id'),
+    userId: text('user_id').notNull(),
+    fantasyParticipantId: text('fantasy_participant_id').notNull(),
+    pickNumber: integer('pick_number').notNull(),
+    roundNumber: integer('round_number').notNull(),
+    status: draftPickStatusEnum('status').default('pending'),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
+export const draftPickRelations = relations(draftPick, ({ one }) => ({
+    fantasyLeague: one(fantasy, {
+        fields: [draftPick.fantasyLeagueId],
+        references: [fantasy.id],
+    }),
+    player: one(player, {
+        fields: [draftPick.playerId],
+        references: [player.id],
+    }),
+    user: one(user, {
+        fields: [draftPick.userId],
+        references: [user.id],
+    }),
+    fantasyParticipant: one(fantasyParticipant, {
+        fields: [draftPick.fantasyParticipantId],
+        references: [fantasyParticipant.id],
     }),
 }))
 
