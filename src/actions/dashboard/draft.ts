@@ -2,24 +2,14 @@
 
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
-import { getFantasyLeagueById, getFantasyLeagueParticipants } from './fantasy'
+import { getFantasyLeagueByCode, getFantasyLeagueById, getFantasyLeagueParticipants } from './fantasy'
 import { db } from '@/db'
 import { draftPick, fantasy, fantasyParticipant } from '@/db/schema'
-import { and, asc, eq } from 'drizzle-orm'
+import { and, asc, eq, isNotNull } from 'drizzle-orm'
 import { shuffleInPlace } from '@/lib/utils'
 import { nanoid } from 'nanoid'
 
-export const createDraftPick = async ({
-    fantasyLeagueId,
-    userId,
-    playerId,
-    pickNumber,
-}: {
-    fantasyLeagueId: string
-    userId: string
-    playerId: string
-    pickNumber: number
-}) => {
+export const createDraftPick = async ({ fantasyLeagueId, playerId }: { fantasyLeagueId: string; playerId: string }) => {
     const session = await auth.api.getSession({
         headers: await headers(),
     })
@@ -44,11 +34,11 @@ export const createDraftPick = async ({
             throw new Error('No more Draft Picks')
         }
 
-        if (nextPick.userId !== userId) {
+        if (nextPick.userId !== session.user.id) {
             throw new Error('Not your turn to make a draft pick')
         }
 
-        if (nextPick.pickNumber !== pickNumber) {
+        if (nextPick.pickNumber !== fantasyLeague.pickNumber) {
             throw new Error('Invalid Pick Number')
         }
 
@@ -93,7 +83,7 @@ export const createDraftPick = async ({
     }
 }
 
-export const startDraft = async ({ fantasyLeagueId }: { fantasyLeagueId: string }) => {
+export const startDraft = async (fantasyLeagueId: string) => {
     const session = await auth.api.getSession({
         headers: await headers(),
     })
@@ -183,5 +173,69 @@ export const startDraft = async ({ fantasyLeagueId }: { fantasyLeagueId: string 
     } catch (error) {
         console.error(error)
         throw new Error('Failed to start draft')
+    }
+}
+
+export const getAvailableDraftPlayers = async (slug: string) => {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    })
+
+    if (!session) {
+        throw new Error('Unauthorized')
+    }
+
+    try {
+        const fantasyLeague = await getFantasyLeagueByCode(slug)
+
+        if (!fantasyLeague) {
+            throw new Error("Fantasy league doesn't exist")
+        }
+
+        const queryOne = await db.query.draftPick.findMany({
+            where: isNotNull(draftPick.playerId),
+        })
+
+        const queryTwo = await db.query.player.findMany({
+            with: {
+                statistics: true,
+            },
+        })
+
+        const leaguePlayers = queryTwo.filter((p) => p.statistics.leagueId === fantasyLeague.leagueId)
+
+        if (queryOne.length < 1) {
+            return leaguePlayers
+        }
+
+        const draftedPlayerIds = new Set(queryOne.map((pick) => pick.playerId))
+        const availablePlayers = leaguePlayers.filter((player) => !draftedPlayerIds.has(player.id))
+        return availablePlayers
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed to get Available Draft Player')
+    }
+}
+
+export const getFantasyLeagueDraftPicks = async (leagueId: string) => {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    })
+
+    if (!session) {
+        throw new Error('Unauthorized')
+    }
+
+    try {
+        const results = await db.query.draftPick.findMany({
+            where: eq(draftPick.fantasyLeagueId, leagueId),
+        })
+
+        console.log('RESULTS', results)
+
+        return results
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed to get Fantasy League Draft Picks')
     }
 }
