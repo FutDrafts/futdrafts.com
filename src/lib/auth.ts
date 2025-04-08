@@ -83,6 +83,13 @@ export const auth = betterAuth({
             disableSignUp: isFeatureFlagEnabled('github-auth'),
             clientId: serverEnv.GITHUB_CLIENT_ID as string,
             clientSecret: serverEnv.GITHUB_CLIENT_SECRET as string,
+            scope: ['read:user', 'user:email'],
+            mapProfileToUser(profile) {
+                return {
+                    username: profile.login,
+                    displayUsername: profile.login,
+                }
+            },
         },
     },
     plugins: [admin(), jwt(), username(), nextCookies()],
