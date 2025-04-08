@@ -185,6 +185,23 @@ export async function getFantasyLeagueByCode(slug: string) {
     }
 }
 
+export async function getFantasyLeagueById(id: string) {
+    try {
+        const fantasyLeague = await db.query.fantasy.findFirst({
+            where: eq(fantasy.id, id),
+        })
+
+        if (!fantasyLeague) {
+            throw new Error('Fantasy league not found')
+        }
+
+        return fantasyLeague
+    } catch (error) {
+        console.error('Error fetching fantasy league:', error)
+        throw new Error('Failed to fetch fantasy league')
+    }
+}
+
 export async function getUserFantasyLeagues(username: string, old: boolean) {
     try {
         const userId = await db.select({ id: user.id }).from(user).where(eq(user.username, username))
@@ -216,6 +233,29 @@ export async function getUserFantasyLeagues(username: string, old: boolean) {
     } catch (error) {
         console.error('Error getting user active fantasy leagues', error)
         throw error
+    }
+}
+
+export async function getFantasyLeagueParticipants(leagueId: string) {
+    try {
+        const [participants, total] = await Promise.all([
+            await db.query.fantasyParticipant.findMany({
+                where: eq(fantasyParticipant.fantasyId, leagueId),
+                with: {
+                    user: true,
+                    fantasy: true,
+                },
+            }),
+            await db.$count(fantasyParticipant, eq(fantasyParticipant.fantasyId, leagueId)),
+        ])
+
+        return {
+            participants,
+            total,
+        }
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed to get League Participants')
     }
 }
 
