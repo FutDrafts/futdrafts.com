@@ -64,3 +64,20 @@ export function isValidLeagueCode(code: string): boolean {
     const pattern = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/
     return pattern.test(code.toUpperCase())
 }
+
+// Generate a URL-friendly slug from text
+export function generateSlug(text: string, appendId: boolean = true): string {
+    const slug = text
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+        .replace(/\s+/g, '-') // Replace spaces with hyphens
+        .replace(/-+/g, '-') // Remove consecutive hyphens
+
+    if (appendId) {
+        const uniqueId = Math.random().toString(36).substring(2, 6)
+        return `${slug}-${uniqueId}`
+    }
+
+    return slug
+}
