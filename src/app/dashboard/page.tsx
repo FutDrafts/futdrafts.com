@@ -2,20 +2,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Trophy, Users, Calendar, Search, Plus } from 'lucide-react'
+import { Trophy, Calendar, Search, Plus } from 'lucide-react'
 import Link from 'next/link'
-import { getDashboardActiveLeagues } from '@/actions/dashboard/dashboard'
+import { getDashboardActiveLeagues, getDashboardLeagueCounts } from '@/actions/dashboard/dashboard'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 // Mock data - replace with real data fetching
-const userStats = {
-    totalLeagues: 5,
-    activeLeagues: 3,
-    ranking: '#234',
-    totalPoints: '1,234',
-    winRate: '+12.3%',
-    recentPerformance: '-3.2%',
-}
 
 const upcomingMatches = [
     {
@@ -35,7 +27,10 @@ const upcomingMatches = [
 ]
 
 export default async function DashboardPage() {
-    const [{ fantasyLeagues: activeLeagues }] = await Promise.all([getDashboardActiveLeagues(3)])
+    const [{ fantasyLeagues: activeLeagues }, { totalLeagueCount, pendingLeagueCount }] = await Promise.all([
+        getDashboardActiveLeagues(3),
+        getDashboardLeagueCounts(),
+    ])
 
     return (
         <div className="space-y-8">
@@ -76,8 +71,8 @@ export default async function DashboardPage() {
                         <Trophy className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{userStats.totalLeagues}</div>
-                        <p className="text-muted-foreground text-xs">{userStats.activeLeagues} active leagues</p>
+                        <div className="text-2xl font-bold">{totalLeagueCount}</div>
+                        <p className="text-muted-foreground text-xs">{pendingLeagueCount} leagues you can join!</p>
                     </CardContent>
                 </Card>
                 {/* <Card>
@@ -106,7 +101,7 @@ export default async function DashboardPage() {
                         </div>
                     </CardContent>
                 </Card> */}
-                <Card>
+                {/* <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Active Players</CardTitle>
                         <Users className="text-muted-foreground h-4 w-4" />
@@ -115,7 +110,7 @@ export default async function DashboardPage() {
                         <div className="text-2xl font-bold">11/11</div>
                         <p className="text-muted-foreground text-xs">Full squad available</p>
                     </CardContent>
-                </Card>
+                </Card> */}
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
