@@ -238,16 +238,62 @@ export default function FantasyLeaguesTable() {
                             Previous
                         </Button>
                         <div className="flex items-center gap-1">
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                <Button
-                                    key={page}
-                                    variant={currentPage === page ? 'default' : 'outline'}
-                                    size="sm"
-                                    onClick={() => setCurrentPage(page)}
-                                >
-                                    {page}
-                                </Button>
-                            ))}
+                            {(() => {
+                                // Show limited page buttons to prevent overflow
+                                const visiblePages: ('ellipsis-start' | 'ellipsis-end' | number)[] = []
+                                const maxVisiblePages = 5
+
+                                if (totalPages <= maxVisiblePages) {
+                                    // Show all pages if there are few
+                                    visiblePages.push(...Array.from({ length: totalPages }, (_, i) => i + 1))
+                                } else {
+                                    // Always show first page
+                                    visiblePages.push(1)
+
+                                    // Calculate range around current page
+                                    const startPage = Math.max(2, currentPage - 1)
+                                    const endPage = Math.min(totalPages - 1, currentPage + 1)
+
+                                    // Add ellipsis if needed
+                                    if (startPage > 2) {
+                                        visiblePages.push('ellipsis-start')
+                                    }
+
+                                    // Add pages around current page
+                                    for (let i = startPage; i <= endPage; i++) {
+                                        visiblePages.push(i)
+                                    }
+
+                                    // Add ellipsis if needed
+                                    if (endPage < totalPages - 1) {
+                                        visiblePages.push('ellipsis-end')
+                                    }
+
+                                    // Always show last page
+                                    visiblePages.push(totalPages)
+                                }
+
+                                return visiblePages.map((page, index) => {
+                                    if (page === 'ellipsis-start' || page === 'ellipsis-end') {
+                                        return (
+                                            <span key={page} className="text-muted-foreground px-2">
+                                                ...
+                                            </span>
+                                        )
+                                    }
+
+                                    return (
+                                        <Button
+                                            key={`page-${page}-${index}`}
+                                            variant={currentPage === page ? 'default' : 'outline'}
+                                            size="sm"
+                                            onClick={() => setCurrentPage(page)}
+                                        >
+                                            {page}
+                                        </Button>
+                                    )
+                                })
+                            })()}
                         </div>
                         <Button
                             variant="outline"
