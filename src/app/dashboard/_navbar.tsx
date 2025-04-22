@@ -108,9 +108,11 @@ export function DashboardNavbar({ session }: Props) {
                                     </Link>
                                 </DropdownMenuItem>
                                 {session?.user.role === 'admin' && (
-                                    <DropdownMenuItem>
-                                        <ShieldPlusIcon className="mr-2 size-4" />
-                                        Admin Dashboard
+                                    <DropdownMenuItem asChild>
+                                        <Link href="/admin">
+                                            <ShieldPlusIcon className="mr-2 size-4" />
+                                            Admin Dashboard
+                                        </Link>
                                     </DropdownMenuItem>
                                 )}
                                 <DropdownMenuItem onClick={handleSignOut}>
