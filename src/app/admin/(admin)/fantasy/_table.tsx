@@ -162,7 +162,7 @@ export default function FantasyLeaguesTable() {
                                 <TableRow>
                                     <TableHead>Name</TableHead>
                                     <TableHead>Status</TableHead>
-                                    <TableHead>Private</TableHead>
+                                    <TableHead className="w-[100px]">Private</TableHead>
                                     <TableHead>Owner</TableHead>
                                     <TableHead>League</TableHead>
                                     <TableHead className="w-[50px]"></TableHead>
@@ -180,13 +180,13 @@ export default function FantasyLeaguesTable() {
                                         <TableCell>{colorStatusCell(league.status)}</TableCell>
                                         <TableCell>
                                             {league.isPrivate ? (
-                                                <span className="flex items-center gap-1 rounded-full bg-red-100/30 px-2 py-1 text-xs text-red-600">
-                                                    <LockIcon className="size-3" />
+                                                <span className="flex items-center gap-1 rounded-full border border-red-200 bg-red-100 px-2.5 py-1 text-xs font-medium text-red-600">
+                                                    <LockIcon className="size-3.5" />
                                                     Private
                                                 </span>
                                             ) : (
-                                                <span className="flex items-center gap-1 rounded-full bg-green-100/30 px-2 py-1 text-xs text-green-600">
-                                                    <GlobeIcon className="size-3" />
+                                                <span className="flex items-center gap-1 rounded-full border border-green-200 bg-green-100 px-2.5 py-1 text-xs font-medium text-green-600">
+                                                    <GlobeIcon className="size-3.5" />
                                                     Public
                                                 </span>
                                             )}
@@ -223,6 +223,7 @@ export default function FantasyLeaguesTable() {
                     )}
                 </div>
 
+                {/* Pagination */}
                 <div className="mt-4 flex items-center justify-between">
                     <div className="text-muted-foreground text-sm">
                         Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
