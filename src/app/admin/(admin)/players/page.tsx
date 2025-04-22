@@ -36,7 +36,6 @@ export default async function PlayersPage() {
                     description="Injured Players"
                     statistic={injuredPlayers ?? 0}
                 />
-                <AdminQuickStatCard title="" description="" statistic={0} />
             </div>
             <PlayersTable />
         </div>
