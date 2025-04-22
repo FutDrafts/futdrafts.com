@@ -2,9 +2,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Trophy, Users, Star, TrendingUp, Calendar, Search, Plus, ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import { Trophy, Users, Calendar, Search, Plus } from 'lucide-react'
 import Link from 'next/link'
 import { getDashboardActiveLeagues } from '@/actions/dashboard/dashboard'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 // Mock data - replace with real data fetching
 const userStats = {
@@ -51,12 +52,19 @@ export default async function DashboardPage() {
                             Join League
                         </Link>
                     </Button>
-                    <Button variant="outline" asChild>
-                        <Link href="/dashboard/search">
-                            <Search className="mr-2 h-4 w-4" />
-                            Find Players
-                        </Link>
-                    </Button>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="outline">
+                                    {/* <Link href="/dashboard/search" aria-disabled> */}
+                                    <Search className="mr-2 h-4 w-4" />
+                                    Find Players
+                                    {/* </Link> */}
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Player search coming soon!</TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </div>
             </div>
 
@@ -72,7 +80,7 @@ export default async function DashboardPage() {
                         <p className="text-muted-foreground text-xs">{userStats.activeLeagues} active leagues</p>
                     </CardContent>
                 </Card>
-                <Card>
+                {/* <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Global Ranking</CardTitle>
                         <TrendingUp className="text-muted-foreground h-4 w-4" />
@@ -84,8 +92,8 @@ export default async function DashboardPage() {
                             {userStats.winRate} this month
                         </div>
                     </CardContent>
-                </Card>
-                <Card>
+                </Card> */}
+                {/* <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Points</CardTitle>
                         <Star className="text-muted-foreground h-4 w-4" />
@@ -97,7 +105,7 @@ export default async function DashboardPage() {
                             {userStats.recentPerformance} last week
                         </div>
                     </CardContent>
-                </Card>
+                </Card> */}
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Active Players</CardTitle>
