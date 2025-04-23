@@ -515,7 +515,7 @@ export const fantasyParticipant = pgTable('fantasy_participant', {
     status: participantStatusEnum('status').notNull().default('pending'),
     teamName: text('team_name'),
     points: integer('points').default(0),
-    rank: integer('rank'),
+    rank: integer('rank').default(1),
     draftPosition: integer('draft_position'),
     lastActive: timestamp('last_active'),
     joinedAt: timestamp('joined_at').notNull().defaultNow(),
