@@ -22,8 +22,8 @@ export function ReportRow({ report, onViewDetails, onStatusChange, onBanUser }: 
         <TableRow>
             <TableCell>
                 <div>
-                    <div className="font-medium">{report.reportedUser.name}</div>
-                    <div className="text-muted-foreground text-sm">{report.reportedUser.email}</div>
+                    <div className="font-medium">{report.reported.name}</div>
+                    <div className="text-muted-foreground text-sm">{report.reported.email}</div>
                 </div>
             </TableCell>
             <TableCell>
@@ -52,7 +52,7 @@ export function ReportRow({ report, onViewDetails, onStatusChange, onBanUser }: 
                     </span>
                 </div>
             </TableCell>
-            <TableCell>{report.reportedByUser.name}</TableCell>
+            <TableCell>{report.reportedBy.name}</TableCell>
             <TableCell>{new Date(report.createdAt).toLocaleDateString()}</TableCell>
             <TableCell>
                 <DropdownMenu>

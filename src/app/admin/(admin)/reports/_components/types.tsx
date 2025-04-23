@@ -2,14 +2,14 @@ import { report, reportComment, user } from '@/db/schema'
 import { ClockIcon, CheckCircle2Icon, Trash2Icon } from 'lucide-react'
 
 export type ReportTable = typeof report.$inferSelect & {
-    reportedUser: UserTable
-    reportedByUser: UserTable
-    resolvedByUser: UserTable
-    comments: ReportCommentTable[]
+    reportedBy: UserTable
+    reported: UserTable
+    resolvedBy: UserTable
+    reportComments: ReportCommentTable[]
 }
 
 export type ReportCommentTable = typeof reportComment.$inferSelect & {
-    admin: UserTable
+    user: UserTable
 }
 
 export type UserTable = typeof user.$inferSelect

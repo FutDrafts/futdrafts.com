@@ -178,13 +178,13 @@ export default function ReportsTable() {
                                         report={report}
                                         onViewDetails={(report) => {
                                             setSelectedReport(report)
-                                            setSelectedUser(report.reportedUser)
+                                            setSelectedUser(report.reported)
                                             setIsDetailsOpen(true)
                                         }}
                                         onStatusChange={handleStatusChange}
                                         onBanUser={(report) => {
                                             setSelectedReport(report)
-                                            setSelectedUser(report.reportedUser)
+                                            setSelectedUser(report.reported)
                                             setIsBanDialogOpen(true)
                                         }}
                                     />
