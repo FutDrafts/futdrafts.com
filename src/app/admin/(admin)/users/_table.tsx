@@ -41,7 +41,7 @@ import { user } from '@/db/schema'
 import { toast } from 'sonner'
 import { updateUserBanStatus, updateUserRole } from '@/actions/admin/user'
 import { authClient } from '@/lib/auth-client'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 const roleIcons = {
     admin: <ShieldCheckIcon className="text-primary h-4 w-4" />,
@@ -53,6 +53,8 @@ type UserTable = typeof user.$inferSelect
 
 export default function UsersTable({ userId }: { userId: string }) {
     const queryClient = useQueryClient()
+    const router = useRouter()
+
     const [searchQuery, setSearchQuery] = useState('')
     const [roleFilter, setRoleFilter] = useState<string>('all')
     const [statusFilter, setStatusFilter] = useState<string>('all')
@@ -122,7 +124,7 @@ export default function UsersTable({ userId }: { userId: string }) {
                 userId,
             })
 
-            redirect('/dashboard/profile/')
+            router.replace('/dashboard/profile')
         } catch (error) {
             toast.error('Failed to impersonate user')
             console.error(error)
