@@ -26,6 +26,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
+    ContactIcon,
     Loader2Icon,
     MoreVerticalIcon,
     SearchIcon,
@@ -39,6 +40,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { user } from '@/db/schema'
 import { toast } from 'sonner'
 import { updateUserBanStatus, updateUserRole } from '@/actions/admin/user'
+import { authClient } from '@/lib/auth-client'
+import { redirect } from 'next/navigation'
 
 const roleIcons = {
     admin: <ShieldCheckIcon className="text-primary h-4 w-4" />,
@@ -48,7 +51,7 @@ const roleIcons = {
 type Role = 'admin' | 'user'
 type UserTable = typeof user.$inferSelect
 
-export default function UsersTable() {
+export default function UsersTable({ userId }: { userId: string }) {
     const queryClient = useQueryClient()
     const [searchQuery, setSearchQuery] = useState('')
     const [roleFilter, setRoleFilter] = useState<string>('all')
@@ -111,6 +114,19 @@ export default function UsersTable() {
             toast.error('Failed to update user status')
         }
         setIsBanDialogOpen(false)
+    }
+
+    const handleImpersonateUser = async (userId: string) => {
+        try {
+            await authClient.admin.impersonateUser({
+                userId,
+            })
+
+            redirect('/dashboard/profile/')
+        } catch (error) {
+            toast.error('Failed to impersonate user')
+            console.error(error)
+        }
     }
 
     if (error) {
@@ -225,6 +241,15 @@ export default function UsersTable() {
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end">
+                                                    {userId !== user.id && (
+                                                        <DropdownMenuItem
+                                                            onClick={() => handleImpersonateUser(user.id)}
+                                                        >
+                                                            <ContactIcon className="mr-2 size-4" />
+                                                            Impersonate User
+                                                        </DropdownMenuItem>
+                                                    )}
+
                                                     <DropdownMenuItem
                                                         onClick={() => {
                                                             setSelectedUser(user)
@@ -235,6 +260,7 @@ export default function UsersTable() {
                                                         <ShieldIcon className="mr-2 h-4 w-4" />
                                                         Change Role
                                                     </DropdownMenuItem>
+
                                                     <DropdownMenuItem
                                                         className="text-destructive focus:text-destructive"
                                                         onClick={() => {
