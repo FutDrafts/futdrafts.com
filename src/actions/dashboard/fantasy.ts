@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/db'
-import { fantasy, fantasyParticipant, fantasyStatusEnum, user } from '@/db/schema'
+import { fantasy, fantasyParticipant, fantasyStatus, user } from '@/db/schema'
 import { auth } from '@/lib/auth'
 import { generateSlug } from '@/lib/utils'
 import { and, eq, ilike, or } from 'drizzle-orm'
@@ -16,7 +16,7 @@ export type FantasyLeague = typeof fantasy.$inferSelect & {
     }
 }
 
-type FantasyStatus = (typeof fantasyStatusEnum.enumValues)[number]
+type FantasyStatus = (typeof fantasyStatus.enumValues)[number]
 
 export async function getFantasyLeagues({
     search,
@@ -50,7 +50,7 @@ export async function getFantasyLeagues({
                 offset,
                 orderBy: (fantasy, { desc }) => [desc(fantasy.createdAt)],
                 with: {
-                    owner: {
+                    user: {
                         columns: {
                             name: true,
                         },
@@ -111,7 +111,7 @@ export async function getActiveFantasyLeagues({
                 offset,
                 orderBy: (fantasy, { desc }) => [desc(fantasy.createdAt)],
                 with: {
-                    owner: {
+                    user: {
                         columns: {
                             name: true,
                         },
@@ -155,7 +155,7 @@ export async function getFantasyLeagueByCode(slug: string) {
         const fantasyLeague = await db.query.fantasy.findFirst({
             where: eq(fantasy.id, league.id),
             with: {
-                owner: {
+                user: {
                     columns: {
                         name: true,
                         username: true,
@@ -167,14 +167,14 @@ export async function getFantasyLeagueByCode(slug: string) {
                         name: true,
                     },
                 },
-                scoreRules: {
+                scoreRule: {
                     columns: {
                         id: false,
                         createdAt: false,
                         updatedAt: false,
                     },
                 },
-                players: {
+                fantasyParticipants: {
                     with: {
                         user: {
                             columns: {
@@ -227,7 +227,7 @@ export async function getUserFantasyLeagues(username: string, old: boolean) {
         const results = await db.query.fantasy.findMany({
             where: conditions,
             with: {
-                players: {
+                fantasyParticipants: {
                     where: eq(fantasyParticipant.userId, userId[0].id),
                     columns: {
                         rank: true,
@@ -237,7 +237,7 @@ export async function getUserFantasyLeagues(username: string, old: boolean) {
             },
         })
 
-        const filtered = results.filter((l) => l.players.length >= 1)
+        const filtered = results.filter((l) => l.fantasyParticipants.length >= 1)
 
         return filtered
     } catch (error) {
@@ -285,7 +285,7 @@ export async function getFantasyLeagueParticipantsBySlug(slug: string) {
                 with: {
                     user: true,
                     fantasy: true,
-                    draftPicks: {
+                    draftsPicks: {
                         with: {
                             player: true,
                         },
@@ -346,12 +346,12 @@ export async function createFantasyLeague({
             scoreRulesId: '5Etfk9Y467NO1Ph3JFhGM',
             slug: slug ? generateSlug(slug) : generateSlug(name),
             joinCode,
-            minPlayer,
-            maxPlayer,
+            minimumPlayer: minPlayer,
+            maximumPlayer: maxPlayer,
             isPrivate,
             description,
-            startDate,
-            endDate,
+            startDate: startDate?.toDateString(),
+            endDate: endDate?.toDateString(),
             ownerId: session.user.id,
             status: 'pending',
         })

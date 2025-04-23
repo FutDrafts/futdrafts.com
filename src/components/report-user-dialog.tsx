@@ -15,7 +15,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
-import { ReportCategory } from '@/db/schema'
+
+type ReportCategory = 'transfers' | 'match-reports' | 'analysis' | 'interviews' | 'news'
 
 interface ReportUserDialogProps {
     open: boolean

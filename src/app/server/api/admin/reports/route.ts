@@ -1,7 +1,17 @@
 import { db } from '@/db'
-import { report, ReportCategory, ReportStatus, user } from '@/db/schema'
+import { report, user } from '@/db/schema'
 import { and, eq, ilike, or } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
+
+type ReportCategory =
+    | 'harassment'
+    | 'spam'
+    | 'inappropriate_behavior'
+    | 'hate_speech'
+    | 'cheating'
+    | 'impersonation'
+    | 'other'
+type ReportStatus = 'pending' | 'resolved' | 'dismissed'
 
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
@@ -36,12 +46,12 @@ export async function GET(request: NextRequest) {
             offset,
             orderBy: (report, { desc }) => [desc(report.createdAt)],
             with: {
-                reportedUser: true,
-                reportedByUser: true,
-                resolvedByUser: true,
-                comments: {
+                reportedBy: true,
+                reported: true,
+                resolvedBy: true,
+                reportComments: {
                     with: {
-                        admin: true,
+                        user: true,
                     },
                 },
             },

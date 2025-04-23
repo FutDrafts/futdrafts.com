@@ -6,7 +6,9 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 import { ReportTable, statusIcons } from './types'
-import { ReportStatus } from '@/db/schema'
+import { reportStatus } from '@/db/schema'
+
+type ReportStatus = (typeof reportStatus.enumValues)[number]
 
 interface ReportRowProps {
     report: ReportTable

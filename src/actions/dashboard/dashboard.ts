@@ -44,7 +44,7 @@ export const getDashboardActiveLeagues = async (limit: number) => {
                 limit,
                 orderBy: (fantasy, { desc }) => [desc(fantasy.createdAt)],
                 with: {
-                    owner: {
+                    user: {
                         columns: {
                             name: true,
                         },
@@ -54,7 +54,7 @@ export const getDashboardActiveLeagues = async (limit: number) => {
                             name: true,
                         },
                     },
-                    players: {
+                    fantasyParticipants: {
                         where: eq(fantasyParticipant.userId, session.user.id),
                         columns: {
                             rank: true,
@@ -65,9 +65,13 @@ export const getDashboardActiveLeagues = async (limit: number) => {
             }),
         ])
 
-        return {
-            fantasyLeagues,
+        for (const league of fantasyLeagues) {
+            if (league.fantasyParticipants.length == 0) {
+                return []
+            }
         }
+
+        return fantasyLeagues
     } catch (error) {
         console.error('Error fetching fantasy leagues:', error)
         throw new Error('Failed to fetch fantasy leagues')

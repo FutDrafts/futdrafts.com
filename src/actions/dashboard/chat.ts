@@ -18,8 +18,7 @@ export async function getChatMessages(leagueId: string) {
     const messages = await db.query.chatMessage.findMany({
         where: eq(chatMessage.leagueId, leagueId),
         with: {
-            sender: true,
-            replyTo: true,
+            user: true,
         },
         orderBy: (chatMessage, { asc }) => [asc(chatMessage.createdAt)],
     })

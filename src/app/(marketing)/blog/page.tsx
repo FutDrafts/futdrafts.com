@@ -46,7 +46,7 @@ export default async function BlogPage() {
                                 title={post.title}
                                 category={post.category}
                                 imageUrl={post.featuredImage || '/images/placeholder.jpg'}
-                                author={post.author.displayUsername ?? post.authorId}
+                                author={post.user.displayUsername ?? post.authorId}
                                 publishedAt={post.publishedAt ? new Date(post.publishedAt) : new Date(post.createdAt)}
                                 slug={post.slug}
                             />
@@ -76,7 +76,7 @@ export default async function BlogPage() {
                                     title={post.title}
                                     category={post.category}
                                     imageUrl={post.featuredImage || '/images/placeholder.jpg'}
-                                    author={post.author.displayUsername ?? post.authorId}
+                                    author={post.user.displayUsername ?? post.authorId}
                                     publishedAt={
                                         post.publishedAt ? new Date(post.publishedAt) : new Date(post.createdAt)
                                     }
@@ -100,7 +100,7 @@ export default async function BlogPage() {
                                     title={post.title}
                                     category={post.category}
                                     imageUrl={post.featuredImage || '/images/placeholder.jpg'}
-                                    author={post.author.displayUsername ?? post.authorId}
+                                    author={post.user.displayUsername ?? post.authorId}
                                     publishedAt={
                                         post.publishedAt ? new Date(post.publishedAt) : new Date(post.createdAt)
                                     }

@@ -142,7 +142,7 @@ export default function LeagueDetailsPage({ params }: { params: Promise<{ slug: 
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold">
-                                    {fantasyLeague.minPlayer}/{fantasyLeague.maxPlayer}
+                                    {fantasyLeague.minimumPlayer}/{fantasyLeague.maximumPlayer}
                                 </div>
                                 <p className="text-muted-foreground text-xs">Active players in league</p>
                             </CardContent>
@@ -155,7 +155,9 @@ export default function LeagueDetailsPage({ params }: { params: Promise<{ slug: 
                             <CardContent>
                                 <div className="text-2xl font-bold">{fantasyLeague.league.name}</div>
                                 <p className="text-muted-foreground text-xs">
-                                    {formatDate(fantasyLeague.startDate)} - {formatDate(fantasyLeague.endDate)}
+                                    {fantasyLeague.startDate && fantasyLeague.endDate
+                                        ? `${formatDate(new Date(fantasyLeague.startDate))} - ${formatDate(new Date(fantasyLeague.endDate))}`
+                                        : `${formatDate(null)} - ${formatDate(null)}`}
                                 </p>
                             </CardContent>
                         </Card>
@@ -167,7 +169,7 @@ export default function LeagueDetailsPage({ params }: { params: Promise<{ slug: 
                                 </Badge>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">{fantasyLeague.owner.name}</div>
+                                <div className="text-2xl font-bold">{fantasyLeague.user.name}</div>
                                 <p className="text-muted-foreground text-xs">League Owner</p>
                             </CardContent>
                         </Card>
@@ -201,19 +203,21 @@ export default function LeagueDetailsPage({ params }: { params: Promise<{ slug: 
                                             <h3 className="text-sm font-medium">Created by</h3>
                                             <div className="flex items-center gap-2">
                                                 <Avatar className="h-6 w-6">
-                                                    <AvatarImage src={fantasyLeague.owner.image ?? undefined} />
-                                                    <AvatarFallback>
-                                                        {fantasyLeague.owner.name.charAt(0)}
-                                                    </AvatarFallback>
+                                                    <AvatarImage src={fantasyLeague.user.image ?? undefined} />
+                                                    <AvatarFallback>{fantasyLeague.user.name.charAt(0)}</AvatarFallback>
                                                 </Avatar>
-                                                <Link href={`/dashboard/profile/${fantasyLeague.owner.username}`}>
-                                                    <span className="text-sm">{fantasyLeague.owner.name}</span>
+                                                <Link href={`/dashboard/profile/${fantasyLeague.user.username}`}>
+                                                    <span className="text-sm">{fantasyLeague.user.name}</span>
                                                 </Link>
                                             </div>
                                         </div>
                                         <div className="space-y-2">
                                             <h3 className="text-sm font-medium">Draft Start</h3>
-                                            <p className="text-sm">{formatDate(fantasyLeague.draftStart)}</p>
+                                            <p className="text-sm">
+                                                {fantasyLeague.draftStart
+                                                    ? formatDate(new Date(fantasyLeague.draftStart))
+                                                    : formatDate(null)}
+                                            </p>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -240,7 +244,7 @@ export default function LeagueDetailsPage({ params }: { params: Promise<{ slug: 
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
-                                                {!fantasyLeague.players ? (
+                                                {!fantasyLeague.fantasyParticipants ? (
                                                     <TableRow>
                                                         <TableCell
                                                             colSpan={6}
@@ -250,7 +254,7 @@ export default function LeagueDetailsPage({ params }: { params: Promise<{ slug: 
                                                         </TableCell>
                                                     </TableRow>
                                                 ) : (
-                                                    fantasyLeague.players.map((player) => (
+                                                    fantasyLeague.fantasyParticipants.map((player) => (
                                                         <TableRow key={player.id}>
                                                             <TableCell className="font-medium">{player.rank}</TableCell>
                                                             <TableCell>
@@ -324,25 +328,25 @@ export default function LeagueDetailsPage({ params }: { params: Promise<{ slug: 
                                                     <div className="flex justify-between">
                                                         <span>Goals:</span>
                                                         <span className="font-medium">
-                                                            {fantasyLeague.scoreRules.goals || 0} points
+                                                            {fantasyLeague.scoreRule.goals || 0} points
                                                         </span>
                                                     </div>
                                                     <div className="flex justify-between">
                                                         <span>Own Goals:</span>
                                                         <span className="font-medium">
-                                                            {fantasyLeague.scoreRules.ownGoal || 0} points
+                                                            {fantasyLeague.scoreRule.ownGoal || 0} points
                                                         </span>
                                                     </div>
                                                     <div className="flex justify-between">
                                                         <span>Clean Sheet:</span>
                                                         <span className="font-medium">
-                                                            {fantasyLeague.scoreRules.cleanSheet || 0} points
+                                                            {fantasyLeague.scoreRule.cleanSheet || 0} points
                                                         </span>
                                                     </div>
                                                     <div className="flex justify-between">
                                                         <span>Penalty Save:</span>
                                                         <span className="font-medium">
-                                                            {fantasyLeague.scoreRules.penaltySave || 0} points
+                                                            {fantasyLeague.scoreRule.penaltySave || 0} points
                                                         </span>
                                                     </div>
                                                 </div>
@@ -350,19 +354,19 @@ export default function LeagueDetailsPage({ params }: { params: Promise<{ slug: 
                                                     <div className="flex justify-between">
                                                         <span>Penalty Miss:</span>
                                                         <span className="font-medium">
-                                                            {fantasyLeague.scoreRules.penaltyMiss || 0} points
+                                                            {fantasyLeague.scoreRule.penaltyMiss || 0} points
                                                         </span>
                                                     </div>
                                                     <div className="flex justify-between">
                                                         <span>Yellow Card:</span>
                                                         <span className="font-medium">
-                                                            {fantasyLeague.scoreRules.yellowCard || 0} points
+                                                            {fantasyLeague.scoreRule.yellowCard || 0} points
                                                         </span>
                                                     </div>
                                                     <div className="flex justify-between">
                                                         <span>Red Card:</span>
                                                         <span className="font-medium">
-                                                            {fantasyLeague.scoreRules.redCard || 0} points
+                                                            {fantasyLeague.scoreRule.redCard || 0} points
                                                         </span>
                                                     </div>
                                                 </div>

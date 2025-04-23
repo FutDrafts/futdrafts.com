@@ -34,7 +34,7 @@ export async function joinWaitlist(data: WaitlistFormData) {
         // Insert into waitlist table
         await db.insert(waitlistUsers).values({
             email: result.data.email,
-            signupDate: new Date(),
+            signupDate: new Date().toDateString(),
         })
 
         await sendEmail({

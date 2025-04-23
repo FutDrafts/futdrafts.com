@@ -102,7 +102,7 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ slug: str
                             <div className="flex items-center gap-2">
                                 <Users className="text-muted-foreground h-4 w-4" />
                                 <span className="font-medium">
-                                    {leagueData.players.length}/{leagueData.maxPlayer} players
+                                    {leagueData.fantasyParticipants.length}/{leagueData.maximumPlayer} players
                                 </span>
                             </div>
                         </div>
