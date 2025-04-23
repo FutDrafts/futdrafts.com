@@ -14,18 +14,22 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { redirect } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { LogOutIcon, UsersIcon } from 'lucide-react'
+import { LogOutIcon, UserCog2Icon, UsersIcon } from 'lucide-react'
 import ThemeSwitcher from '@/components/theme-switcher'
+import { useRouter } from 'next/navigation'
 
 interface Props {
     user: {
         name: string
         profileImage: string | undefined
         role: string
+        impersonated: boolean
     }
 }
 
 export function AdminSidebarProfile({ user }: Props) {
+    const router = useRouter()
+
     const handleSignOut = async () => {
         await authClient.signOut({
             fetchOptions: {
@@ -65,6 +69,18 @@ export function AdminSidebarProfile({ user }: Props) {
                             Profile Settings
                         </Link>
                     </DropdownMenuItem>
+                    {user.impersonated && (
+                        <DropdownMenuItem
+                            onClick={() => {
+                                authClient.admin.stopImpersonating()
+
+                                router.push('/dashboard/profile')
+                            }}
+                        >
+                            <UserCog2Icon className="mr-2 size-4" />
+                            Stop Impersonating
+                        </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={handleSignOut}>
                         <LogOutIcon className="mr-2 h-4 w-4" />
                         Sign Out

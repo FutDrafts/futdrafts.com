@@ -21,13 +21,15 @@ export async function getLimitedUserInfo() {
             throw new Error('You are unauthorized to perform this action')
         }
 
-        const { user } = data
+        const { user, session } = data
         const { name, role, image } = user
+        const { impersonatedBy } = session
 
         return {
             name,
             role: role ?? 'User',
             profileImage: image ?? undefined,
+            impersonated: typeof impersonatedBy === 'string',
         }
     } catch (error) {
         console.error('Error fetching limited user info:', error)
