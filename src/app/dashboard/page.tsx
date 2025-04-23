@@ -130,11 +130,11 @@ export default async function DashboardPage() {
                                     <div className="space-y-1">
                                         <p className="font-medium">{league.name}</p>
                                         <p className="text-muted-foreground text-sm">
-                                            Position {league.players[0].rank} of {league.maxPlayer}
+                                            Position {league.players[0].rank || league.maxPlayer} of {league.maxPlayer}
                                         </p>
                                     </div>
                                     <div className="flex items-center gap-4">
-                                        {league.players[0].rank === 1 ? (
+                                        {league.players[0].rank && league.players[0].rank === 1 ? (
                                             <Badge>
                                                 <Trophy className="h-5 w-5 text-yellow-500" />
                                                 <span>1st Place!</span>
