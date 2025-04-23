@@ -15,8 +15,11 @@ import remarkGfm from 'remark-gfm'
 import { getPostById, updatePost } from '@/actions/posts'
 import { PostFormData } from '@/lib/validator'
 import { toast } from 'sonner'
-import { PostCategory, PostStatus } from '@/db/schema'
 import { UploadButton } from '@/components/ui/uploadthing'
+import { postCategory, postStatus } from '@/db/schema'
+
+type PostCategory = (typeof postCategory.enumValues)[number]
+type PostStatus = (typeof postStatus.enumValues)[number]
 
 const categories = [
     { value: 'transfers', label: 'Transfers' },

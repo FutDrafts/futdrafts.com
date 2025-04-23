@@ -19,12 +19,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         const reportData = await db.query.report.findFirst({
             where: eq(report.id, id),
             with: {
-                reportedUser: true,
-                reportedByUser: true,
-                resolvedByUser: true,
-                comments: {
+                reported: true,
+                reportedBy: true,
+                resolvedBy: true,
+                reportComments: {
                     with: {
-                        admin: true,
+                        user: true,
                     },
                 },
             },

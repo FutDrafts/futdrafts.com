@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
                 offset,
                 orderBy: (fantasy, { desc }) => [desc(fantasy.name)],
                 with: {
-                    owner: {
+                    user: {
                         columns: {
                             name: true,
                         },

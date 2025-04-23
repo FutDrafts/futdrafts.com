@@ -141,7 +141,7 @@ export async function updateChangelogEntry(id: string, formData: ChangelogFormDa
             version: validatedData.version || existingEntry.version,
             important: validatedData.important,
             published: validatedData.published,
-            updatedAt: new Date(),
+            updatedAt: new Date().toDateString(),
         }
 
         await db.update(changelog).set(updatedEntry).where(eq(changelog.id, id))

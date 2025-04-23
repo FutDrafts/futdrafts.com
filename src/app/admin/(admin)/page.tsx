@@ -140,7 +140,7 @@ export default async function AdminDashboard() {
                                             <div className="space-y-1">
                                                 <p className="font-medium">{article.title}</p>
                                                 <div className="text-muted-foreground flex text-sm">
-                                                    <span>{article.author.name}</span>
+                                                    <span>{article.user.name}</span>
                                                     <span className="mx-2">•</span>
                                                     <span>{new Date(article.createdAt).toLocaleString()}</span>
                                                 </div>

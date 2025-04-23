@@ -11,11 +11,11 @@ import { Trophy, Users, Search, Globe, Lock, ArrowUpRight, Info, Plus, Loader2 }
 import Link from 'next/link'
 import { getFantasyLeagues } from '@/actions/dashboard/fantasy'
 import { useQuery } from '@tanstack/react-query'
-import { fantasyStatusEnum } from '@/db/schema'
 import { getAllLeagueNames } from '@/actions/dashboard/leagues'
 import { toast } from 'sonner'
+import { fantasyStatus } from '@/db/schema'
 
-type FantasyStatus = (typeof fantasyStatusEnum.enumValues)[number]
+type FantasyStatus = (typeof fantasyStatus.enumValues)[number]
 type StatusOption = FantasyStatus | 'All Statuses'
 
 const competitions = ['All Competitions', 'Premier League', 'La Liga', 'Bundesliga', 'Serie A', 'UEFA Champions League']
@@ -141,7 +141,7 @@ export default function LeaguesPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">
-                            {fantasyLeagues.reduce((acc, league) => acc + league.maxPlayer, 0)}
+                            {fantasyLeagues.reduce((acc, league) => acc + league.maximumPlayer, 0)}
                         </div>
                         <div className="flex items-center text-xs text-green-500">
                             <ArrowUpRight className="mr-1 h-4 w-4" />
@@ -298,7 +298,7 @@ export default function LeaguesPage() {
                                                 <TableCell>
                                                     <div className="flex items-center gap-2">
                                                         <Users className="text-muted-foreground h-4 w-4" />
-                                                        {league.minPlayer}/{league.maxPlayer}
+                                                        {league.minimumPlayer}/{league.maximumPlayer}
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>{colorStatusCell(league.status as FantasyStatus)}</TableCell>

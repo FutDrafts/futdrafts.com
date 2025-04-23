@@ -21,7 +21,10 @@ export async function updateLeagueStatus(leagueId: string, newStatus: 'active' |
             throw new Error('You are unauthorized to perform this action')
         }
 
-        await db.update(league).set({ status: newStatus, updatedAt: new Date() }).where(eq(league.id, leagueId))
+        await db
+            .update(league)
+            .set({ status: newStatus, updatedAt: new Date().toDateString() })
+            .where(eq(league.id, leagueId))
         revalidatePath('/admin/leagues')
     } catch (error) {
         console.error('Error updating user role:', error)
