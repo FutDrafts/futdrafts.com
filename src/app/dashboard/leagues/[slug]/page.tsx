@@ -32,7 +32,6 @@ export default function LeagueDetailsPage({ params }: { params: Promise<{ slug: 
     const [copied, setCopied] = useState(false)
     const [isChatOpen, setIsChatOpen] = useState(false)
     const [activeTab, setActiveTab] = useState('overview')
-    const [started, setStarted] = useState(false)
 
     const { data: fantasyLeague, isLoading } = useQuery({
         queryKey: ['fantasy', 'league', slug],
@@ -51,7 +50,6 @@ export default function LeagueDetailsPage({ params }: { params: Promise<{ slug: 
 
     const handleDraft = () => {
         startDraft(fantasyLeague!.id)
-        setStarted(true)
     }
 
     const formatDate = (date: Date | null) => {
@@ -124,7 +122,9 @@ export default function LeagueDetailsPage({ params }: { params: Promise<{ slug: 
                                     Settings
                                 </Link>
                             </Button>
-                            {!started ? (
+                            {fantasyLeague.draftStatus === null ? (
+                                <div></div>
+                            ) : !fantasyLeague.draftStatus ? (
                                 <Button onClick={() => handleDraft()}>Start Draft</Button>
                             ) : (
                                 <Button asChild>
