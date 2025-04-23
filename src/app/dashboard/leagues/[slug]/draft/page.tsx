@@ -49,7 +49,6 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
     const { participants } = participantsData || {}
 
     const handlePlayerSelect = (player: PlayerTable) => {
-        console.log(player)
         setSelectedPlayer(player)
     }
 
@@ -57,8 +56,6 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
         if (!selectedPlayer) return
 
         try {
-            console.log('Drafting player:', selectedPlayer)
-
             await createDraftPick({
                 fantasyLeagueId: fantasyLeagueData!.id,
                 playerId: selectedPlayer.id,
