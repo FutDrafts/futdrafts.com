@@ -27,7 +27,7 @@ const upcomingMatches = [
 ]
 
 export default async function DashboardPage() {
-    const [{ fantasyLeagues: activeLeagues }, { totalLeagueCount, pendingLeagueCount }] = await Promise.all([
+    const [activeLeagues, { totalLeagueCount, pendingLeagueCount }] = await Promise.all([
         getDashboardActiveLeagues(3),
         getDashboardLeagueCounts(),
     ])
@@ -122,34 +122,42 @@ export default async function DashboardPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            {activeLeagues.map((league) => (
-                                <div
-                                    key={league.id}
-                                    className="flex items-center justify-between rounded-lg border p-4"
-                                >
-                                    <div className="space-y-1">
-                                        <p className="font-medium">{league.name}</p>
-                                        <p className="text-muted-foreground text-sm">
-                                            Position {league.players[0].rank || league.maxPlayer} of {league.maxPlayer}
-                                        </p>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        {league.players[0].rank && league.players[0].rank === 1 ? (
-                                            <Badge>
-                                                <Trophy className="h-5 w-5 text-yellow-500" />
-                                                <span>1st Place!</span>
-                                            </Badge>
-                                        ) : (
+                            {activeLeagues.length > 0 ? (
+                                activeLeagues.map((league) => (
+                                    <div
+                                        key={league.id}
+                                        className="flex items-center justify-between rounded-lg border p-4"
+                                    >
+                                        <div className="space-y-1">
+                                            <p className="font-medium">{league.name}</p>
                                             <p className="text-muted-foreground text-sm">
-                                                {league.players[0].points} pts
+                                                Position {league.fantasyParticipants[0].rank ?? league.maximumPlayer} of{' '}
+                                                {league.maximumPlayer}
                                             </p>
-                                        )}
-                                        <Button variant="ghost" size="sm" asChild>
-                                            <Link href={`/dashboard/leagues/${league.slug}`}>View</Link>
-                                        </Button>
+                                        </div>
+                                        <div className="flex items-center gap-4">
+                                            {league.fantasyParticipants[0].rank &&
+                                            league.fantasyParticipants[0].rank === 1 ? (
+                                                <Badge>
+                                                    <Trophy className="h-5 w-5 text-yellow-500" />
+                                                    <span>1st Place!</span>
+                                                </Badge>
+                                            ) : (
+                                                <p className="text-muted-foreground text-sm">
+                                                    {league.fantasyParticipants[0].points} pts
+                                                </p>
+                                            )}
+                                            <Button variant="ghost" size="sm" asChild>
+                                                <Link href={`/dashboard/leagues/${league.slug}`}>View</Link>
+                                            </Button>
+                                        </div>
                                     </div>
+                                ))
+                            ) : (
+                                <div className="flex h-full w-full items-center justify-center">
+                                    You are in no active leagues. You should join one!
                                 </div>
-                            ))}
+                            )}
                         </div>
                     </CardContent>
                 </Card>

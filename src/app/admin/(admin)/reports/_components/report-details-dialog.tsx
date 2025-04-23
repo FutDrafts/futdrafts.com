@@ -87,17 +87,17 @@ export function ReportDetailsDialog({
                                 <h4 className="font-medium">Reported User</h4>
                                 <div className="flex items-start gap-4 rounded-lg border p-4">
                                     <Avatar className="h-10 w-10">
-                                        <AvatarImage src={report.reportedUser.image ?? ''} />
-                                        <AvatarFallback>{report.reportedUser.name?.[0]?.toUpperCase()}</AvatarFallback>
+                                        <AvatarImage src={report.reported.image ?? ''} />
+                                        <AvatarFallback>{report.reported.name?.[0]?.toUpperCase()}</AvatarFallback>
                                     </Avatar>
                                     <div className="flex-1 space-y-1">
-                                        <p className="font-medium">{report.reportedUser.name}</p>
-                                        <p className="text-muted-foreground text-sm">{report.reportedUser.email}</p>
-                                        {report.reportedUser.banned && (
+                                        <p className="font-medium">{report.reported.name}</p>
+                                        <p className="text-muted-foreground text-sm">{report.reported.email}</p>
+                                        {report.reported.banned && (
                                             <div className="text-destructive text-sm">
                                                 Banned until:{' '}
-                                                {report.reportedUser.banExpires
-                                                    ? new Date(report.reportedUser.banExpires).toLocaleDateString()
+                                                {report.reported.banExpires
+                                                    ? new Date(report.reported.banExpires).toLocaleDateString()
                                                     : 'Permanently'}
                                             </div>
                                         )}
@@ -109,14 +109,12 @@ export function ReportDetailsDialog({
                                 <h4 className="font-medium">Reported By</h4>
                                 <div className="flex items-start gap-4 rounded-lg border p-4">
                                     <Avatar className="h-10 w-10">
-                                        <AvatarImage src={report.reportedByUser.image ?? ''} />
-                                        <AvatarFallback>
-                                            {report.reportedByUser.name?.[0]?.toUpperCase()}
-                                        </AvatarFallback>
+                                        <AvatarImage src={report.reported.image ?? ''} />
+                                        <AvatarFallback>{report.reported.name?.[0]?.toUpperCase()}</AvatarFallback>
                                     </Avatar>
                                     <div className="flex-1 space-y-1">
-                                        <p className="font-medium">{report.reportedByUser.name}</p>
-                                        <p className="text-muted-foreground text-sm">{report.reportedByUser.email}</p>
+                                        <p className="font-medium">{report.reported.name}</p>
+                                        <p className="text-muted-foreground text-sm">{report.reported.email}</p>
                                     </div>
                                 </div>
                             </div>
@@ -126,17 +124,17 @@ export function ReportDetailsDialog({
                     <TabsContent value="comments" className="space-y-4">
                         <ScrollArea className="h-[300px] rounded-md border p-4">
                             <div className="space-y-4">
-                                {report.comments && report.comments.length > 0 ? (
-                                    report.comments.toReversed().map((comment) => (
+                                {report.reportComments && report.reportComments.length > 0 ? (
+                                    report.reportComments.toReversed().map((comment) => (
                                         <div key={comment.id} className="space-y-2">
                                             <div className="flex items-center gap-2">
                                                 <Avatar className="h-6 w-6">
-                                                    <AvatarImage src={comment.admin.image ?? ''} />
+                                                    <AvatarImage src={comment.user.image ?? ''} />
                                                     <AvatarFallback>
-                                                        {comment.admin.name?.[0]?.toUpperCase()}
+                                                        {comment.user.name?.[0]?.toUpperCase()}
                                                     </AvatarFallback>
                                                 </Avatar>
-                                                <span className="text-sm font-medium">{comment.admin.name}</span>
+                                                <span className="text-sm font-medium">{comment.user.name}</span>
                                                 <span className="text-muted-foreground text-xs">
                                                     {new Date(comment.createdAt).toLocaleString()}
                                                 </span>

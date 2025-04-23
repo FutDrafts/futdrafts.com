@@ -19,7 +19,7 @@ import rehypeRaw from 'rehype-raw'
 import rehypeSanitize from 'rehype-sanitize'
 import remarkBreaks from 'remark-breaks'
 import React from 'react'
-import { post, user } from '@/db/schema'
+import { post } from '@/db/schema'
 
 type PostSchema = typeof post.$inferSelect & {
     author: {
@@ -83,8 +83,8 @@ export default function DraftPreview({ params }: { params: Promise<{ slug: strin
                 const processedPost: PostSchema = {
                     ...result,
                     author: {
-                        displayUsername: result.author.displayUsername || undefined,
-                        image: result.author.image || undefined,
+                        displayUsername: result.user.displayUsername || undefined,
+                        image: result.user.image || undefined,
                     },
                 }
 

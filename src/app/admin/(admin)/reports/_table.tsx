@@ -9,12 +9,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { updateUserBanStatus } from '@/actions/admin/user'
 import { toast } from 'sonner'
 import { updateReportStatus } from '@/actions/admin/reports'
-import { ReportStatus } from '@/db/schema'
 import { ReportTable, UserTable } from './_components/types'
 import { ReportFilters } from './_components/report-filters'
 import { ReportRow } from './_components/report-row'
 import { ReportDetailsDialog } from './_components/report-details-dialog'
 import { BanUserDialog } from './_components/ban-user-dialog'
+import { reportStatus } from '@/db/schema'
+
+type ReportStatus = (typeof reportStatus.enumValues)[number]
 
 const ITEMS_PER_PAGE = 5
 
@@ -176,13 +178,13 @@ export default function ReportsTable() {
                                         report={report}
                                         onViewDetails={(report) => {
                                             setSelectedReport(report)
-                                            setSelectedUser(report.reportedUser)
+                                            setSelectedUser(report.reported)
                                             setIsDetailsOpen(true)
                                         }}
                                         onStatusChange={handleStatusChange}
                                         onBanUser={(report) => {
                                             setSelectedReport(report)
-                                            setSelectedUser(report.reportedUser)
+                                            setSelectedUser(report.reported)
                                             setIsBanDialogOpen(true)
                                         }}
                                     />

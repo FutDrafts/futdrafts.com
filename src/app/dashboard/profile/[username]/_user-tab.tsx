@@ -202,7 +202,10 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile, le
                                             <Badge variant="default">{league.status}</Badge>
                                         </div>
                                         <div className="text-muted-foreground text-sm">
-                                            Season: {league.endDate?.getFullYear() ?? new Date().getFullYear()}
+                                            Season:{' '}
+                                            {league.endDate
+                                                ? new Date(league.endDate).getFullYear()
+                                                : new Date().getFullYear()}
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-4">
@@ -232,7 +235,7 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile, le
                 </CardContent>
             </Card>
 
-            {(isOwnProfile || data?.user.role === "admin") && currentSession && (
+            {(isOwnProfile || data?.user.role === 'admin') && currentSession && (
                 <Card>
                     <CardHeader>
                         <CardTitle>Active Sessions</CardTitle>

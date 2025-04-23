@@ -4,7 +4,7 @@ import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { getFantasyLeagueByCode, getFantasyLeagueById, getFantasyLeagueParticipants } from './fantasy'
 import { db } from '@/db'
-import { draftPick, fantasy, fantasyParticipant } from '@/db/schema'
+import { draftsPicks, fantasy, fantasyParticipant } from '@/db/schema'
 import { and, asc, eq, isNotNull } from 'drizzle-orm'
 import { shuffleInPlace } from '@/lib/utils'
 import { nanoid } from 'nanoid'
@@ -26,9 +26,9 @@ export const createDraftPick = async ({ fantasyLeagueId, playerId }: { fantasyLe
             throw new Error('League is not Active')
         }
 
-        const nextPick = await db.query.draftPick.findFirst({
-            where: and(eq(draftPick.fantasyLeagueId, fantasyLeagueId), eq(draftPick.status, 'pending')),
-            orderBy: asc(draftPick.pickNumber),
+        const nextPick = await db.query.draftsPicks.findFirst({
+            where: and(eq(draftsPicks.fantasyLeagueId, fantasyLeagueId), eq(draftsPicks.status, 'pending')),
+            orderBy: asc(draftsPicks.pickNumber),
         })
 
         if (!nextPick) {
@@ -43,10 +43,10 @@ export const createDraftPick = async ({ fantasyLeagueId, playerId }: { fantasyLe
             throw new Error('Invalid Pick Number')
         }
 
-        const existingPlayerPick = await db.query.draftPick.findFirst({
+        const existingPlayerPick = await db.query.draftsPicks.findFirst({
             where: and(
-                and(eq(draftPick.fantasyLeagueId, fantasyLeagueId), eq(draftPick.playerId, playerId)),
-                eq(draftPick.status, 'completed'),
+                and(eq(draftsPicks.fantasyLeagueId, fantasyLeagueId), eq(draftsPicks.playerId, playerId)),
+                eq(draftsPicks.status, 'completed'),
             ),
         })
 
@@ -56,30 +56,30 @@ export const createDraftPick = async ({ fantasyLeagueId, playerId }: { fantasyLe
 
         const now = new Date()
         await db
-            .update(draftPick)
+            .update(draftsPicks)
             .set({
                 playerId,
                 status: 'completed',
-                updatedAt: now,
+                updatedAt: now.toDateString(),
             })
-            .where(eq(draftPick.id, nextPick.id))
+            .where(eq(draftsPicks.id, nextPick.id))
 
         await db
             .update(fantasy)
             .set({ pickNumber: fantasyLeague.pickNumber + 1 })
             .where(eq(fantasy.id, fantasyLeague.id))
 
-        const remainingPicks = await db.query.draftPick.findFirst({
-            where: and(eq(draftPick.fantasyLeagueId, fantasyLeagueId), eq(draftPick.status, 'pending')),
+        const remainingPicks = await db.query.draftsPicks.findFirst({
+            where: and(eq(draftsPicks.fantasyLeagueId, fantasyLeagueId), eq(draftsPicks.status, 'pending')),
         })
 
         if (!remainingPicks) {
             await db.update(fantasy).set({ draftStatus: true }).where(eq(fantasy.id, fantasyLeagueId))
         }
 
-        const newNextPick = await db.query.draftPick.findFirst({
-            where: and(eq(draftPick.fantasyLeagueId, fantasyLeagueId), eq(draftPick.status, 'pending')),
-            orderBy: asc(draftPick.pickNumber),
+        const newNextPick = await db.query.draftsPicks.findFirst({
+            where: and(eq(draftsPicks.fantasyLeagueId, fantasyLeagueId), eq(draftsPicks.status, 'pending')),
+            orderBy: asc(draftsPicks.pickNumber),
         })
 
         revalidatePath(`/dashboard/leagues/${fantasyLeague.slug}/draft`)
@@ -117,7 +117,7 @@ export const startDraft = async (fantasyLeagueId: string) => {
             throw new Error('Not Enough Members to start draft')
         }
 
-        if (total > participants[0].fantasy.maxPlayer) {
+        if (total > participants[0].fantasy.maximumPlayer) {
             throw new Error('Too Many Members in your league')
         }
 
@@ -155,7 +155,7 @@ export const startDraft = async (fantasyLeagueId: string) => {
                 const user = currentOrder[i]
                 const pickNumber = (roundNum - 1) * users.length + pos
 
-                await db.insert(draftPick).values({
+                await db.insert(draftsPicks).values({
                     id: nanoid(),
                     userId: user.id,
                     fantasyLeagueId,
@@ -199,17 +199,17 @@ export const getAvailableDraftPlayers = async (slug: string) => {
             throw new Error("Fantasy league doesn't exist")
         }
 
-        const queryOne = await db.query.draftPick.findMany({
-            where: isNotNull(draftPick.playerId),
+        const queryOne = await db.query.draftsPicks.findMany({
+            where: isNotNull(draftsPicks.playerId),
         })
 
         const queryTwo = await db.query.player.findMany({
             with: {
-                statistics: true,
+                playerStatistics: true,
             },
         })
 
-        const leaguePlayers = queryTwo.filter((p) => p.statistics.leagueId === fantasyLeague.leagueId)
+        const leaguePlayers = queryTwo.filter((p) => p.playerStatistics.leagueId === fantasyLeague.leagueId)
 
         if (queryOne.length < 1) {
             return leaguePlayers
@@ -234,8 +234,8 @@ export const getFantasyLeagueDraftPicks = async (leagueId: string) => {
     }
 
     try {
-        const results = await db.query.draftPick.findMany({
-            where: eq(draftPick.fantasyLeagueId, leagueId),
+        const results = await db.query.draftsPicks.findMany({
+            where: eq(draftsPicks.fantasyLeagueId, leagueId),
         })
 
         console.log('RESULTS', results)

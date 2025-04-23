@@ -1,13 +1,15 @@
 'use server'
 
 import { db } from '@/db'
-import { post, PostCategory } from '@/db/schema'
+import { post } from '@/db/schema'
 import { eq, desc, and } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { nanoid } from 'nanoid'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { postSchema, type PostFormData } from '@/lib/validator'
+
+type PostCategory = 'transfers' | 'match-reports' | 'analysis' | 'interviews' | 'news'
 
 // Helper function to generate slug from title
 function generateSlug(title: string): string {
@@ -47,7 +49,7 @@ export async function createPost(formData: PostFormData) {
         slug,
         featuredImage: validatedData.featuredImage,
         authorId: session.user.id,
-        publishedAt: validatedData.status === 'published' ? new Date() : null,
+        publishedAt: validatedData.status === 'published' ? new Date().toDateString() : null,
     }
 
     await db.insert(post).values(newPost)
@@ -94,8 +96,8 @@ export async function updatePost(id: string, formData: PostFormData) {
         status: validatedData.status,
         slug: validatedData.slug || existingPost.slug,
         featuredImage: validatedData.featuredImage || existingPost.featuredImage,
-        publishedAt: !wasPublished && isNowPublished ? new Date() : existingPost.publishedAt,
-        updatedAt: new Date(),
+        publishedAt: !wasPublished && isNowPublished ? new Date().toDateString() : existingPost.publishedAt,
+        updatedAt: new Date().toDateString(),
     }
 
     await db.update(post).set(updatedPost).where(eq(post.id, id))
@@ -165,7 +167,7 @@ export async function getPosts(options?: {
         limit: limit,
         offset: (page - 1) * limit,
         with: {
-            author: {
+            user: {
                 columns: {
                     displayUsername: true,
                     image: true,
@@ -182,7 +184,7 @@ export async function getPostById(id: string) {
     const result = await db.query.post.findFirst({
         where: eq(post.id, id),
         with: {
-            author: {
+            user: {
                 columns: {
                     displayUsername: true,
                     image: true,
@@ -202,7 +204,7 @@ export async function getPostBySlug(slug: string) {
         const result = await db.query.post.findFirst({
             where: eq(post.slug, slug),
             with: {
-                author: {
+                user: {
                     columns: {
                         displayUsername: true,
                         image: true,
@@ -234,7 +236,7 @@ export async function getPublishedPosts(options?: { page?: number; limit?: numbe
         limit: limit,
         offset: (page - 1) * limit,
         with: {
-            author: {
+            user: {
                 columns: {
                     displayUsername: true,
                     image: true,
