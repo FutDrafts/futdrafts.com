@@ -1,1 +1,0 @@
-ALTER TABLE "player" ADD COLUMN "statistics_id" uuid NOT NULL;

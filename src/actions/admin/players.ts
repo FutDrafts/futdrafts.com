@@ -21,7 +21,7 @@ export async function getPlayerCount() {
         const data = await db
             .select({
                 totalUserCount: db.$count(player),
-                injuredPlayerCount: db.$count(player, eq(player.isInjured, true)),
+                injuredPlayerCount: db.$count(player, eq(player.injured, true)),
             })
             .from(player)
 

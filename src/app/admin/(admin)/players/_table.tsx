@@ -14,7 +14,7 @@ import Image from 'next/image'
 
 type PlayerTable = typeof player.$inferSelect & {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    statistics: { games: any } & {
+    playerStatistics: { games: any } & {
         team: {
             name: string
         }
@@ -138,18 +138,18 @@ export default function PlayersTable() {
                                         </TableCell>
                                         <TableCell className="font-medium">{player.name}</TableCell>
                                         <TableCell>{player.nationality}</TableCell>
-                                        <TableCell>{player.statistics.team.name}</TableCell>
-                                        <TableCell>{player.statistics.league.name}</TableCell>
-                                        <TableCell>{player.statistics.games?.position}</TableCell>
+                                        <TableCell>{player.playerStatistics.team.name}</TableCell>
+                                        <TableCell>{player.playerStatistics.league.name}</TableCell>
+                                        <TableCell>{player.playerStatistics.games?.position}</TableCell>
                                         <TableCell>
                                             <span
                                                 className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                                                    !player.isInjured
+                                                    !player.injured
                                                         ? 'bg-green-100 text-green-700 dark:bg-green-700/20 dark:text-green-500'
                                                         : 'bg-red-100 text-red-700 dark:bg-red-700/20 dark:text-red-500'
                                                 }`}
                                             >
-                                                {player.isInjured ? 'Injured' : 'Healthy'}
+                                                {player.injured ? 'Injured' : 'Healthy'}
                                             </span>
                                         </TableCell>
                                         <TableCell>

@@ -174,19 +174,26 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
                                                     </Badge>
                                                 </div>
                                                 <div className="text-muted-foreground text-sm">
-                                                    Season: {league.endDate?.getFullYear() ?? new Date().getFullYear()}
+                                                    Season:{' '}
+                                                    {league.endDate
+                                                        ? new Date(league.endDate).getFullYear()
+                                                        : new Date().getFullYear()}
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-4">
                                                 <div className="text-right">
                                                     <div className="font-medium">
-                                                        Position: {league.players && league.players[0].rank}
+                                                        Position:{' '}
+                                                        {league.fantasyParticipants &&
+                                                            league.fantasyParticipants[0].rank}
                                                     </div>
                                                     <div className="text-muted-foreground text-sm">
-                                                        {league.players && league.players[0].points} points
+                                                        {league.fantasyParticipants &&
+                                                            league.fantasyParticipants[0].points}{' '}
+                                                        points
                                                     </div>
                                                 </div>
-                                                {league.players[0].rank === 1 && (
+                                                {league.fantasyParticipants[0].rank === 1 && (
                                                     <TrophyIcon className="h-5 w-5 text-yellow-500" />
                                                 )}
                                             </div>

@@ -24,7 +24,7 @@ interface ChangelogEntry {
     title: string
     description: string
     version: string | null
-    date: Date
+    date: string
     published: boolean | null
     important: boolean | null
     authorId: string | null

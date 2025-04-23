@@ -15,7 +15,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 type PlayerStatsTable = typeof playerStatistics.$inferSelect
 type PlayerTable = typeof player.$inferSelect & {
-    statistics: PlayerStatsTable
+    playerStatistics: PlayerStatsTable
 }
 
 export default function DraftPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -128,7 +128,7 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
                                             <p className="text-sm text-gray-500">{team.user.displayUsername}</p>
                                         </div>
                                         <div className="flex space-x-2">
-                                            {team.draftPicks.map((pick) => (
+                                            {team.draftsPicks.map((pick) => (
                                                 <Badge key={pick.id} variant="secondary">
                                                     {pick.player && pick.player.name}
                                                 </Badge>
@@ -163,7 +163,7 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
                                         <div className="flex-1">
                                             <h3 className="font-medium">{player.name}</h3>
                                             <p className="text-sm text-gray-500">
-                                                {player.statistics.games?.position}
+                                                {player.playerStatistics.games?.position}
                                                 {/* {player.statistics.games?.position} • {player.statistics.team.name} */}
                                             </p>
                                         </div>

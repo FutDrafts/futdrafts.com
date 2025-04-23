@@ -21,9 +21,9 @@ export async function GET(request: NextRequest) {
 
     if (condition && condition !== 'all') {
         if (condition === 'healthy') {
-            conditions.push(eq(player.isInjured, false))
+            conditions.push(eq(player.injured, false))
         } else if (condition === 'injured') {
-            conditions.push(eq(player.isInjured, true))
+            conditions.push(eq(player.injured, true))
         }
     }
 
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
             limit,
             offset,
             with: {
-                statistics: {
+                playerStatistics: {
                     columns: {
                         games: true,
                     },

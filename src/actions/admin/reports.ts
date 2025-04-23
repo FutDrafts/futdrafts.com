@@ -1,11 +1,13 @@
 'use server'
 
 import { db } from '@/db'
-import { report, ReportStatus } from '@/db/schema'
+import { report } from '@/db/schema'
 import { auth } from '@/lib/auth'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
+
+type ReportStatus = 'pending' | 'resolved' | 'dismissed'
 
 export async function getReportCount() {
     try {
@@ -64,7 +66,7 @@ export async function updateReportStatus(reportId: string, newStatus: ReportStat
 
         await db
             .update(report)
-            .set({ status: newStatus, updatedAt: new Date(), resolvedByUserId: session.user.id })
+            .set({ status: newStatus, updatedAt: new Date().toDateString(), resolvedByUserId: session.user.id })
             .where(eq(report.id, reportId))
         revalidatePath('/admin/reports')
     } catch (error) {

@@ -137,7 +137,7 @@ export function LeagueChatSidebar({ isOpen, onClose, leagueCode, leagueId }: Lea
                         <div className="space-y-6">
                             {session &&
                                 messages?.map((msg) => {
-                                    const isCurrentUser = msg.sender.id === session.user.id
+                                    const isCurrentUser = msg.user.id === session.user.id
 
                                     return (
                                         <motion.div
@@ -156,10 +156,10 @@ export function LeagueChatSidebar({ isOpen, onClose, leagueCode, leagueId }: Lea
                                                 })}
                                             >
                                                 <Avatar className="mt-1 h-8 w-8">
-                                                    {msg.sender.image && (
-                                                        <AvatarImage src={msg.sender.image} alt={msg.sender.name} />
+                                                    {msg.user.image && (
+                                                        <AvatarImage src={msg.user.image} alt={msg.user.name} />
                                                     )}
-                                                    <AvatarFallback>{msg.sender.name.charAt(0)}</AvatarFallback>
+                                                    <AvatarFallback>{msg.user.name.charAt(0)}</AvatarFallback>
                                                 </Avatar>
                                                 <div>
                                                     <div
@@ -168,9 +168,9 @@ export function LeagueChatSidebar({ isOpen, onClose, leagueCode, leagueId }: Lea
                                                             'justify-start': !isCurrentUser,
                                                         })}
                                                     >
-                                                        <span className="text-sm font-medium">{msg.sender.name}</span>
+                                                        <span className="text-sm font-medium">{msg.user.name}</span>
                                                         <span className="text-muted-foreground text-xs">
-                                                            {formatTimestamp(msg.createdAt)}
+                                                            {formatTimestamp(new Date(msg.createdAt))}
                                                         </span>
                                                     </div>
 
@@ -184,11 +184,11 @@ export function LeagueChatSidebar({ isOpen, onClose, leagueCode, leagueId }: Lea
                                                             {msg.content}
                                                         </div>
 
-                                                        {msg.replyTo && (
+                                                        {/* {msg.replyTo && (
                                                             <div className="text-muted-foreground mt-1 text-xs">
                                                                 Replying to: {msg.replyTo.content}
                                                             </div>
-                                                        )}
+                                                        )} */}
 
                                                         {isCurrentUser && (
                                                             <div className="mt-1 flex justify-end">

@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
             category,
             reason,
             details: details || null,
-            createdAt: now,
-            updatedAt: now,
+            createdAt: now.toDateString(),
+            updatedAt: now.toDateString(),
         })
 
         return NextResponse.json({ success: true })
