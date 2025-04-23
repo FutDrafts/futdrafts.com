@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-        conditions.push(or(ilike(player.name, `%${search}`), ilike(player.nationality, `%${search}`)))
+        conditions.push(or(ilike(player.name, `%${search}%`), ilike(player.nationality, `%${search}%`)))
     }
 
     const where = conditions.length > 0 ? and(...conditions) : undefined

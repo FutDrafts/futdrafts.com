@@ -8,6 +8,7 @@ import { draftPick, fantasy, fantasyParticipant } from '@/db/schema'
 import { and, asc, eq, isNotNull } from 'drizzle-orm'
 import { shuffleInPlace } from '@/lib/utils'
 import { nanoid } from 'nanoid'
+import { revalidatePath } from 'next/cache'
 
 export const createDraftPick = async ({ fantasyLeagueId, playerId }: { fantasyLeagueId: string; playerId: string }) => {
     const session = await auth.api.getSession({
@@ -63,6 +64,11 @@ export const createDraftPick = async ({ fantasyLeagueId, playerId }: { fantasyLe
             })
             .where(eq(draftPick.id, nextPick.id))
 
+        await db
+            .update(fantasy)
+            .set({ pickNumber: fantasyLeague.pickNumber + 1 })
+            .where(eq(fantasy.id, fantasyLeague.id))
+
         const remainingPicks = await db.query.draftPick.findFirst({
             where: and(eq(draftPick.fantasyLeagueId, fantasyLeagueId), eq(draftPick.status, 'pending')),
         })
@@ -76,6 +82,7 @@ export const createDraftPick = async ({ fantasyLeagueId, playerId }: { fantasyLe
             orderBy: asc(draftPick.pickNumber),
         })
 
+        revalidatePath(`/dashboard/leagues/${fantasyLeague.slug}/draft`)
         return newNextPick
     } catch (error) {
         console.error(error)

@@ -162,7 +162,7 @@ export default function FantasyLeaguesTable() {
                                 <TableRow>
                                     <TableHead>Name</TableHead>
                                     <TableHead>Status</TableHead>
-                                    <TableHead>Private</TableHead>
+                                    <TableHead className="w-[100px]">Private</TableHead>
                                     <TableHead>Owner</TableHead>
                                     <TableHead>League</TableHead>
                                     <TableHead className="w-[50px]"></TableHead>
@@ -180,13 +180,13 @@ export default function FantasyLeaguesTable() {
                                         <TableCell>{colorStatusCell(league.status)}</TableCell>
                                         <TableCell>
                                             {league.isPrivate ? (
-                                                <span className="flex items-center gap-1 rounded-full bg-red-100/30 px-2 py-1 text-xs text-red-600">
-                                                    <LockIcon className="size-3" />
+                                                <span className="flex items-center gap-1 rounded-full border border-red-200 bg-red-100 px-2.5 py-1 text-xs font-medium text-red-600">
+                                                    <LockIcon className="size-3.5" />
                                                     Private
                                                 </span>
                                             ) : (
-                                                <span className="flex items-center gap-1 rounded-full bg-green-100/30 px-2 py-1 text-xs text-green-600">
-                                                    <GlobeIcon className="size-3" />
+                                                <span className="flex items-center gap-1 rounded-full border border-green-200 bg-green-100 px-2.5 py-1 text-xs font-medium text-green-600">
+                                                    <GlobeIcon className="size-3.5" />
                                                     Public
                                                 </span>
                                             )}
@@ -223,6 +223,7 @@ export default function FantasyLeaguesTable() {
                     )}
                 </div>
 
+                {/* Pagination */}
                 <div className="mt-4 flex items-center justify-between">
                     <div className="text-muted-foreground text-sm">
                         Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
@@ -238,16 +239,62 @@ export default function FantasyLeaguesTable() {
                             Previous
                         </Button>
                         <div className="flex items-center gap-1">
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                <Button
-                                    key={page}
-                                    variant={currentPage === page ? 'default' : 'outline'}
-                                    size="sm"
-                                    onClick={() => setCurrentPage(page)}
-                                >
-                                    {page}
-                                </Button>
-                            ))}
+                            {(() => {
+                                // Show limited page buttons to prevent overflow
+                                const visiblePages: ('ellipsis-start' | 'ellipsis-end' | number)[] = []
+                                const maxVisiblePages = 5
+
+                                if (totalPages <= maxVisiblePages) {
+                                    // Show all pages if there are few
+                                    visiblePages.push(...Array.from({ length: totalPages }, (_, i) => i + 1))
+                                } else {
+                                    // Always show first page
+                                    visiblePages.push(1)
+
+                                    // Calculate range around current page
+                                    const startPage = Math.max(2, currentPage - 1)
+                                    const endPage = Math.min(totalPages - 1, currentPage + 1)
+
+                                    // Add ellipsis if needed
+                                    if (startPage > 2) {
+                                        visiblePages.push('ellipsis-start')
+                                    }
+
+                                    // Add pages around current page
+                                    for (let i = startPage; i <= endPage; i++) {
+                                        visiblePages.push(i)
+                                    }
+
+                                    // Add ellipsis if needed
+                                    if (endPage < totalPages - 1) {
+                                        visiblePages.push('ellipsis-end')
+                                    }
+
+                                    // Always show last page
+                                    visiblePages.push(totalPages)
+                                }
+
+                                return visiblePages.map((page, index) => {
+                                    if (page === 'ellipsis-start' || page === 'ellipsis-end') {
+                                        return (
+                                            <span key={page} className="text-muted-foreground px-2">
+                                                ...
+                                            </span>
+                                        )
+                                    }
+
+                                    return (
+                                        <Button
+                                            key={`page-${page}-${index}`}
+                                            variant={currentPage === page ? 'default' : 'outline'}
+                                            size="sm"
+                                            onClick={() => setCurrentPage(page)}
+                                        >
+                                            {page}
+                                        </Button>
+                                    )
+                                })
+                            })()}
                         </div>
                         <Button
                             variant="outline"

@@ -1,98 +1,16 @@
-'use client'
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Users, Newspaper, TrendingUp, ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
-import { post, user } from '@/db/schema'
+import { getDashboardAnalytics, getRecentArticles, getRecentUsers } from '@/actions/admin/dashboard'
 
-type Post = typeof post.$inferSelect & {
-    author: typeof user.$inferSelect
-    views: number
-}
-type User = typeof user.$inferSelect
-
-export default function AdminDashboard() {
-    const [metrics, setMetrics] = useState({
-        totalUsers: '0',
-        activeUsers: '0',
-        totalArticles: '0',
-        dailyVisits: '0',
-        userGrowth: '0',
-        articleGrowth: '0',
-        visitsGrowth: '0',
-    })
-
-    const [recentArticles, setRecentArticles] = useState<Post[]>([])
-    const [recentUsers, setRecentUsers] = useState<User[]>([])
-    const [loading, setLoading] = useState(true)
-
-    useEffect(() => {
-        // Fetch real statistics
-        const fetchStats = async () => {
-            try {
-                // Replace with your actual API endpoint
-                const response = await fetch('/server/api/admin/statistics')
-                const data = await response.json()
-
-                setMetrics({
-                    totalUsers: data.totalUsers.toString(),
-                    activeUsers: data.activeUsers.toString(),
-                    totalArticles: data.totalArticles.toString(),
-                    dailyVisits: data.dailyVisits.toString(),
-                    userGrowth: data.userGrowth.toString(),
-                    articleGrowth: data.articleGrowth.toString(),
-                    visitsGrowth: data.visitsGrowth.toString(),
-                })
-            } catch (error) {
-                console.error('Failed to fetch statistics:', error)
-                // Fallback to sample data in case of error
-                setMetrics({
-                    totalUsers: '10.2k',
-                    activeUsers: '8.9k',
-                    totalArticles: '245',
-                    dailyVisits: '15.2k',
-                    userGrowth: '12.3',
-                    articleGrowth: '8.1',
-                    visitsGrowth: '-3.2',
-                })
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        // Fetch recent articles
-        const fetchRecentArticles = async () => {
-            try {
-                const response = await fetch('/server/api/admin/recent-articles')
-                const data = await response.json()
-                setRecentArticles(data.articles)
-            } catch (error) {
-                console.error('Failed to fetch recent articles:', error)
-                // Fallback to sample data
-                setRecentArticles([])
-            }
-        }
-
-        // Fetch recent users
-        const fetchRecentUsers = async () => {
-            try {
-                const response = await fetch('/server/api/admin/recent-users')
-                const data = await response.json()
-                setRecentUsers(data.users)
-            } catch (error) {
-                console.error('Failed to fetch recent users:', error)
-                // Fallback to sample data
-                setRecentUsers([])
-            }
-        }
-
-        fetchStats()
-        fetchRecentArticles()
-        fetchRecentUsers()
-    }, [])
+export default async function AdminDashboard() {
+    const [articles, users, metrics] = await Promise.all([
+        await getRecentArticles({ limit: 3 }),
+        await getRecentUsers({ limit: 3 }),
+        await getDashboardAnalytics(),
+    ])
 
     return (
         <div className="space-y-8">
@@ -125,20 +43,18 @@ export default function AdminDashboard() {
                         <Users className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{loading ? 'Loading...' : metrics.totalUsers}</div>
-                        {!loading && (
-                            <div
-                                className={`flex items-center text-xs ${parseFloat(metrics.userGrowth) >= 0 ? 'text-green-500' : 'text-red-500'}`}
-                            >
-                                {parseFloat(metrics.userGrowth) >= 0 ? (
-                                    <ArrowUpRight className="mr-1 h-4 w-4" />
-                                ) : (
-                                    <ArrowDownRight className="mr-1 h-4 w-4" />
-                                )}
-                                {parseFloat(metrics.userGrowth) >= 0 ? '+' : ''}
-                                {metrics.userGrowth}% from last month
-                            </div>
-                        )}
+                        <div className="text-2xl font-bold">{metrics.totalUsers}</div>
+                        <div
+                            className={`flex items-center text-xs ${parseFloat(metrics.userGrowth) >= 0 ? 'text-green-500' : 'text-red-500'}`}
+                        >
+                            {parseFloat(metrics.userGrowth) >= 0 ? (
+                                <ArrowUpRight className="mr-1 h-4 w-4" />
+                            ) : (
+                                <ArrowDownRight className="mr-1 h-4 w-4" />
+                            )}
+                            {parseFloat(metrics.userGrowth) >= 0 ? '+' : ''}
+                            {metrics.userGrowth}% from last month
+                        </div>
                     </CardContent>
                 </Card>
                 <Card>
@@ -147,20 +63,18 @@ export default function AdminDashboard() {
                         <Newspaper className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{loading ? 'Loading...' : metrics.totalArticles}</div>
-                        {!loading && (
-                            <div
-                                className={`flex items-center text-xs ${parseFloat(metrics.articleGrowth) >= 0 ? 'text-green-500' : 'text-red-500'}`}
-                            >
-                                {parseFloat(metrics.articleGrowth) >= 0 ? (
-                                    <ArrowUpRight className="mr-1 h-4 w-4" />
-                                ) : (
-                                    <ArrowDownRight className="mr-1 h-4 w-4" />
-                                )}
-                                {parseFloat(metrics.articleGrowth) >= 0 ? '+' : ''}
-                                {metrics.articleGrowth}% from last month
-                            </div>
-                        )}
+                        <div className="text-2xl font-bold">{metrics.totalArticles}</div>
+                        <div
+                            className={`flex items-center text-xs ${parseFloat(metrics.articleGrowth) >= 0 ? 'text-green-500' : 'text-red-500'}`}
+                        >
+                            {parseFloat(metrics.articleGrowth) >= 0 ? (
+                                <ArrowUpRight className="mr-1 h-4 w-4" />
+                            ) : (
+                                <ArrowDownRight className="mr-1 h-4 w-4" />
+                            )}
+                            {parseFloat(metrics.articleGrowth) >= 0 ? '+' : ''}
+                            {metrics.articleGrowth}% from last month
+                        </div>
                     </CardContent>
                 </Card>
                 <Card>
@@ -169,20 +83,19 @@ export default function AdminDashboard() {
                         <TrendingUp className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{loading ? 'Loading...' : metrics.dailyVisits}</div>
-                        {!loading && (
-                            <div
-                                className={`flex items-center text-xs ${parseFloat(metrics.visitsGrowth) >= 0 ? 'text-green-500' : 'text-red-500'}`}
-                            >
-                                {parseFloat(metrics.visitsGrowth) >= 0 ? (
-                                    <ArrowUpRight className="mr-1 h-4 w-4" />
-                                ) : (
-                                    <ArrowDownRight className="mr-1 h-4 w-4" />
-                                )}
-                                {parseFloat(metrics.visitsGrowth) >= 0 ? '+' : ''}
-                                {metrics.visitsGrowth}% from yesterday
-                            </div>
-                        )}
+                        <div className="text-2xl font-bold">{metrics.dailyVisits}</div>
+
+                        <div
+                            className={`flex items-center text-xs ${parseFloat(metrics.visitsGrowth) >= 0 ? 'text-green-500' : 'text-red-500'}`}
+                        >
+                            {parseFloat(metrics.visitsGrowth) >= 0 ? (
+                                <ArrowUpRight className="mr-1 h-4 w-4" />
+                            ) : (
+                                <ArrowDownRight className="mr-1 h-4 w-4" />
+                            )}
+                            {parseFloat(metrics.visitsGrowth) >= 0 ? '+' : ''}
+                            {metrics.visitsGrowth}% from yesterday
+                        </div>
                     </CardContent>
                 </Card>
                 <Card>
@@ -191,17 +104,15 @@ export default function AdminDashboard() {
                         <Users className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{loading ? 'Loading...' : metrics.activeUsers}</div>
-                        {!loading && (
-                            <p className="text-muted-foreground text-xs">
-                                {(
-                                    (parseInt(metrics.activeUsers.replace(/[^\d]/g, '')) /
-                                        parseInt(metrics.totalUsers.replace(/[^\d]/g, ''))) *
-                                    100
-                                ).toFixed(1)}
-                                % of total users
-                            </p>
-                        )}
+                        <div className="text-2xl font-bold">{metrics.activeUsers}</div>
+                        <p className="text-muted-foreground text-xs">
+                            {(
+                                (parseInt(metrics.activeUsers.replace(/[^\d]/g, '')) /
+                                    parseInt(metrics.totalUsers.replace(/[^\d]/g, ''))) *
+                                100
+                            ).toFixed(1)}
+                            % of total users
+                        </p>
                     </CardContent>
                 </Card>
             </div>
@@ -220,8 +131,8 @@ export default function AdminDashboard() {
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {recentArticles ? (
-                                    recentArticles.map((article) => (
+                                {articles ? (
+                                    articles.map((article) => (
                                         <div
                                             key={article.id}
                                             className="flex items-center justify-between rounded-lg border p-4"
@@ -235,9 +146,6 @@ export default function AdminDashboard() {
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-4">
-                                                <div className="text-muted-foreground text-sm">
-                                                    {article.views ?? 0} views
-                                                </div>
                                                 <Button variant="ghost" size="sm" asChild>
                                                     <Link href={`/admin/blog/edit/${article.id}`}>Edit</Link>
                                                 </Button>
@@ -259,8 +167,8 @@ export default function AdminDashboard() {
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {recentUsers ? (
-                                    recentUsers.map((user) => (
+                                {users ? (
+                                    users.map((user) => (
                                         <div
                                             key={user.id}
                                             className="flex items-center justify-between rounded-lg border p-4"

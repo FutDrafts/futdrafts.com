@@ -200,56 +200,60 @@ export default function TeamsTable() {
                         </Button>
                         <div className="flex items-center gap-1">
                             {(() => {
-                                const pageButtons = []
+                                // Show limited page buttons to prevent overflow
+                                const visiblePages: ('ellipsis-start' | 'ellipsis-end' | number)[] = []
                                 const maxVisiblePages = 5
 
-                                if (totalPages > 0) {
-                                    pageButtons.push(
+                                if (totalPages <= maxVisiblePages) {
+                                    // Show all pages if there are few
+                                    visiblePages.push(...Array.from({ length: totalPages }, (_, i) => i + 1))
+                                } else {
+                                    // Always show first page
+                                    visiblePages.push(1)
+
+                                    // Calculate range around current page
+                                    const startPage = Math.max(2, currentPage - 1)
+                                    const endPage = Math.min(totalPages - 1, currentPage + 1)
+
+                                    // Add ellipsis if needed
+                                    if (startPage > 2) {
+                                        visiblePages.push('ellipsis-start')
+                                    }
+
+                                    // Add pages around current page
+                                    for (let i = startPage; i <= endPage; i++) {
+                                        visiblePages.push(i)
+                                    }
+
+                                    // Add ellipsis if needed
+                                    if (endPage < totalPages - 1) {
+                                        visiblePages.push('ellipsis-end')
+                                    }
+
+                                    // Always show last page
+                                    visiblePages.push(totalPages)
+                                }
+
+                                return visiblePages.map((page, index) => {
+                                    if (page === 'ellipsis-start' || page === 'ellipsis-end') {
+                                        return (
+                                            <span key={page} className="text-muted-foreground px-2">
+                                                ...
+                                            </span>
+                                        )
+                                    }
+
+                                    return (
                                         <Button
-                                            key={1}
-                                            variant={currentPage === 1 ? 'default' : 'outline'}
+                                            key={`page-${page}-${index}`}
+                                            variant={currentPage === page ? 'default' : 'outline'}
                                             size="sm"
-                                            onClick={() => setCurrentPage(1)}
+                                            onClick={() => setCurrentPage(page)}
                                         >
-                                            1
-                                        </Button>,
+                                            {page}
+                                        </Button>
                                     )
-                                }
-
-                                const startPage = Math.max(2, currentPage - Math.floor(maxVisiblePages / 2))
-                                const endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 2)
-
-                                for (let i = startPage; i <= endPage; i++) {
-                                    pageButtons.push(
-                                        <Button
-                                            key={i}
-                                            variant={currentPage === i ? 'default' : 'outline'}
-                                            size="sm"
-                                            onClick={() => setCurrentPage(i)}
-                                        >
-                                            {i}
-                                        </Button>,
-                                    )
-                                }
-
-                                if (endPage < totalPages - 1) {
-                                    pageButtons.push(<span key="ellipsis-end">...</span>)
-                                }
-
-                                if (totalPages > 1) {
-                                    pageButtons.push(
-                                        <Button
-                                            key={totalPages}
-                                            variant={currentPage === totalPages ? 'default' : 'outline'}
-                                            size="sm"
-                                            onClick={() => setCurrentPage(totalPages)}
-                                        >
-                                            {totalPages}
-                                        </Button>,
-                                    )
-                                }
-
-                                return pageButtons
+                                })
                             })()}
                         </div>
                         <Button

@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { DASHBOARD_NAVIGATION_ITEMS } from '@/lib/constants'
-import { XIcon, MenuIcon, MessageSquareIcon } from 'lucide-react'
+import { XIcon, MenuIcon, MessageSquareIcon, ShieldPlusIcon } from 'lucide-react'
 import {
     DropdownMenu,
     DropdownMenuTrigger,
@@ -103,10 +103,18 @@ export function DashboardNavbar({ session }: Props) {
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem asChild>
                                     <Link href="/dashboard/profile">
-                                        <UserIcon className="mr-2 h-4 w-4" />
+                                        <UserIcon className="mr-2 size-4" />
                                         Profile
                                     </Link>
                                 </DropdownMenuItem>
+                                {session?.user.role === 'admin' && (
+                                    <DropdownMenuItem asChild>
+                                        <Link href="/admin">
+                                            <ShieldPlusIcon className="mr-2 size-4" />
+                                            Admin Dashboard
+                                        </Link>
+                                    </DropdownMenuItem>
+                                )}
                                 <DropdownMenuItem onClick={handleSignOut}>
                                     <LogOutIcon className="mr-2 h-4 w-4" />
                                     Sign Out
