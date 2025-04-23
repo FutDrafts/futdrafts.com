@@ -1,3 +1,4 @@
+CREATE TYPE "public"."draft_pick_stauts" AS ENUM('pending', 'completed');--> statement-breakpoint
 CREATE TYPE "public"."fantasy_status" AS ENUM('pending', 'active', 'ended', 'cancelled');--> statement-breakpoint
 CREATE TYPE "public"."fixture_status" AS ENUM('upcoming', 'in_progress', 'finished', 'cancelled');--> statement-breakpoint
 CREATE TYPE "public"."league_status" AS ENUM('active', 'upcoming', 'disabled');--> statement-breakpoint
@@ -60,12 +61,27 @@ CREATE TABLE "config" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "drafts_picks" (
+	"id" text PRIMARY KEY NOT NULL,
+	"fantasy_league_id" text NOT NULL,
+	"player_id" text,
+	"user_id" text NOT NULL,
+	"fantasy_participant_id" text NOT NULL,
+	"pick_number" integer NOT NULL,
+	"round_number" integer NOT NULL,
+	"status" "draft_pick_stauts" DEFAULT 'pending',
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "fantasy" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"owner_id" text NOT NULL,
 	"league_id" text NOT NULL,
 	"score_rules_id" text NOT NULL,
+	"draft_status" boolean DEFAULT false,
+	"pick_number" integer DEFAULT 1,
 	"status" "fantasy_status" DEFAULT 'pending' NOT NULL,
 	"slug" text NOT NULL,
 	"join_code" text NOT NULL,
@@ -90,7 +106,8 @@ CREATE TABLE "fantasy_participant" (
 	"status" "participant_status" DEFAULT 'pending' NOT NULL,
 	"team_name" text,
 	"points" integer DEFAULT 0,
-	"rank" integer,
+	"rank" integer DEFAULT 1,
+	"draft_position" integer,
 	"last_active" timestamp,
 	"joined_at" timestamp DEFAULT now() NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -140,7 +157,7 @@ CREATE TABLE "player" (
 	"height" numeric NOT NULL,
 	"weight" numeric NOT NULL,
 	"injured" boolean NOT NULL,
-	"statistics_id" uuid NOT NULL,
+	"statistics_id" text NOT NULL,
 	"profile_picture" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
@@ -148,7 +165,7 @@ CREATE TABLE "player" (
 );
 --> statement-breakpoint
 CREATE TABLE "player_statistics" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
 	"team_id" text NOT NULL,
 	"league_id" text NOT NULL,
