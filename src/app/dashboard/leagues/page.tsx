@@ -125,7 +125,11 @@ export default function LeaguesPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">
-                            {fantasyLeagues.filter((league) => league.status === 'active').length}
+                            {
+                                fantasyLeagues.filter(
+                                    (league) => league.status === 'active' || league.status === 'pending',
+                                ).length
+                            }
                         </div>
                         <p className="text-muted-foreground text-xs">Across all competitions</p>
                     </CardContent>
@@ -300,19 +304,23 @@ export default function LeaguesPage() {
                                                 <TableCell>{colorStatusCell(league.status as FantasyStatus)}</TableCell>
                                                 <TableCell className="text-right">
                                                     <div className="flex items-center justify-end gap-2">
-                                                        <Button variant="ghost" size="icon" asChild>
-                                                            <Link href={`/dashboard/leagues/${league.slug}`}>
-                                                                <Info className="h-4 w-4" />
-                                                            </Link>
-                                                        </Button>
                                                         {league.isPrivate ? (
                                                             <Button disabled>Request to Join</Button>
                                                         ) : (
-                                                            <Button size="sm" asChild>
-                                                                <Link href={`/dashboard/leagues/${league.slug}/join`}>
-                                                                    Join
-                                                                </Link>
-                                                            </Button>
+                                                            <>
+                                                                <Button variant="ghost" size="icon" asChild>
+                                                                    <Link href={`/dashboard/leagues/${league.slug}`}>
+                                                                        <Info className="h-4 w-4" />
+                                                                    </Link>
+                                                                </Button>
+                                                                <Button size="sm" asChild>
+                                                                    <Link
+                                                                        href={`/dashboard/leagues/${league.slug}/join`}
+                                                                    >
+                                                                        Join
+                                                                    </Link>
+                                                                </Button>
+                                                            </>
                                                         )}
                                                     </div>
                                                 </TableCell>
