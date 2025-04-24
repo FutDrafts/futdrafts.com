@@ -14,22 +14,22 @@ import { createChangelogEntry } from '@/actions/changelog'
 import { z } from 'zod'
 import { MarkdownEditor } from '@/components/ui/markdown-editor'
 
-const changelogSchema = z.object({
+const changelogFormSchema = z.object({
     title: z.string().min(3, { message: 'Title must be at least 3 characters' }),
     description: z.string().min(10, { message: 'Description must be at least 10 characters' }),
     version: z.string().optional(),
-    important: z.boolean().default(false),
-    published: z.boolean().default(false),
+    important: z.boolean(),
+    published: z.boolean(),
 })
 
-export type ChangelogFormData = z.infer<typeof changelogSchema>
+export type ChangelogFormData = z.infer<typeof changelogFormSchema>
 
 export default function NewChangelogEntryPage() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const router = useRouter()
 
     const form = useForm<ChangelogFormData>({
-        resolver: zodResolver(changelogSchema),
+        resolver: zodResolver(changelogFormSchema),
         defaultValues: {
             title: '',
             description: '',

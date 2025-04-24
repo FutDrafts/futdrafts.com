@@ -24,15 +24,15 @@ const formSchema = z.object({
     name: z.string().min(3, 'League name must be at least 3 characters'),
     description: z.string().optional(),
     leagueId: z.string().min(1, 'Please select a league'),
-    status: z.enum(['pending', 'active', 'ended', 'cancelled']).default('pending'),
     slug: z.string().min(3, 'Slug must be at least 3 characters'),
     joinCode: z.string().min(6, 'Join code must be at least 6 characters'),
     minPlayer: z.number().min(2, 'Minimum players must be at least 2').max(8, 'Minimum players cannot exceed 8'),
     maxPlayer: z.number().min(2, 'Maximum players must be at least 2').max(8, 'Maximum players cannot exceed 8'),
-    isPrivate: z.boolean().default(false),
-    startDate: z.date().default(new Date()),
-    endDate: z.date().default(new Date()),
+    isPrivate: z.boolean(),
+    startDate: z.date().optional(),
+    endDate: z.date().optional(),
     teamName: z.string(),
+    status: z.enum(['pending', 'active', 'ended', 'cancelled']).optional(),
 })
 
 export default function CreateLeaguePage() {
@@ -63,7 +63,6 @@ export default function CreateLeaguePage() {
             name: '',
             description: '',
             leagueId: '',
-            status: 'pending',
             slug: '',
             joinCode: generateLeagueCode(),
             minPlayer: 2,
@@ -72,14 +71,22 @@ export default function CreateLeaguePage() {
             startDate: new Date(),
             endDate: new Date(),
             teamName: '',
+            status: 'pending',
         },
     })
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         setLoading(true)
         try {
-            console.log(values)
-            const { message } = await createFantasyLeague(values)
+            // Make sure any optional fields are properly handled
+            const payload = {
+                ...values,
+                startDate: values.startDate || new Date(),
+                endDate: values.endDate || new Date(),
+                status: values.status || 'pending',
+            }
+
+            const { message } = await createFantasyLeague(payload)
             toast.success(message)
         } catch (error) {
             console.error('Failed to create league:', error)
