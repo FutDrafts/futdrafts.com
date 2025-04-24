@@ -33,8 +33,6 @@ export const metadata: Metadata = {
         shortcut: '/favicon-16x16.png',
     },
     manifest: '/manifest.json',
-    themeColor: '#ffffff',
-    viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
     openGraph: {
         title: 'FutDrafts - Global Fantasy Football Drafts',
         description:

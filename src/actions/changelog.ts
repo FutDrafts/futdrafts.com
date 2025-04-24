@@ -9,12 +9,13 @@ import { nanoid } from 'nanoid'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+// Schema for validation of server-side data
 const changelogSchema = z.object({
     title: z.string().min(3, { message: 'Title must be at least 3 characters' }),
     description: z.string().min(10, { message: 'Description must be at least 10 characters' }),
     version: z.string().optional(),
-    important: z.boolean().default(false),
-    published: z.boolean().default(false),
+    important: z.boolean(),
+    published: z.boolean(),
 })
 
 type ChangelogFormData = z.infer<typeof changelogSchema>
