@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
     ArrowLeft,
-    Settings,
     Share2,
     MessageSquare,
     Users,
@@ -13,6 +12,7 @@ import {
     Globe,
     Lock,
     MoreVerticalIcon,
+    Users2Icon,
 } from 'lucide-react'
 import Link from 'next/link'
 import { LeagueChatSidebar } from './_components/league-chat-sidebar'
@@ -117,9 +117,9 @@ export default function LeagueDetailsPage({ params }: { params: Promise<{ slug: 
                                 Chat
                             </Button>
                             <Button variant="outline" asChild>
-                                <Link href={`/dashboard/leagues/${slug}/settings`}>
-                                    <Settings className="mr-2 h-4 w-4" />
-                                    Settings
+                                <Link href={`/dashboard/leagues/${slug}/team`}>
+                                    <Users2Icon className="mr-2 h-4 w-4" />
+                                    View Team
                                 </Link>
                             </Button>
                             {fantasyLeague.draftStatus === null ? (
