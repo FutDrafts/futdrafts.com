@@ -12,6 +12,7 @@ import {
     SettingsIcon,
     ClipboardListIcon,
     ShieldUserIcon,
+    BookUserIcon,
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -39,6 +40,11 @@ const SIDEBAR_GROUPS = [
                 title: 'User Management',
                 href: '/admin/users',
                 icon: UsersIcon,
+            },
+            {
+                title: 'Waitlist Users',
+                href: '/admin/waitlist',
+                icon: BookUserIcon,
             },
             {
                 title: 'Reports',
