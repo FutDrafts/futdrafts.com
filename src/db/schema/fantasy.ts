@@ -70,7 +70,6 @@ export const chatMessage = pgTable('chat_message', {
     content: text().notNull(),
     type: messageType().default('text').notNull(),
     status: messageStatus().default('sent').notNull(),
-    replyToId: text('reply_to_id'),
     metadata: jsonb(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),

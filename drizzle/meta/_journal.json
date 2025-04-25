@@ -8,6 +8,20 @@
       "when": 1745548838993,
       "tag": "0000_mysterious_newton_destine",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1745556732665,
+      "tag": "0001_low_nightshade",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1745556967972,
+      "tag": "0002_narrow_nehzno",
+      "breakpoints": true
     }
   ]
 }

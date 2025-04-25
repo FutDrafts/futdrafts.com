@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, use } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -9,9 +9,10 @@ import { Badge } from '@/components/ui/badge'
 import { AlertCircleIcon, Loader2 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { getFantasyLeagueByCode, getFantasyLeagueParticipantsBySlug } from '@/actions/dashboard/fantasy'
-import { createDraftPick, getAvailableDraftPlayers } from '@/actions/dashboard/draft'
+import { createDraftPick, getAvailableDraftPlayers, getCurrentDraftPick } from '@/actions/dashboard/draft'
 import { player, playerStatistics } from '@/db/schema'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { cn } from '@/lib/utils'
 
 type PlayerStatsTable = typeof playerStatistics.$inferSelect
 type PlayerTable = typeof player.$inferSelect & {
@@ -41,6 +42,11 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
         queryFn: () => getFantasyLeagueParticipantsBySlug(slug),
     })
 
+    const { data: currentPick, isLoading: isLoadingCurrent } = useQuery({
+        queryKey: ['fantasy', 'league', 'draft', slug, 'pick'],
+        queryFn: () => getCurrentDraftPick(slug),
+    })
+
     if (error) {
         return <p>Error Loading League Data</p>
     }
@@ -67,7 +73,7 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
         }
     }
 
-    if (isLoadingFantasy || isLoadingPlayers || isLoadingParticipants) {
+    if (isLoadingFantasy || isLoadingPlayers || isLoadingParticipants || isLoadingCurrent) {
         return (
             <div className="flex h-screen items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin" />
@@ -85,6 +91,12 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
                 </Card>
             </div>
         )
+    }
+
+    let current
+
+    if (currentPick !== 'ended') {
+        current = participants?.find((participant) => participant.id === currentPick)
     }
 
     return (
@@ -110,6 +122,15 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
                 <Card className="lg:col-span-2">
                     <CardHeader>
                         <CardTitle>Draft Board</CardTitle>
+                        <CardDescription>
+                            {currentPick === 'ended' && <p>Draft Ended</p>}
+                            {current && currentPick !== 'ended' && current.id === currentPick && (
+                                <div>
+                                    <span>Current Pick:</span>
+                                    <Badge>{current.teamName}</Badge>
+                                </div>
+                            )}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="flex flex-col gap-3">
@@ -117,7 +138,9 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
                                 participants.map((team) => (
                                     <div
                                         key={team.id}
-                                        className="flex items-center space-x-4 rounded-md border border-gray-200 px-2 py-1 dark:border-neutral-700"
+                                        className={cn(
+                                            `flex items-center space-x-4 rounded-md border px-2 py-2 ${currentPick !== 'ended' && team.id === currentPick ? 'border-green-200 dark:border-green-700' : 'border-gray-200 dark:border-neutral-700'}"`,
+                                        )}
                                     >
                                         <Avatar>
                                             <AvatarImage src={team.user.image ?? undefined} alt={team.user.name} />
@@ -171,7 +194,7 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
                                 ))}
                             </div>
                         </ScrollArea>
-                        {selectedPlayer && (
+                        {selectedPlayer && fantasyLeagueData.draftStatus === 'started' && (
                             <div className="mt-4">
                                 <Button className="w-full" onClick={handleDraftPlayer} disabled={!selectedPlayer}>
                                     Draft {selectedPlayer.name}
