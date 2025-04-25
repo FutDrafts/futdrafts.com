@@ -21,4 +21,4 @@ export const reportCategory = pgEnum('report_category', [
 ])
 export const reportStatus = pgEnum('report_status', ['pending', 'resolved', 'dismissed'])
 export const venueSurface = pgEnum('venue_surface', ['artificial turf'])
-export const draftStatus = pgEnum('draft_status', ['pending', 'started', 'finished'])
+export const draftStatus = pgEnum('draft_status', ['pending', 'in-progress', 'finished'])

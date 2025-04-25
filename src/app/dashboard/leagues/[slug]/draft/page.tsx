@@ -194,7 +194,7 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
                                 ))}
                             </div>
                         </ScrollArea>
-                        {selectedPlayer && fantasyLeagueData.draftStatus === 'started' && (
+                        {selectedPlayer && fantasyLeagueData.draftStatus === 'in-progress' && (
                             <div className="mt-4">
                                 <Button className="w-full" onClick={handleDraftPlayer} disabled={!selectedPlayer}>
                                     Draft {selectedPlayer.name}
