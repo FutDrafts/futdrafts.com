@@ -127,7 +127,7 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
                                             <h3 className="font-medium">{team.teamName}</h3>
                                             <p className="text-sm text-gray-500">{team.user.displayUsername}</p>
                                         </div>
-                                        <div className="flex space-x-2">
+                                        <div className="flex flex-wrap gap-2 space-x-2">
                                             {team.draftsPicks.map((pick) => (
                                                 <Badge key={pick.id} variant="secondary">
                                                     {pick.player && pick.player.name}

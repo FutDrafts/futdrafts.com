@@ -32,7 +32,7 @@ export async function PATCH(request: Request) {
             .update(config)
             .set({
                 value,
-                updatedAt: new Date().toDateString(),
+                updatedAt: new Date(),
                 updatedBy: session.user.id,
             })
             .where(eq(config.key, key))

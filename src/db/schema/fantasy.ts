@@ -1,6 +1,14 @@
-import { pgTable, text, integer, timestamp, boolean, foreignKey, unique, jsonb } from 'drizzle-orm/pg-core'
+import { pgTable, text, integer, timestamp, boolean, jsonb } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm/relations'
-import { fantasyStatus, draftPickStauts, participantRole, participantStatus, messageType, messageStatus } from './enums'
+import {
+    fantasyStatus,
+    draftPickStauts,
+    participantRole,
+    participantStatus,
+    messageType,
+    messageStatus,
+    draftStatus,
+} from './enums'
 import { user } from './auth'
 import { league, player } from './sports'
 
@@ -13,112 +21,60 @@ export const scoreRules = pgTable('score_rules', {
     penaltyMiss: integer('penalty_miss'),
     yellowCard: integer('yellow_card'),
     redCard: integer('red_card'),
-    createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
-    updatedAt: timestamp('updated_at', { mode: 'string' }).defaultNow().notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const fantasy = pgTable(
-    'fantasy',
-    {
-        id: text().primaryKey().notNull(),
-        name: text().notNull(),
-        ownerId: text('owner_id').notNull(),
-        leagueId: text('league_id').notNull(),
-        scoreRulesId: text('score_rules_id').notNull(),
-        status: fantasyStatus().default('pending').notNull(),
-        minimumPlayer: integer('minimum_player').default(2).notNull(),
-        maximumPlayer: integer('maximum_player').default(8).notNull(),
-        isPrivate: boolean('is_private').default(false).notNull(),
-        createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
-        updatedAt: timestamp('updated_at', { mode: 'string' }).defaultNow().notNull(),
-        joinCode: text('join_code').notNull(),
-        slug: text().notNull(),
-        description: text(),
-        startDate: timestamp('start_date', { mode: 'string' }),
-        endDate: timestamp('end_date', { mode: 'string' }),
-        draftStart: timestamp('draft_start', { mode: 'string' }),
-        draftStatus: boolean('draft_status').default(false),
-        pickNumber: integer('pick_number').default(1),
-    },
-    (table) => [
-        foreignKey({
-            columns: [table.leagueId],
-            foreignColumns: [league.id],
-            name: 'fantasy_league_id_league_id_fk',
-        }),
-        foreignKey({
-            columns: [table.ownerId],
-            foreignColumns: [user.id],
-            name: 'fantasy_owner_id_user_id_fk',
-        }),
-        foreignKey({
-            columns: [table.scoreRulesId],
-            foreignColumns: [scoreRules.id],
-            name: 'fantasy_score_rules_id_score_rules_id_fk',
-        }),
-        unique('fantasy_name_unique').on(table.name),
-        unique('fantasy_slug_unique').on(table.slug),
-    ],
-)
+export const fantasy = pgTable('fantasy', {
+    id: text().primaryKey().notNull(),
+    name: text().notNull(),
+    ownerId: text('owner_id').notNull(),
+    leagueId: text('league_id').notNull(),
+    scoreRulesId: text('score_rules_id').notNull(),
+    status: fantasyStatus().default('pending').notNull(),
+    minimumPlayer: integer('minimum_player').default(2).notNull(),
+    maximumPlayer: integer('maximum_player').default(8).notNull(),
+    isPrivate: boolean('is_private').default(false).notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+    joinCode: text('join_code').notNull(),
+    slug: text().notNull(),
+    description: text(),
+    startDate: timestamp('start_date'),
+    endDate: timestamp('end_date'),
+    draftStart: timestamp('draft_start'),
+    draftStatus: draftStatus('draft_status').default('pending').notNull(),
+    pickNumber: integer('pick_number').default(1),
+})
 
-export const fantasyParticipant = pgTable(
-    'fantasy_participant',
-    {
-        id: text().primaryKey().notNull(),
-        fantasyId: text('fantasy_id').notNull(),
-        userId: text('user_id').notNull(),
-        role: participantRole().default('player').notNull(),
-        status: participantStatus().default('pending').notNull(),
-        teamName: text('team_name'),
-        points: integer().default(0),
-        rank: integer().default(1),
-        lastActive: timestamp('last_active', { mode: 'string' }),
-        joinedAt: timestamp('joined_at', { mode: 'string' }).defaultNow().notNull(),
-        createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
-        updatedAt: timestamp('updated_at', { mode: 'string' }).defaultNow().notNull(),
-        draftPosition: integer('draft_position'),
-    },
-    (table) => [
-        foreignKey({
-            columns: [table.fantasyId],
-            foreignColumns: [fantasy.id],
-            name: 'fantasy_participant_fantasy_id_fantasy_id_fk',
-        }),
-        foreignKey({
-            columns: [table.userId],
-            foreignColumns: [user.id],
-            name: 'fantasy_participant_user_id_user_id_fk',
-        }),
-    ],
-)
+export const fantasyParticipant = pgTable('fantasy_participant', {
+    id: text().primaryKey().notNull(),
+    fantasyId: text('fantasy_id').notNull(),
+    userId: text('user_id').notNull(),
+    role: participantRole().default('player').notNull(),
+    status: participantStatus().default('pending').notNull(),
+    teamName: text('team_name'),
+    points: integer().default(0),
+    rank: integer().default(1),
+    lastActive: timestamp('last_active'),
+    joinedAt: timestamp('joined_at').defaultNow().notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+    draftPosition: integer('draft_position'),
+})
 
-export const chatMessage = pgTable(
-    'chat_message',
-    {
-        id: text().primaryKey().notNull(),
-        leagueId: text('league_id').notNull(),
-        senderId: text('sender_id').notNull(),
-        content: text().notNull(),
-        type: messageType().default('text').notNull(),
-        status: messageStatus().default('sent').notNull(),
-        replyToId: text('reply_to_id'),
-        metadata: jsonb(),
-        createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
-        updatedAt: timestamp('updated_at', { mode: 'string' }).defaultNow().notNull(),
-    },
-    (table) => [
-        foreignKey({
-            columns: [table.senderId],
-            foreignColumns: [user.id],
-            name: 'chat_message_sender_id_user_id_fk',
-        }),
-        foreignKey({
-            columns: [table.leagueId],
-            foreignColumns: [fantasy.id],
-            name: 'chat_message_league_id_fantasy_id_fk',
-        }),
-    ],
-)
+export const chatMessage = pgTable('chat_message', {
+    id: text().primaryKey().notNull(),
+    leagueId: text('league_id').notNull(),
+    senderId: text('sender_id').notNull(),
+    content: text().notNull(),
+    type: messageType().default('text').notNull(),
+    status: messageStatus().default('sent').notNull(),
+    replyToId: text('reply_to_id'),
+    metadata: jsonb(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
 
 export const draftsPicks = pgTable('drafts_picks', {
     id: text().primaryKey().notNull(),
@@ -129,8 +85,8 @@ export const draftsPicks = pgTable('drafts_picks', {
     pickNumber: integer('pick_number').notNull(),
     roundNumber: integer('round_number').notNull(),
     status: draftPickStauts().default('pending'),
-    createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
-    updatedAt: timestamp('updated_at', { mode: 'string' }).defaultNow().notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
 export const scoreRulesRelations = relations(scoreRules, ({ many }) => ({
