@@ -1,0 +1,1 @@
+ALTER TYPE "public"."draft_pick_stauts" RENAME TO "draft_pick_status";
