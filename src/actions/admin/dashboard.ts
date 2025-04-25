@@ -89,10 +89,7 @@ export async function getDashboardAnalytics() {
             await db.$count(user, and(lt(user.createdAt, thisMonth))),
             await db.$count(user, gte(user.lastLogin, sevenDaysAgo)),
             await db.$count(post),
-            await db.$count(
-                post,
-                and(lt(post.createdAt, thisMonth.toDateString()), gte(post.createdAt, lastMonth.toDateString())),
-            ),
+            await db.$count(post, and(lt(post.createdAt, thisMonth), gte(post.createdAt, lastMonth))),
         ])
 
         const userGrowth =

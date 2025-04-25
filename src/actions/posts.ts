@@ -49,7 +49,7 @@ export async function createPost(formData: PostFormData) {
         slug,
         featuredImage: validatedData.featuredImage,
         authorId: session.user.id,
-        publishedAt: validatedData.status === 'published' ? new Date().toDateString() : null,
+        publishedAt: validatedData.status === 'published' ? new Date() : null,
     }
 
     await db.insert(post).values(newPost)
@@ -96,8 +96,8 @@ export async function updatePost(id: string, formData: PostFormData) {
         status: validatedData.status,
         slug: validatedData.slug || existingPost.slug,
         featuredImage: validatedData.featuredImage || existingPost.featuredImage,
-        publishedAt: !wasPublished && isNowPublished ? new Date().toDateString() : existingPost.publishedAt,
-        updatedAt: new Date().toDateString(),
+        publishedAt: !wasPublished && isNowPublished ? new Date() : existingPost.publishedAt,
+        updatedAt: new Date(),
     }
 
     await db.update(post).set(updatedPost).where(eq(post.id, id))
