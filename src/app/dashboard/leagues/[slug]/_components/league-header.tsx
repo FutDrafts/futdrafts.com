@@ -1,0 +1,106 @@
+'use client'
+
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { ArrowLeft, Share2, MessageSquare, Globe, Lock, Users2Icon } from 'lucide-react'
+import Link from 'next/link'
+import { LeagueChatSidebar } from './league-chat-sidebar'
+import { cn } from '@/lib/utils'
+import { startDraft } from '@/actions/dashboard/draft'
+import { FantasyLeagueType } from './types'
+
+interface LeagueHeaderProps {
+    fantasyLeague: FantasyLeagueType
+    leagueCode: string
+}
+
+export function LeagueHeader({ fantasyLeague, leagueCode }: LeagueHeaderProps) {
+    const [copied, setCopied] = useState(false)
+    const [isChatOpen, setIsChatOpen] = useState(false)
+
+    const copyInviteLink = () => {
+        navigator.clipboard.writeText(`https://futdrafts.com/leagues/${leagueCode}/join`)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+    }
+
+    const toggleChat = () => {
+        setIsChatOpen(!isChatOpen)
+    }
+
+    const handleDraft = () => {
+        startDraft(fantasyLeague.id)
+    }
+
+    return (
+        <>
+            <div className={cn('flex-1 transition-all duration-300', isChatOpen ? 'mr-80 md:mr-96' : '')}>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <Button variant="ghost" size="icon" asChild>
+                            <Link href="/dashboard/leagues">
+                                <ArrowLeft className="h-5 w-5" />
+                            </Link>
+                        </Button>
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <h1 className="text-3xl font-bold">{fantasyLeague.name}</h1>
+                                <Badge variant={fantasyLeague.isPrivate ? 'outline' : 'secondary'}>
+                                    {fantasyLeague.isPrivate ? (
+                                        <Lock className="mr-1 h-3 w-3" />
+                                    ) : (
+                                        <Globe className="mr-1 h-3 w-3" />
+                                    )}
+                                    {fantasyLeague.isPrivate ? 'Private' : 'Public'}
+                                </Badge>
+                            </div>
+                            <p className="text-muted-foreground">{fantasyLeague.description}</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-2">
+                        <Button variant="outline" onClick={copyInviteLink}>
+                            <Share2 className="mr-2 h-4 w-4" />
+                            {copied ? 'Copied!' : 'Share'}
+                        </Button>
+                        <Button
+                            variant={isChatOpen ? 'default' : 'outline'}
+                            onClick={toggleChat}
+                            className={isChatOpen ? 'bg-primary' : ''}
+                        >
+                            <MessageSquare className="mr-2 h-4 w-4" />
+                            Chat
+                        </Button>
+                        <Button variant="outline" asChild>
+                            <Link href={`/dashboard/leagues/${leagueCode}/team`}>
+                                <Users2Icon className="mr-2 h-4 w-4" />
+                                View Team
+                            </Link>
+                        </Button>
+                        {fantasyLeague.draftStatus === null ? (
+                            <div></div>
+                        ) : !fantasyLeague.draftStatus ? (
+                            <Button onClick={() => handleDraft()}>Start Draft</Button>
+                        ) : (
+                            <Button asChild>
+                                <Link href={`/dashboard/leagues/${leagueCode}/draft`}>Go To Draft</Link>
+                            </Button>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Chat Sidebar */}
+            <div className="fixed top-0 right-0 h-full">
+                {isChatOpen && (
+                    <LeagueChatSidebar
+                        isOpen={isChatOpen}
+                        onClose={() => setIsChatOpen(false)}
+                        leagueCode={leagueCode}
+                        leagueId={fantasyLeague.id}
+                    />
+                )}
+            </div>
+        </>
+    )
+}
