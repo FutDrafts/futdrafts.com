@@ -238,11 +238,54 @@ export const getFantasyLeagueDraftPicks = async (leagueId: string) => {
             where: eq(draftsPicks.fantasyLeagueId, leagueId),
         })
 
-        console.log('RESULTS', results)
-
         return results
     } catch (error) {
         console.error(error)
         throw new Error('Failed to get Fantasy League Draft Picks')
+    }
+}
+
+export const getCurrentDraftPick = async (slug: string) => {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    })
+
+    if (!session) {
+        throw new Error('Unauthorized')
+    }
+
+    try {
+        const results = await db
+            .select({ id: fantasy.id, pickNumber: fantasy.pickNumber, status: fantasy.draftStatus })
+            .from(fantasy)
+            .where(eq(fantasy.slug, slug))
+
+        if (!results || results.length < 1) {
+            throw new Error('No Fantasy League')
+        }
+
+        const { id: fantasyId, pickNumber, status } = results[0]
+
+        if (!pickNumber) {
+            throw new Error('Draft Not Started!')
+        }
+
+        const participant = await db
+            .select({ participantId: draftsPicks.userId })
+            .from(draftsPicks)
+            .where(and(eq(draftsPicks.fantasyLeagueId, fantasyId), eq(draftsPicks.pickNumber, pickNumber)))
+
+        if ((!participant || participant.length < 1) && status === 'started') {
+            throw new Error('No Player Pick')
+        }
+
+        if (participant.length === 1) {
+            return participant[0].participantId
+        } else {
+            return 'ended'
+        }
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed to get current draft pick')
     }
 }

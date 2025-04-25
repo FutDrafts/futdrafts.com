@@ -26,7 +26,7 @@ export async function getChatMessages(leagueId: string) {
     return messages
 }
 
-export async function sendChatMessage(leagueId: string, content: string, replyToId?: string) {
+export async function sendChatMessage(leagueId: string, content: string) {
     const session = await auth.api.getSession({
         headers: await headers(),
     })
@@ -41,7 +41,6 @@ export async function sendChatMessage(leagueId: string, content: string, replyTo
             leagueId,
             senderId: session.user.id,
             content,
-            replyToId,
             type: 'text',
             status: 'sent',
         })

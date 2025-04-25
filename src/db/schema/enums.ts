@@ -1,6 +1,6 @@
 import { pgEnum } from 'drizzle-orm/pg-core'
 
-export const draftPickStauts = pgEnum('draft_pick_stauts', ['pending', 'completed'])
+export const draftPickStauts = pgEnum('draft_pick_status', ['pending', 'completed'])
 export const fantasyStatus = pgEnum('fantasy_status', ['pending', 'active', 'ended', 'cancelled'])
 export const fixtureStatus = pgEnum('fixture_status', ['upcoming', 'in_progress', 'finished', 'cancelled'])
 export const leagueStatus = pgEnum('league_status', ['active', 'upcoming', 'disabled'])
