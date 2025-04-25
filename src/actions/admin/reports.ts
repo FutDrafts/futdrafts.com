@@ -66,7 +66,7 @@ export async function updateReportStatus(reportId: string, newStatus: ReportStat
 
         await db
             .update(report)
-            .set({ status: newStatus, updatedAt: new Date().toDateString(), resolvedByUserId: session.user.id })
+            .set({ status: newStatus, updatedAt: new Date(), resolvedByUserId: session.user.id })
             .where(eq(report.id, reportId))
         revalidatePath('/admin/reports')
     } catch (error) {

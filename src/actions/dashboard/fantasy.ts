@@ -305,6 +305,41 @@ export async function getFantasyLeagueParticipantsBySlug(slug: string) {
     }
 }
 
+export async function getFantasyLeagueParticipantById(userId: string, slug: string) {
+    try {
+        const results = await db.select({ leagueId: fantasy.id }).from(fantasy).where(eq(fantasy.slug, slug))
+
+        console.log(results)
+
+        if (results.length < 1) {
+            throw new Error('No League Found')
+        }
+
+        const { leagueId } = results[0]
+
+        const participant = await db.query.fantasyParticipant.findFirst({
+            where: and(eq(fantasyParticipant.fantasyId, leagueId), eq(fantasyParticipant.userId, userId)),
+            with: {
+                draftsPicks: {
+                    with: {
+                        player: true,
+                    },
+                },
+                user: true,
+            },
+        })
+
+        if (!participant) {
+            throw new Error('No Participants Found')
+        }
+
+        return participant
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed to get League Participant')
+    }
+}
+
 export async function createFantasyLeague({
     name,
     leagueId,
@@ -350,8 +385,8 @@ export async function createFantasyLeague({
             maximumPlayer: maxPlayer,
             isPrivate,
             description,
-            startDate: startDate?.toDateString(),
-            endDate: endDate?.toDateString(),
+            startDate: startDate,
+            endDate: endDate,
             ownerId: session.user.id,
             status: 'pending',
         })
