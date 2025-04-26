@@ -14,20 +14,38 @@ import { useQuery } from '@tanstack/react-query'
 import { getAllLeagueNames } from '@/actions/dashboard/leagues'
 import { toast } from 'sonner'
 import { fantasyStatus } from '@/db/schema'
+import { Combobox } from '@/components/ui/combobox'
 
 type FantasyStatus = (typeof fantasyStatus.enumValues)[number]
 
-const competitions = ['All Competitions', 'Premier League', 'La Liga', 'Bundesliga', 'Serie A', 'UEFA Champions League']
-const regions = ['Global', 'Europe', 'Americas', 'Asia', 'Africa']
 const types = ['All Types', 'public', 'private']
 
 export default function LeaguesPage() {
     const [searchQuery, setSearchQuery] = useState('')
-    const [selectedCompetition, setSelectedCompetition] = useState('All Competitions')
-    const [selectedRegion, setSelectedRegion] = useState('Global')
+    const competition = useState({ label: 'All Competitions', value: 'all' })
+    const competionValue = useState('all')
     const [selectedType, setSelectedType] = useState('All Types')
     const [currentPage, setCurrentPage] = useState(1)
     const ITEMS_PER_PAGE = 10
+
+    const { data: competitionData, error: competitionError } = useQuery({
+        queryKey: ['fantasy', 'leagues', 'soccer'],
+        queryFn: async () => {
+            return getAllLeagueNames()
+        },
+    })
+
+    if (competitionError) {
+        ;<div className="flex items-center justify-center">
+            <p className="text-destructive">Error Loading Data. Please try again later</p>
+        </div>
+    }
+
+    const { leagues: competitions = [] } = competitionData || {}
+    const transformedLeagues = competitions.map((comp) => ({
+        label: comp.name,
+        value: comp.id,
+    }))
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['fantasy', 'leagues', currentPage, searchQuery, ITEMS_PER_PAGE],
@@ -187,30 +205,13 @@ export default function LeaguesPage() {
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
                             </div>
-                            <Select value={selectedCompetition} onValueChange={setSelectedCompetition}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Competition" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {competitions.map((competition) => (
-                                        <SelectItem key={competition} value={competition}>
-                                            {competition}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Region" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {regions.map((region) => (
-                                        <SelectItem key={region} value={region}>
-                                            {region}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <Combobox
+                                options={transformedLeagues}
+                                value={competition[0].value}
+                                onValueChange={competionValue[1]}
+                                placeholder="All Competitions"
+                                emptyText="No competitions found."
+                            />
                             <Select value={selectedType} onValueChange={setSelectedType}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select Type" />
