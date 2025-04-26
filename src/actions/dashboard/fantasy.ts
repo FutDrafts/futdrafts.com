@@ -373,13 +373,15 @@ export async function createFantasyLeague({
         throw new Error('Unauthorized')
     }
 
+    const genSlug = slug ? generateSlug(slug) : generateSlug(name)
+
     try {
         await db.insert(fantasy).values({
             id: crypto.randomUUID(),
             name,
             leagueId,
             scoreRulesId: '5Etfk9Y467NO1Ph3JFhGM',
-            slug: slug ? generateSlug(slug) : generateSlug(name),
+            slug: genSlug,
             joinCode,
             minimumPlayer: minPlayer,
             maximumPlayer: maxPlayer,
@@ -404,6 +406,7 @@ export async function createFantasyLeague({
 
         return {
             message: 'Successfully created new fantasy league',
+            slug: genSlug,
         }
     } catch (error) {
         console.error('Error creating fantasy league:', error)
