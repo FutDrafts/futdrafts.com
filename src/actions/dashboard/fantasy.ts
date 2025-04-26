@@ -20,21 +20,17 @@ type FantasyStatus = (typeof fantasyStatus.enumValues)[number]
 
 export async function getFantasyLeagues({
     search,
-    status,
     page = 1,
     limit = 10,
 }: {
     search?: string
-    status?: FantasyStatus | 'all'
     page?: number
     limit?: number
 }) {
     const offset = (page - 1) * limit
     const conditions = []
 
-    if (status && status !== 'all') {
-        conditions.push(eq(fantasy.status, status))
-    }
+    conditions.push(eq(fantasy.status, 'pending'))
 
     if (search) {
         conditions.push(ilike(fantasy.name, `%${search}%`))
