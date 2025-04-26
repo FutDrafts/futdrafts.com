@@ -20,13 +20,13 @@ import Link from 'next/link'
 interface LeagueChatSidebarProps {
     isOpen: boolean
     onClose: () => void
-    leagueCode: string
+    leagueSlug: string
     leagueId: string
 }
 
 const emojis = ['👍', '❤️', '😂', '😮', '😢', '😡']
 
-export function LeagueChatSidebar({ isOpen, onClose, leagueCode, leagueId }: LeagueChatSidebarProps) {
+export function LeagueChatSidebar({ isOpen, onClose, leagueSlug, leagueId }: LeagueChatSidebarProps) {
     const [newMessage, setNewMessage] = useState('')
     const [showEmojiPicker, setShowEmojiPicker] = useState(false)
     const scrollAreaRef = useRef<HTMLDivElement>(null)
@@ -49,7 +49,7 @@ export function LeagueChatSidebar({ isOpen, onClose, leagueCode, leagueId }: Lea
     const sendMessageMutation = useMutation({
         mutationFn: (content: string) => sendChatMessage(leagueId, content),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['chat', 'messages', leagueCode] })
+            queryClient.invalidateQueries({ queryKey: ['chat', 'messages', leagueSlug] })
             setNewMessage('')
         },
     })

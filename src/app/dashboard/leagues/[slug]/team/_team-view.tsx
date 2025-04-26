@@ -16,7 +16,7 @@ interface Props {
     slug: string
     players: PlayerType[]
     league: {
-        draftStatus: 'finished' | 'pending' | 'started'
+        draftStatus: 'finished' | 'pending' | 'in-progress'
     }
 }
 

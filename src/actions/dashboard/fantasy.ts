@@ -20,21 +20,17 @@ type FantasyStatus = (typeof fantasyStatus.enumValues)[number]
 
 export async function getFantasyLeagues({
     search,
-    status,
     page = 1,
     limit = 10,
 }: {
     search?: string
-    status?: FantasyStatus | 'all'
     page?: number
     limit?: number
 }) {
     const offset = (page - 1) * limit
     const conditions = []
 
-    if (status && status !== 'all') {
-        conditions.push(eq(fantasy.status, status))
-    }
+    conditions.push(eq(fantasy.status, 'pending'))
 
     if (search) {
         conditions.push(ilike(fantasy.name, `%${search}%`))
@@ -152,7 +148,7 @@ export async function getFantasyLeagueByCode(slug: string) {
             throw new Error("League doesn't exist")
         }
 
-        const fantasyLeague = await db.query.fantasy.findFirst({
+        return await db.query.fantasy.findFirst({
             where: eq(fantasy.id, league.id),
             with: {
                 user: {
@@ -187,8 +183,6 @@ export async function getFantasyLeagueByCode(slug: string) {
                 },
             },
         })
-
-        return fantasyLeague
     } catch (error) {
         console.error('Error fetching fantasy league:', error)
         throw new Error('Failed to fetch fantasy league')
@@ -373,28 +367,33 @@ export async function createFantasyLeague({
         throw new Error('Unauthorized')
     }
 
+    const genSlug = slug ? generateSlug(slug) : generateSlug(name)
+
     try {
-        await db.insert(fantasy).values({
-            id: crypto.randomUUID(),
-            name,
-            leagueId,
-            scoreRulesId: '5Etfk9Y467NO1Ph3JFhGM',
-            slug: slug ? generateSlug(slug) : generateSlug(name),
-            joinCode,
-            minimumPlayer: minPlayer,
-            maximumPlayer: maxPlayer,
-            isPrivate,
-            description,
-            startDate: startDate,
-            endDate: endDate,
-            ownerId: session.user.id,
-            status: 'pending',
-        })
+        const newLeague = await db
+            .insert(fantasy)
+            .values({
+                id: crypto.randomUUID(),
+                name,
+                leagueId,
+                scoreRulesId: '5Etfk9Y467NO1Ph3JFhGM',
+                slug: slug ? generateSlug(slug) : generateSlug(name),
+                joinCode,
+                minimumPlayer: minPlayer,
+                maximumPlayer: maxPlayer,
+                isPrivate,
+                description,
+                startDate: startDate,
+                endDate: endDate,
+                ownerId: session.user.id,
+                status: 'pending',
+            })
+            .returning()
 
         await db.insert(fantasyParticipant).values({
             id: crypto.randomUUID(),
             userId: session.user.id,
-            fantasyId: crypto.randomUUID(),
+            fantasyId: newLeague[0].id,
             rank: 1,
             points: 0,
             role: 'owner',
@@ -404,9 +403,147 @@ export async function createFantasyLeague({
 
         return {
             message: 'Successfully created new fantasy league',
+            slug: genSlug,
         }
     } catch (error) {
         console.error('Error creating fantasy league:', error)
         throw new Error('Failed to create fantasy league')
+    }
+}
+
+export const joinPrivateLeague = async ({
+    leagueId,
+    joinCode,
+    teamName,
+}: {
+    leagueId: string
+    teamName: string
+    joinCode: string
+}) => {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    })
+
+    if (!session?.session || !session.user) {
+        throw new Error('You must be logged in')
+    }
+
+    try {
+        const league = await db.query.fantasy.findFirst({
+            where: eq(fantasy.id, leagueId),
+            columns: {
+                id: true,
+                isPrivate: true,
+                joinCode: true,
+                maximumPlayer: true,
+                status: true,
+            },
+            with: {
+                fantasyParticipants: {
+                    columns: {
+                        userId: true,
+                        teamName: true,
+                    },
+                },
+            },
+        })
+
+        if (!league) {
+            throw new Error('Invalid Fantasy League')
+        }
+
+        if (joinCode == '') {
+            throw new Error('Please enter a join code')
+        }
+
+        if (joinCode !== league.joinCode) {
+            throw new Error('Invalid Join Code')
+        }
+
+        await db.insert(fantasyParticipant).values({
+            id: crypto.randomUUID(),
+            fantasyId: league.id,
+            userId: session.user.id,
+            role: 'player',
+            status: 'active',
+            teamName: teamName,
+        })
+    } catch (error) {
+        console.error('Failed to join league', error)
+        throw new Error('Failed to join fantasy league')
+    }
+}
+
+export const joinPublicLeague = async ({ leagueId, teamName }: { leagueId: string; teamName: string }) => {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    })
+
+    if (!session?.session || !session.user) {
+        throw new Error('You must be logged in')
+    }
+
+    try {
+        const league = await db.query.fantasy.findFirst({
+            where: eq(fantasy.id, leagueId),
+            columns: {
+                id: true,
+                isPrivate: true,
+                joinCode: true,
+                maximumPlayer: true,
+                status: true,
+            },
+            with: {
+                fantasyParticipants: {
+                    columns: {
+                        userId: true,
+                        teamName: true,
+                    },
+                },
+            },
+        })
+
+        if (!league) {
+            throw new Error('Invalid Fantasy League')
+        }
+
+        await db.insert(fantasyParticipant).values({
+            id: crypto.randomUUID(),
+            fantasyId: league.id,
+            userId: session.user.id,
+            role: 'player',
+            status: 'active',
+            teamName: teamName,
+        })
+    } catch (error) {
+        console.error('Failed to join league', error)
+        throw new Error('Failed to join fantasy league')
+    }
+}
+
+export const isMemberOfLeague = async ({ leagueId }: { leagueId: string }) => {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    })
+
+    if (!session?.user || !session.session) {
+        throw new Error('Unauthorized')
+    }
+
+    try {
+        const { id: userId } = session.user
+
+        const result = await db.query.fantasyParticipant.findFirst({
+            where: and(eq(fantasyParticipant.fantasyId, leagueId), eq(fantasyParticipant.userId, userId)),
+        })
+
+        if (!result) {
+            return false
+        }
+
+        return true
+    } catch (error) {
+        console.error('Failed to check if you are a member', error)
+        throw new Error('Failed to check if user is a member')
     }
 }

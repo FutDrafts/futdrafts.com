@@ -43,6 +43,18 @@ export const getDashboardActiveLeagues = async (limit: number) => {
             db.query.fantasy.findMany({
                 limit,
                 orderBy: (fantasy, { desc }) => [desc(fantasy.createdAt)],
+                where: (fields, { exists, eq, and }) =>
+                    exists(
+                        db
+                            .select()
+                            .from(fantasyParticipant)
+                            .where(
+                                and(
+                                    eq(fantasyParticipant.userId, session.user.id),
+                                    eq(fantasyParticipant.fantasyId, fields.id),
+                                ),
+                            ),
+                    ),
                 with: {
                     user: {
                         columns: {
@@ -64,12 +76,6 @@ export const getDashboardActiveLeagues = async (limit: number) => {
                 },
             }),
         ])
-
-        for (const league of fantasyLeagues) {
-            if (league.fantasyParticipants.length == 0) {
-                return []
-            }
-        }
 
         return fantasyLeagues
     } catch (error) {

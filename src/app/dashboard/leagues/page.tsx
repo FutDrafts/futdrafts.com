@@ -7,37 +7,51 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Trophy, Users, Search, Globe, Lock, ArrowUpRight, Info, Plus, Loader2 } from 'lucide-react'
+import { Trophy, Users, Search, Globe, Lock, Info, Plus, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { getFantasyLeagues } from '@/actions/dashboard/fantasy'
 import { useQuery } from '@tanstack/react-query'
 import { getAllLeagueNames } from '@/actions/dashboard/leagues'
 import { toast } from 'sonner'
 import { fantasyStatus } from '@/db/schema'
+import { Combobox } from '@/components/ui/combobox'
 
 type FantasyStatus = (typeof fantasyStatus.enumValues)[number]
-type StatusOption = FantasyStatus | 'All Statuses'
 
-const competitions = ['All Competitions', 'Premier League', 'La Liga', 'Bundesliga', 'Serie A', 'UEFA Champions League']
-const regions = ['Global', 'Europe', 'Americas', 'Asia', 'Africa']
 const types = ['All Types', 'public', 'private']
-const statuses = ['All Statuses', 'pending', 'active'] as const
 
 export default function LeaguesPage() {
     const [searchQuery, setSearchQuery] = useState('')
-    const [selectedCompetition, setSelectedCompetition] = useState('All Competitions')
-    const [selectedRegion, setSelectedRegion] = useState('Global')
+    const competition = useState({ label: 'All Competitions', value: 'all' })
+    const competionValue = useState('all')
     const [selectedType, setSelectedType] = useState('All Types')
-    const [selectedStatus, setSelectedStatus] = useState<StatusOption>('All Statuses')
     const [currentPage, setCurrentPage] = useState(1)
     const ITEMS_PER_PAGE = 10
 
+    const { data: competitionData, error: competitionError } = useQuery({
+        queryKey: ['fantasy', 'leagues', 'soccer'],
+        queryFn: async () => {
+            return getAllLeagueNames()
+        },
+    })
+
+    if (competitionError) {
+        ;<div className="flex items-center justify-center">
+            <p className="text-destructive">Error Loading Data. Please try again later</p>
+        </div>
+    }
+
+    const { leagues: competitions = [] } = competitionData || {}
+    const transformedLeagues = competitions.map((comp) => ({
+        label: comp.name,
+        value: comp.id,
+    }))
+
     const { data, isLoading, error } = useQuery({
-        queryKey: ['fantasy', 'leagues', currentPage, searchQuery, selectedStatus, ITEMS_PER_PAGE],
+        queryKey: ['fantasy', 'leagues', currentPage, searchQuery, ITEMS_PER_PAGE],
         queryFn: async () => {
             return getFantasyLeagues({
                 search: searchQuery,
-                status: selectedStatus === 'All Statuses' ? undefined : selectedStatus,
                 page: currentPage,
                 limit: ITEMS_PER_PAGE,
             })
@@ -134,7 +148,7 @@ export default function LeaguesPage() {
                         <p className="text-muted-foreground text-xs">Across all competitions</p>
                     </CardContent>
                 </Card>
-                <Card className="hover:bg-muted/50 transition-colors">
+                {/* <Card className="hover:bg-muted/50 transition-colors">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Players</CardTitle>
                         <Users className="text-muted-foreground h-4 w-4" />
@@ -148,20 +162,20 @@ export default function LeaguesPage() {
                             +12% from last month
                         </div>
                     </CardContent>
-                </Card>
-                <Card className="hover:bg-muted/50 transition-colors">
+                </Card> */}
+                {/* <Card className="hover:bg-muted/50 transition-colors">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Leagues</CardTitle>
+                        <CardTitle className="text-sm font-medium">Total Fantasy Leagues</CardTitle>
                         <Trophy className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{total}</div>
                         <p className="text-muted-foreground text-xs">Leagues available</p>
                     </CardContent>
-                </Card>
+                </Card> */}
                 <Card className="hover:bg-muted/50 transition-colors">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Competitions</CardTitle>
+                        <CardTitle className="text-sm font-medium">Soccer Leagues</CardTitle>
                         <Globe className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
@@ -191,30 +205,13 @@ export default function LeaguesPage() {
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
                             </div>
-                            <Select value={selectedCompetition} onValueChange={setSelectedCompetition}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Competition" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {competitions.map((competition) => (
-                                        <SelectItem key={competition} value={competition}>
-                                            {competition}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Region" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {regions.map((region) => (
-                                        <SelectItem key={region} value={region}>
-                                            {region}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <Combobox
+                                options={transformedLeagues}
+                                value={competition[0].value}
+                                onValueChange={competionValue[1]}
+                                placeholder="All Competitions"
+                                emptyText="No competitions found."
+                            />
                             <Select value={selectedType} onValueChange={setSelectedType}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select Type" />
@@ -223,23 +220,6 @@ export default function LeaguesPage() {
                                     {types.map((type) => (
                                         <SelectItem key={type} value={type}>
                                             {type.charAt(0).toUpperCase() + type.slice(1)}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <Select
-                                value={selectedStatus}
-                                onValueChange={(value: StatusOption) => setSelectedStatus(value)}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {statuses.map((status) => (
-                                        <SelectItem key={status} value={status}>
-                                            {status === 'All Statuses'
-                                                ? 'All Statuses'
-                                                : status.charAt(0).toUpperCase() + status.slice(1)}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>

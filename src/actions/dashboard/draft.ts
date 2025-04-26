@@ -32,6 +32,12 @@ export const createDraftPick = async ({ fantasyLeagueId, playerId }: { fantasyLe
         })
 
         if (!nextPick) {
+            await db
+                .update(fantasy)
+                .set({
+                    draftStatus: 'finished',
+                })
+                .where(eq(fantasy.id, draftsPicks.fantasyLeagueId))
             throw new Error('No more Draft Picks')
         }
 
@@ -74,7 +80,10 @@ export const createDraftPick = async ({ fantasyLeagueId, playerId }: { fantasyLe
         })
 
         if (!remainingPicks) {
-            await db.update(fantasy).set({ draftStatus: 'started' }).where(eq(fantasy.id, fantasyLeagueId))
+            return await db
+                .update(fantasy)
+                .set({ draftStatus: 'finished', status: 'active' })
+                .where(eq(fantasy.id, fantasyLeagueId))
         }
 
         const newNextPick = await db.query.draftsPicks.findFirst({
@@ -171,7 +180,7 @@ export const startDraft = async (fantasyLeagueId: string) => {
         const league = await db
             .update(fantasy)
             .set({
-                draftStatus: 'started',
+                draftStatus: 'in-progress',
             })
             .where(eq(fantasy.id, fantasyLeagueId))
             .returning()
@@ -275,7 +284,7 @@ export const getCurrentDraftPick = async (slug: string) => {
             .from(draftsPicks)
             .where(and(eq(draftsPicks.fantasyLeagueId, fantasyId), eq(draftsPicks.pickNumber, pickNumber)))
 
-        if ((!participant || participant.length < 1) && status === 'started') {
+        if ((!participant || participant.length < 1) && status === 'in-progress') {
             throw new Error('No Player Pick')
         }
 

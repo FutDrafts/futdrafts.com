@@ -220,7 +220,7 @@ export function UserTab({ session, activeSessions, profileUser, isOwnProfile, le
                                         {league.players && league.players[0].rank === 1 && (
                                             <TrophyIcon className="h-5 w-5 text-yellow-500" />
                                         )}
-                                        {!league.isPrivate && (
+                                        {isOwnProfile && (
                                             <Button asChild size="icon" variant="link">
                                                 <Link href={`/dashboard/leagues/${league.slug}`}>
                                                     <InfoIcon />

@@ -12,15 +12,17 @@ import { FantasyLeagueType } from './types'
 
 interface LeagueHeaderProps {
     fantasyLeague: FantasyLeagueType
-    leagueCode: string
+    leagueSlug: string
 }
 
-export function LeagueHeader({ fantasyLeague, leagueCode }: LeagueHeaderProps) {
+export function LeagueHeader({ fantasyLeague, leagueSlug }: LeagueHeaderProps) {
     const [copied, setCopied] = useState(false)
     const [isChatOpen, setIsChatOpen] = useState(false)
 
     const copyInviteLink = () => {
-        navigator.clipboard.writeText(`https://futdrafts.com/leagues/${leagueCode}/join`)
+        navigator.clipboard.writeText(
+            `https://futdrafts.com/leagues/${leagueSlug}/join?joinCode=${fantasyLeague.joinCode}`,
+        )
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
     }
@@ -72,7 +74,7 @@ export function LeagueHeader({ fantasyLeague, leagueCode }: LeagueHeaderProps) {
                             Chat
                         </Button>
                         <Button variant="outline" asChild>
-                            <Link href={`/dashboard/leagues/${leagueCode}/team`}>
+                            <Link href={`/dashboard/leagues/${leagueSlug}/team`}>
                                 <Users2Icon className="mr-2 h-4 w-4" />
                                 View Team
                             </Link>
@@ -83,7 +85,7 @@ export function LeagueHeader({ fantasyLeague, leagueCode }: LeagueHeaderProps) {
                             <Button onClick={() => handleDraft()}>Start Draft</Button>
                         ) : (
                             <Button asChild>
-                                <Link href={`/dashboard/leagues/${leagueCode}/draft`}>Go To Draft</Link>
+                                <Link href={`/dashboard/leagues/${leagueSlug}/draft`}>Go To Draft</Link>
                             </Button>
                         )}
                     </div>
@@ -96,7 +98,7 @@ export function LeagueHeader({ fantasyLeague, leagueCode }: LeagueHeaderProps) {
                     <LeagueChatSidebar
                         isOpen={isChatOpen}
                         onClose={() => setIsChatOpen(false)}
-                        leagueCode={leagueCode}
+                        leagueSlug={leagueSlug}
                         leagueId={fantasyLeague.id}
                     />
                 )}
