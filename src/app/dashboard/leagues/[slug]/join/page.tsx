@@ -1,40 +1,27 @@
-'use client'
-
-import { useState, use } from 'react'
-import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
-import { Users, ArrowLeft, AlertTriangle, Loader2 } from 'lucide-react'
+import { Users, ArrowLeft, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
-import { useQuery } from '@tanstack/react-query'
-import { getFantasyLeagueByCode } from '@/actions/dashboard/fantasy'
+import { getFantasyLeagueByCode, isMemberOfLeague } from '@/actions/dashboard/fantasy'
+import { JoinForm } from './_form'
+import { redirect } from 'next/navigation'
 
-export default function JoinLeaguePage({ params }: { params: Promise<{ slug: string }> }) {
-    const router = useRouter()
+export default async function JoinLeaguePage({
+    params,
+    searchParams,
+}: {
+    params: Promise<{ slug: string }>
+    searchParams: Promise<{ [key: string]: string | undefined }>
+}) {
+    const { slug } = await params
+    const { joinCode } = await searchParams
 
-    const { slug } = use(params)
-    const [loading, setLoading] = useState(false)
-    const [inviteCode, setInviteCode] = useState('')
-    const [error, setError] = useState<string | null>(null)
+    const league = await getFantasyLeagueByCode(slug)
 
-    const { data: leagueData, isLoading } = useQuery({
-        queryKey: ['fantasy', 'league', slug],
-        queryFn: () => getFantasyLeagueByCode(slug),
-    })
-
-    if (isLoading) {
-        return (
-            <div className="flex h-screen items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin" />
-            </div>
-        )
-    }
-
-    if (!leagueData) {
+    if (!league) {
         return (
             <div className="flex h-screen items-center justify-center">
                 <Card>
@@ -46,21 +33,14 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ slug: str
         )
     }
 
-    const handleJoin = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        setLoading(true)
-        setError(null)
+    const isMember = await isMemberOfLeague({ leagueId: league.id })
 
-        try {
-            // TODO: Implement league join API call
-            // await joinLeague(code, inviteCode)
-            router.push(`/dashboard/leagues/${slug}`)
-        } catch (error) {
-            setError('Failed to join league. Please check your invite code and try again.')
-            console.error(error)
-        } finally {
-            setLoading(false)
-        }
+    if (isMember) {
+        redirect(`/dashboard/leagues/${league.slug}`)
+    }
+
+    if (!joinCode && league.isPrivate) {
+        redirect('/dashboard/leagues')
     }
 
     return (
@@ -78,7 +58,7 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ slug: str
                             {slug}
                         </Badge>
                     </div>
-                    <p className="text-muted-foreground">Join {leagueData.name}</p>
+                    <p className="text-muted-foreground">Join {league.name}</p>
                 </div>
             </div>
 
@@ -93,7 +73,7 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ slug: str
                             <Label>Entry Fee</Label>
                             <div className="flex items-center gap-2">
                                 <Trophy className="text-muted-foreground h-4 w-4" />
-                                <span className="font-medium">{leagueData.entryFee.toLocaleString()} points</span>
+                                <span className="font-medium">{league.entryFee.toLocaleString()} points</span>
                             </div>
                         </div> */}
 
@@ -102,7 +82,7 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ slug: str
                             <div className="flex items-center gap-2">
                                 <Users className="text-muted-foreground h-4 w-4" />
                                 <span className="font-medium">
-                                    {leagueData.fantasyParticipants.length}/{leagueData.maximumPlayer} players
+                                    {league.fantasyParticipants.length}/{league.maximumPlayer} players
                                 </span>
                             </div>
                         </div>
@@ -113,49 +93,11 @@ export default function JoinLeaguePage({ params }: { params: Promise<{ slug: str
                         <AlertTitle>Important</AlertTitle>
                         <AlertDescription>
                             By joining this league, you agree to commit until{' '}
-                            {leagueData.endDate && new Date(leagueData.endDate).toLocaleDateString()}. The entry fee
-                            will be deducted from your points balance.
+                            {league.endDate && new Date(league.endDate).toLocaleDateString()}.
                         </AlertDescription>
                     </Alert>
 
-                    <form onSubmit={handleJoin} className="space-y-4">
-                        {leagueData.isPrivate && (
-                            <div className="space-y-2">
-                                <Label htmlFor="inviteCode">Invite Code</Label>
-                                <Input
-                                    id="inviteCode"
-                                    placeholder="Enter the league invite code"
-                                    value={inviteCode}
-                                    onChange={(e) => setInviteCode(e.target.value)}
-                                    required
-                                />
-                            </div>
-                        )}
-
-                        {error && (
-                            <Alert variant="destructive">
-                                <AlertTriangle className="h-4 w-4" />
-                                <AlertTitle>Error</AlertTitle>
-                                <AlertDescription>{error}</AlertDescription>
-                            </Alert>
-                        )}
-
-                        <div className="flex justify-end gap-4">
-                            <Button variant="outline" asChild>
-                                <Link href={`/dashboard/leagues/${slug}`}>Cancel</Link>
-                            </Button>
-                            <Button type="submit" disabled={loading}>
-                                {loading ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Joining...
-                                    </>
-                                ) : (
-                                    'Join League'
-                                )}
-                            </Button>
-                        </div>
-                    </form>
+                    <JoinForm slug={slug} league={league} joinCode={joinCode ?? ''} />
                 </CardContent>
             </Card>
         </div>
