@@ -80,7 +80,10 @@ export const createDraftPick = async ({ fantasyLeagueId, playerId }: { fantasyLe
         })
 
         if (!remainingPicks) {
-            await db.update(fantasy).set({ draftStatus: 'in-progress' }).where(eq(fantasy.id, fantasyLeagueId))
+            return await db
+                .update(fantasy)
+                .set({ draftStatus: 'finished', status: 'active' })
+                .where(eq(fantasy.id, fantasyLeagueId))
         }
 
         const newNextPick = await db.query.draftsPicks.findFirst({
