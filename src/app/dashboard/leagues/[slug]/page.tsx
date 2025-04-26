@@ -34,7 +34,7 @@ export default async function LeagueDetailsPage({ params }: { params: Promise<{ 
             <div className="flex h-full">
                 <div className="flex-1">
                     <div className="space-y-6">
-                        <LeagueHeader fantasyLeague={fantasyLeague} leagueCode={slug} />
+                        <LeagueHeader fantasyLeague={fantasyLeague} leagueSlug={slug} />
                         <LeagueInfo fantasyLeague={fantasyLeague} />
                         <LeagueTabs fantasyLeague={fantasyLeague} />
                     </div>
