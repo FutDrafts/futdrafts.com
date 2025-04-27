@@ -198,8 +198,6 @@ export async function getPostById(id: string) {
 
 // Get a single post by slug
 export async function getPostBySlug(slug: string) {
-    console.log('getPostBySlug called with slug:', slug)
-
     try {
         const result = await db.query.post.findFirst({
             where: eq(post.slug, slug),
