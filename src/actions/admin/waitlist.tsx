@@ -10,7 +10,7 @@ import { sendEmail } from '@/lib/email'
 import WaitlistLaunchNotification from '@/lib/templates/waitlist-launch'
 
 const notifySchema = z.object({
-    id: z.number(),
+    id: z.string(),
     notified: z.boolean(),
 })
 
@@ -89,7 +89,7 @@ export async function getWaitlistCount() {
     }
 }
 
-export async function sendWaitlistNotificationEmail(userId: number) {
+export async function sendWaitlistNotificationEmail(userId: string) {
     try {
         const session = await auth.api.getSession({
             headers: await headers(),

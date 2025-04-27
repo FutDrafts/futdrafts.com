@@ -4,6 +4,7 @@ import { db } from '@/db'
 import { waitlistUsers } from '@/db/schema'
 import { sendEmail } from '@/lib/email'
 import WaitlistConfirmation from '@/lib/templates/waitlist'
+import { nanoid } from 'nanoid'
 import { z } from 'zod'
 
 // Define schema for validation
@@ -33,8 +34,10 @@ export async function joinWaitlist(data: WaitlistFormData) {
 
         // Insert into waitlist table
         await db.insert(waitlistUsers).values({
+            id: nanoid(),
             email: result.data.email,
             signupDate: new Date(),
+            notified: false,
         })
 
         await sendEmail({
