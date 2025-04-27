@@ -6,10 +6,19 @@ import { getFantasyLeagueByCode } from '@/actions/dashboard/fantasy'
 import { Loader2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { FantasyLeagueType } from './_components/types'
+import { auth } from '@/lib/auth'
+import { headers } from 'next/headers'
 
 export default async function LeagueDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params
-    const fantasyLeague = (await getFantasyLeagueByCode(slug)) as FantasyLeagueType | null
+    const [fantasyLeague, session] = await Promise.all([
+        getFantasyLeagueByCode(slug) as Promise<FantasyLeagueType | null>,
+        auth.api.getSession({
+            headers: await headers(),
+        }),
+    ])
+
+    const currentUserId = session?.user?.id
 
     if (!fantasyLeague) {
         return (
@@ -36,7 +45,7 @@ export default async function LeagueDetailsPage({ params }: { params: Promise<{ 
                     <div className="space-y-6">
                         <LeagueHeader fantasyLeague={fantasyLeague} leagueSlug={slug} />
                         <LeagueInfo fantasyLeague={fantasyLeague} />
-                        <LeagueTabs fantasyLeague={fantasyLeague} />
+                        <LeagueTabs fantasyLeague={fantasyLeague} currentUserId={currentUserId} />
                     </div>
                 </div>
             </div>

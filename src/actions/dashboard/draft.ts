@@ -4,8 +4,8 @@ import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { getFantasyLeagueByCode, getFantasyLeagueById, getFantasyLeagueParticipants } from './fantasy'
 import { db } from '@/db'
-import { draftsPicks, fantasy, fantasyParticipant } from '@/db/schema'
-import { and, asc, eq, isNotNull } from 'drizzle-orm'
+import { draftsPicks, fantasy, fantasyParticipant, h2hMatch } from '@/db/schema'
+import { and, asc, eq, isNotNull, or } from 'drizzle-orm'
 import { shuffleInPlace } from '@/lib/utils'
 import { nanoid } from 'nanoid'
 import { revalidatePath } from 'next/cache'
@@ -80,10 +80,12 @@ export const createDraftPick = async ({ fantasyLeagueId, playerId }: { fantasyLe
         })
 
         if (!remainingPicks) {
-            return await db
+            await db
                 .update(fantasy)
                 .set({ draftStatus: 'finished', status: 'active' })
                 .where(eq(fantasy.id, fantasyLeagueId))
+
+            await generateHeadToHeadSchedule(fantasyLeagueId)
         }
 
         const newNextPick = await db.query.draftsPicks.findFirst({
@@ -296,5 +298,215 @@ export const getCurrentDraftPick = async (slug: string) => {
     } catch (error) {
         console.error(error)
         throw new Error('Failed to get current draft pick')
+    }
+}
+
+export const generateHeadToHeadSchedule = async (fantasyLeagueId: string) => {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    })
+
+    if (!session) {
+        throw new Error('Unauthorized')
+    }
+
+    try {
+        const fantasyLeague = await getFantasyLeagueById(fantasyLeagueId)
+
+        if (!fantasyLeague || !fantasyLeague.startDate || !fantasyLeague.endDate) {
+            throw new Error('Fantasy League not found or missing dates')
+        }
+
+        // Get all participants
+        const { participants } = await getFantasyLeagueParticipants(fantasyLeagueId)
+        const activeParticipants = participants.filter((p) => p.status === 'active')
+
+        if (activeParticipants.length < 2) {
+            throw new Error('Not enough participants to create schedule')
+        }
+
+        // Calculate number of weeks available for scheduling
+        const startDate = new Date(fantasyLeague.startDate)
+        const endDate = new Date(fantasyLeague.endDate)
+
+        const totalDays = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
+        const totalWeeks = Math.floor(totalDays / 7)
+
+        // Each participant plays against every other participant
+        const numParticipants = activeParticipants.length
+        const matchesPerParticipant = numParticipants - 1
+
+        // Total number of matches needed (n*(n-1))
+        const totalMatches = numParticipants * matchesPerParticipant
+
+        // We need to have 2 matches per player per week
+        const matchesPerWeek = numParticipants
+        const weeksNeeded = Math.ceil(totalMatches / matchesPerWeek)
+
+        if (weeksNeeded > totalWeeks) {
+            throw new Error(
+                `Not enough weeks available to schedule all matches. Need ${weeksNeeded} weeks, have ${totalWeeks} weeks.`,
+            )
+        }
+
+        // Create a round-robin schedule
+        // Circle method: https://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
+        const participantIds = activeParticipants.map((p) => p.id)
+
+        // Make sure all IDs are valid strings
+        const validParticipantIds = participantIds.filter((id) => typeof id === 'string')
+
+        // If odd number of participants, add a dummy participant
+        if (validParticipantIds.length % 2 !== 0) {
+            validParticipantIds.push('bye')
+        }
+
+        const rounds = []
+        const n = validParticipantIds.length
+
+        // Generate rounds using the circle method
+        for (let round = 0; round < n - 1; round++) {
+            const matches = []
+            for (let i = 0; i < n / 2; i++) {
+                // Skip matches with the dummy participant
+                if (validParticipantIds[i] !== 'bye' && validParticipantIds[n - 1 - i] !== 'bye') {
+                    matches.push({
+                        home: validParticipantIds[i],
+                        away: validParticipantIds[n - 1 - i],
+                    })
+                }
+            }
+            rounds.push(matches)
+
+            // Rotate participants, keeping the first one fixed
+            validParticipantIds.splice(1, 0, validParticipantIds.pop()!)
+        }
+
+        // Double the rounds for home and away
+        const allRounds = [
+            ...rounds,
+            ...rounds.map((round) => round.map((match) => ({ home: match.away, away: match.home }))),
+        ]
+
+        // Schedule matches across weeks
+        const h2hMatches = []
+        const weekInMs = 7 * 24 * 60 * 60 * 1000
+
+        for (let weekNum = 0; weekNum < Math.min(allRounds.length, totalWeeks); weekNum++) {
+            const roundMatches = allRounds[weekNum]
+            const weekStartDate = new Date(startDate.getTime() + weekNum * weekInMs)
+            const midWeekDate = new Date(weekStartDate.getTime() + 3 * 24 * 60 * 60 * 1000) // Wednesday
+            const weekEndDate = new Date(weekStartDate.getTime() + 6 * 24 * 60 * 60 * 1000) // Sunday
+
+            for (let i = 0; i < roundMatches.length; i++) {
+                const match = roundMatches[i]
+
+                // First match of the week - Tuesday to Thursday
+                h2hMatches.push({
+                    id: nanoid(),
+                    fantasyLeagueId,
+                    homeParticipantId: match.home,
+                    awayParticipantId: match.away,
+                    weekNumber: weekNum + 1,
+                    matchNumber: 1,
+                    startDate: weekStartDate,
+                    endDate: midWeekDate,
+                    status: 'scheduled' as const,
+                })
+
+                // Second match of the week - Friday to Sunday
+                h2hMatches.push({
+                    id: nanoid(),
+                    fantasyLeagueId,
+                    homeParticipantId: match.home,
+                    awayParticipantId: match.away,
+                    weekNumber: weekNum + 1,
+                    matchNumber: 2,
+                    startDate: new Date(midWeekDate.getTime() + 24 * 60 * 60 * 1000), // Thursday
+                    endDate: weekEndDate,
+                    status: 'scheduled' as const,
+                })
+            }
+        }
+
+        // Insert all matches into the database
+        for (const match of h2hMatches) {
+            await db.insert(h2hMatch).values(match)
+        }
+
+        return h2hMatches
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed to generate head-to-head schedule')
+    }
+}
+
+// Function to get all h2h matches for a fantasy league
+export const getFantasyLeagueH2HMatches = async (fantasyLeagueId: string) => {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    })
+
+    if (!session) {
+        throw new Error('Unauthorized')
+    }
+
+    try {
+        const matches = await db.query.h2hMatch.findMany({
+            where: eq(h2hMatch.fantasyLeagueId, fantasyLeagueId),
+            with: {
+                homeParticipant: {
+                    with: {
+                        user: true,
+                    },
+                },
+                awayParticipant: {
+                    with: {
+                        user: true,
+                    },
+                },
+            },
+            orderBy: [asc(h2hMatch.weekNumber), asc(h2hMatch.matchNumber)],
+        })
+
+        return matches
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed to get fantasy league H2H matches')
+    }
+}
+
+// Function to get h2h matches for a specific participant
+export const getParticipantH2HMatches = async (participantId: string) => {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    })
+
+    if (!session) {
+        throw new Error('Unauthorized')
+    }
+
+    try {
+        const matches = await db.query.h2hMatch.findMany({
+            where: or(eq(h2hMatch.homeParticipantId, participantId), eq(h2hMatch.awayParticipantId, participantId)),
+            with: {
+                homeParticipant: {
+                    with: {
+                        user: true,
+                    },
+                },
+                awayParticipant: {
+                    with: {
+                        user: true,
+                    },
+                },
+            },
+            orderBy: [asc(h2hMatch.weekNumber), asc(h2hMatch.matchNumber)],
+        })
+
+        return matches
+    } catch (error) {
+        console.error(error)
+        throw new Error('Failed to get participant H2H matches')
     }
 }

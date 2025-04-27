@@ -1,5 +1,5 @@
 import { db } from '@/db'
-import { fantasy, fantasyParticipant } from '@/db/schema'
+import { fantasy, fantasyParticipant, fixture } from '@/db/schema'
 import { auth } from '@/lib/auth'
 import { eq, not } from 'drizzle-orm'
 import { headers } from 'next/headers'
@@ -78,6 +78,50 @@ export const getDashboardActiveLeagues = async (limit: number) => {
         ])
 
         return fantasyLeagues
+    } catch (error) {
+        console.error('Error fetching fantasy leagues:', error)
+        throw new Error('Failed to fetch fantasy leagues')
+    }
+}
+
+export const getDashboardUpcomingFixtures = async (limit: number) => {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    })
+
+    if (!session || !session.user) {
+        throw new Error('Unauthorized')
+    }
+
+    try {
+        const [fixtures] = await Promise.all([
+            db.query.fixture.findMany({
+                limit,
+                orderBy: (fixture, { desc }) => [desc(fixture.matchDay)],
+                where: eq(fixture.status, 'upcoming'),
+                with: {
+                    homeTeam: {
+                        columns: {
+                            logo: true,
+                            name: true,
+                        },
+                    },
+                    awayTeam: {
+                        columns: {
+                            logo: true,
+                            name: true,
+                        },
+                    },
+                    league: {
+                        columns: {
+                            name: true,
+                        },
+                    },
+                },
+            }),
+        ])
+
+        return fixtures
     } catch (error) {
         console.error('Error fetching fantasy leagues:', error)
         throw new Error('Failed to fetch fantasy leagues')

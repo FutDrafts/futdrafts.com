@@ -4,32 +4,18 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Trophy, Calendar, Search, Plus } from 'lucide-react'
 import Link from 'next/link'
-import { getDashboardActiveLeagues, getDashboardLeagueCounts } from '@/actions/dashboard/dashboard'
+import {
+    getDashboardActiveLeagues,
+    getDashboardLeagueCounts,
+    getDashboardUpcomingFixtures,
+} from '@/actions/dashboard/dashboard'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
-// Mock data - replace with real data fetching
-
-const upcomingMatches = [
-    {
-        id: '1',
-        homeTeam: { name: 'Arsenal', logo: '/team-logos/arsenal.png' },
-        awayTeam: { name: 'Chelsea', logo: '/team-logos/chelsea.png' },
-        date: '2024-02-20T15:00:00',
-        competition: 'Premier League',
-    },
-    {
-        id: '2',
-        homeTeam: { name: 'Barcelona', logo: '/team-logos/barcelona.png' },
-        awayTeam: { name: 'Real Madrid', logo: '/team-logos/real-madrid.png' },
-        date: '2024-02-21T20:00:00',
-        competition: 'La Liga',
-    },
-]
-
 export default async function DashboardPage() {
-    const [activeLeagues, { totalLeagueCount, pendingLeagueCount }] = await Promise.all([
+    const [activeLeagues, { totalLeagueCount, pendingLeagueCount }, upcomingFixtures] = await Promise.all([
         getDashboardActiveLeagues(3),
         getDashboardLeagueCounts(),
+        getDashboardUpcomingFixtures(3),
     ])
 
     return (
@@ -170,34 +156,40 @@ export default async function DashboardPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            {upcomingMatches.map((match) => (
-                                <div key={match.id} className="flex flex-col gap-2 rounded-lg border p-4">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <Avatar className="h-8 w-8">
-                                                <AvatarImage src={match.homeTeam.logo} alt={match.homeTeam.name} />
-                                                <AvatarFallback>{match.homeTeam.name.slice(0, 2)}</AvatarFallback>
-                                            </Avatar>
-                                            <span className="font-medium">{match.homeTeam.name}</span>
+                            {upcomingFixtures.length > 0 ? (
+                                upcomingFixtures.map((match) => (
+                                    <div key={match.id} className="flex flex-col gap-2 rounded-lg border p-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <Avatar className="h-8 w-8">
+                                                    <AvatarImage src={match.homeTeam.logo} alt={match.homeTeam.name} />
+                                                    <AvatarFallback>{match.homeTeam.name.slice(0, 2)}</AvatarFallback>
+                                                </Avatar>
+                                                <span className="font-medium">{match.homeTeam.name}</span>
+                                            </div>
+                                            <span className="text-sm font-medium">vs</span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-medium">{match.awayTeam.name}</span>
+                                                <Avatar className="h-8 w-8">
+                                                    <AvatarImage src={match.awayTeam.logo} alt={match.awayTeam.name} />
+                                                    <AvatarFallback>{match.awayTeam.name.slice(0, 2)}</AvatarFallback>
+                                                </Avatar>
+                                            </div>
                                         </div>
-                                        <span className="text-sm font-medium">vs</span>
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-medium">{match.awayTeam.name}</span>
-                                            <Avatar className="h-8 w-8">
-                                                <AvatarImage src={match.awayTeam.logo} alt={match.awayTeam.name} />
-                                                <AvatarFallback>{match.awayTeam.name.slice(0, 2)}</AvatarFallback>
-                                            </Avatar>
+                                        <div className="text-muted-foreground flex items-center justify-between text-sm">
+                                            <span>{match.league.name}</span>
+                                            <div className="flex items-center gap-1">
+                                                <Calendar className="h-4 w-4" />
+                                                {new Date(match.matchDay).toLocaleDateString()}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="text-muted-foreground flex items-center justify-between text-sm">
-                                        <span>{match.competition}</span>
-                                        <div className="flex items-center gap-1">
-                                            <Calendar className="h-4 w-4" />
-                                            {new Date(match.date).toLocaleDateString()}
-                                        </div>
-                                    </div>
+                                ))
+                            ) : (
+                                <div className="flex h-full w-full items-center justify-center">
+                                    There are no upcoming matches. We&apos;ll notify you when this updates!
                                 </div>
-                            ))}
+                            )}
                         </div>
                     </CardContent>
                 </Card>
