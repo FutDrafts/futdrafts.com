@@ -19,7 +19,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getAllLeagueNames } from '@/actions/dashboard/leagues'
 import { createFantasyLeague } from '@/actions/dashboard/fantasy'
 import { toast } from 'sonner'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 const formSchema = z.object({
     name: z.string().min(3, 'League name must be at least 3 characters'),
@@ -37,6 +37,7 @@ const formSchema = z.object({
 })
 
 export default function CreateLeaguePage() {
+    const router = useRouter()
     const [loading, setLoading] = useState(false)
 
     const { data, error } = useQuery({
@@ -90,7 +91,7 @@ export default function CreateLeaguePage() {
             const { message, slug } = await createFantasyLeague(payload)
             toast.success(message)
 
-            redirect(`/dashboard/leagues/${slug}`)
+            router.push(`/dashboard/leagues/${slug}`)
         } catch (error) {
             console.error('Failed to create league:', error)
             toast.error('An error occurred while creating the league.')
