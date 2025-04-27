@@ -13,15 +13,16 @@ import { FantasyLeagueType } from './types'
 interface LeagueHeaderProps {
     fantasyLeague: FantasyLeagueType
     leagueSlug: string
+    isOwner: boolean
 }
 
-export function LeagueHeader({ fantasyLeague, leagueSlug }: LeagueHeaderProps) {
+export function LeagueHeader({ fantasyLeague, leagueSlug, isOwner }: LeagueHeaderProps) {
     const [copied, setCopied] = useState(false)
     const [isChatOpen, setIsChatOpen] = useState(false)
 
     const copyInviteLink = () => {
         navigator.clipboard.writeText(
-            `https://futdrafts.com/leagues/${leagueSlug}/join?joinCode=${fantasyLeague.joinCode}`,
+            `https://futdrafts.com/dashboard/leagues/${leagueSlug}/join?joinCode=${fantasyLeague.joinCode}`,
         )
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
@@ -112,7 +113,9 @@ export function LeagueHeader({ fantasyLeague, leagueSlug }: LeagueHeaderProps) {
                             </Button>
                         )}
 
-                        {fantasyLeague.draftStatus === 'pending' && <Button onClick={handleDraft}>Start Draft</Button>}
+                        {fantasyLeague.draftStatus === 'pending' && isOwner && (
+                            <Button onClick={handleDraft}>Start Draft</Button>
+                        )}
                         {fantasyLeague.draftStatus === 'in-progress' && (
                             <Button asChild>
                                 <Link href={`/dashboard/leagues/${leagueSlug}/draft`}>Go To Draft</Link>
