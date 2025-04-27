@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, json, serial } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, boolean, json } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm/relations'
 import { postCategory, postStatus, reportCategory, reportStatus } from './enums'
 import { user } from './auth'
@@ -57,7 +57,7 @@ export const reportComment = pgTable('report_comment', {
 })
 
 export const waitlistUsers = pgTable('waitlist_users', {
-    id: serial().primaryKey().notNull(),
+    id: text().primaryKey().notNull(),
     email: text().notNull(),
     notified: boolean().default(false).notNull(),
     signupDate: timestamp('signup_date').defaultNow().notNull(),
