@@ -1,0 +1,4 @@
+ALTER TABLE "fixture" ADD CONSTRAINT "fixture_venueId_venue_id_fk" FOREIGN KEY ("venueId") REFERENCES "public"."venue"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "fixture" ADD CONSTRAINT "fixture_leagueId_league_id_fk" FOREIGN KEY ("leagueId") REFERENCES "public"."league"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "fixture" ADD CONSTRAINT "fixture_homeTeamId_team_id_fk" FOREIGN KEY ("homeTeamId") REFERENCES "public"."team"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "fixture" ADD CONSTRAINT "fixture_awayTeamId_team_id_fk" FOREIGN KEY ("awayTeamId") REFERENCES "public"."team"("id") ON DELETE no action ON UPDATE no action;
