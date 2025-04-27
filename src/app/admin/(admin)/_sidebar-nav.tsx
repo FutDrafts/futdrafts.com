@@ -13,6 +13,7 @@ import {
     ClipboardListIcon,
     ShieldUserIcon,
     BookUserIcon,
+    SwordsIcon,
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -72,7 +73,12 @@ const SIDEBAR_GROUPS = [
                 icon: UsersIcon,
             },
             {
-                title: 'Players',
+                title: 'Soccer Fixtures',
+                href: '/admin/fixtures',
+                icon: SwordsIcon,
+            },
+            {
+                title: 'Soccer Players',
                 href: '/admin/players',
                 icon: ShieldUserIcon,
             },
