@@ -23,7 +23,7 @@ import {
 import { useState } from 'react'
 
 type FantasyLeaguesTable = typeof fantasy.$inferSelect & {
-    owner: {
+    user: {
         name: string
     }
     league: {
@@ -191,7 +191,7 @@ export default function FantasyLeaguesTable() {
                                                 </span>
                                             )}
                                         </TableCell>
-                                        <TableCell>{league.owner.name}</TableCell>
+                                        <TableCell>{league.user.name}</TableCell>
                                         <TableCell>{league.league.name}</TableCell>
                                         <TableCell>
                                             <DropdownMenu>
