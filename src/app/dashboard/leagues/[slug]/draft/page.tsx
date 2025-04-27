@@ -112,9 +112,10 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
                 </Alert>
             </div>
             <div className="mb-6">
-                {/* <h1 className="text-2xl font-bold">{fantasyLeague.name}</h1> */}
-                league name
-                <p className="text-muted-foreground">{/* {fantasyLeague} • {fantasyLeague.owner.name} */}</p>
+                <h1 className="text-2xl font-bold">{fantasyLeagueData.name}</h1>
+                <p className="text-muted-foreground">
+                    {fantasyLeagueData.league.name} • {fantasyLeagueData.user.name}
+                </p>
             </div>
 
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

@@ -332,22 +332,8 @@ export const generateHeadToHeadSchedule = async (fantasyLeagueId: string) => {
         const totalDays = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
         const totalWeeks = Math.floor(totalDays / 7)
 
-        // Each participant plays against every other participant
-        const numParticipants = activeParticipants.length
-        const matchesPerParticipant = numParticipants - 1
-
-        // Total number of matches needed (n*(n-1))
-        const totalMatches = numParticipants * matchesPerParticipant
-
-        // We need to have 2 matches per player per week
-        const matchesPerWeek = numParticipants
-        const weeksNeeded = Math.ceil(totalMatches / matchesPerWeek)
-
-        if (weeksNeeded > totalWeeks) {
-            throw new Error(
-                `Not enough weeks available to schedule all matches. Need ${weeksNeeded} weeks, have ${totalWeeks} weeks.`,
-            )
-        }
+        // Each participant plays against every other participant once
+        // const numParticipants = activeParticipants.length
 
         // Create a round-robin schedule
         // Circle method: https://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
@@ -382,54 +368,37 @@ export const generateHeadToHeadSchedule = async (fantasyLeagueId: string) => {
             validParticipantIds.splice(1, 0, validParticipantIds.pop()!)
         }
 
-        // Double the rounds for home and away
-        const allRounds = [
-            ...rounds,
-            ...rounds.map((round) => round.map((match) => ({ home: match.away, away: match.home }))),
-        ]
-
-        // Schedule matches across weeks
+        // We'll just use the rounds as they are - no home/away doubling
         const h2hMatches = []
         const weekInMs = 7 * 24 * 60 * 60 * 1000
 
-        for (let weekNum = 0; weekNum < Math.min(allRounds.length, totalWeeks); weekNum++) {
-            const roundMatches = allRounds[weekNum]
+        for (let weekNum = 0; weekNum < Math.min(rounds.length, totalWeeks); weekNum++) {
+            const roundMatches = rounds[weekNum]
             const weekStartDate = new Date(startDate.getTime() + weekNum * weekInMs)
-            const midWeekDate = new Date(weekStartDate.getTime() + 3 * 24 * 60 * 60 * 1000) // Wednesday
             const weekEndDate = new Date(weekStartDate.getTime() + 6 * 24 * 60 * 60 * 1000) // Sunday
 
             for (let i = 0; i < roundMatches.length; i++) {
                 const match = roundMatches[i]
 
-                // First match of the week - Tuesday to Thursday
+                // Just one match per pairing per week
                 h2hMatches.push({
                     id: nanoid(),
                     fantasyLeagueId,
                     homeParticipantId: match.home,
                     awayParticipantId: match.away,
                     weekNumber: weekNum + 1,
-                    matchNumber: 1,
+                    matchNumber: i + 1,
                     startDate: weekStartDate,
-                    endDate: midWeekDate,
-                    status: 'scheduled' as const,
-                })
-
-                // Second match of the week - Friday to Sunday
-                h2hMatches.push({
-                    id: nanoid(),
-                    fantasyLeagueId,
-                    homeParticipantId: match.home,
-                    awayParticipantId: match.away,
-                    weekNumber: weekNum + 1,
-                    matchNumber: 2,
-                    startDate: new Date(midWeekDate.getTime() + 24 * 60 * 60 * 1000), // Thursday
                     endDate: weekEndDate,
                     status: 'scheduled' as const,
                 })
             }
         }
 
-        // Insert all matches into the database
+        // Clear any existing matches first
+        await db.delete(h2hMatch).where(eq(h2hMatch.fantasyLeagueId, fantasyLeagueId))
+
+        // Insert new matches into the database
         for (const match of h2hMatches) {
             await db.insert(h2hMatch).values(match)
         }
