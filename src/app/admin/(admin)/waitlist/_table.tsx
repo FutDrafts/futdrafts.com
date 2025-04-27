@@ -22,13 +22,9 @@ import { cn } from '@/lib/utils'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { sendWaitlistNotificationEmail, updateWaitlistUserNotificationStatus } from '@/actions/admin/waitlist'
+import { waitlistUsers } from '@/db/schema'
 
-type WaitlistUser = {
-    id: number
-    email: string
-    notified: boolean
-    signupDate: string
-}
+type WaitlistUser = typeof waitlistUsers.$inferSelect
 
 export default function WaitlistTable() {
     const queryClient = useQueryClient()
