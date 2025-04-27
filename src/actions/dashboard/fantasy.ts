@@ -27,6 +27,14 @@ export async function getFantasyLeagues({
     page?: number
     limit?: number
 }) {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    })
+
+    if (!session?.user || !session.session) {
+        throw new Error('Unauthorized')
+    }
+
     const offset = (page - 1) * limit
     const conditions = []
 
@@ -56,13 +64,22 @@ export async function getFantasyLeagues({
                             name: true,
                         },
                     },
+                    fantasyParticipants: {
+                        columns: {
+                            id: true,
+                        },
+                    },
                 },
             }),
             db.$count(fantasy, where),
         ])
 
+        const filteredFantasyLeagues = fantasyLeagues.filter((league) => {
+            return !league.fantasyParticipants.some((participant) => participant.id === session.user.id)
+        })
+
         return {
-            fantasyLeagues,
+            fantasyLeagues: filteredFantasyLeagues,
             total: totalCount,
         }
     } catch (error) {
@@ -353,8 +370,6 @@ export async function getFantasyLeagueParticipantsBySlug(slug: string) {
 export async function getFantasyLeagueParticipantById(userId: string, slug: string) {
     try {
         const results = await db.select({ leagueId: fantasy.id }).from(fantasy).where(eq(fantasy.slug, slug))
-
-        console.log(results)
 
         if (results.length < 1) {
             throw new Error('No League Found')

@@ -93,11 +93,21 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
         )
     }
 
-    let current
-
-    if (currentPick !== 'ended') {
-        current = participants?.find((participant) => participant.id === currentPick)
+    if (!participants) {
+        return (
+            <div className="flex h-screen items-center justify-center">
+                <Card>
+                    <CardContent className="p-6">
+                        <p className="text-destructive">No Participants Found</p>
+                    </CardContent>
+                </Card>
+            </div>
+        )
     }
+
+    console.log(currentPick)
+
+    const currentParticipant = currentPick !== 'ended' ? participants.find((p) => p.userId === currentPick) : undefined
 
     return (
         <div className="container mx-auto p-4">
@@ -112,9 +122,10 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
                 </Alert>
             </div>
             <div className="mb-6">
-                {/* <h1 className="text-2xl font-bold">{fantasyLeague.name}</h1> */}
-                league name
-                <p className="text-muted-foreground">{/* {fantasyLeague} • {fantasyLeague.owner.name} */}</p>
+                <h1 className="text-2xl font-bold">{fantasyLeagueData.name}</h1>
+                <p className="text-muted-foreground">
+                    {fantasyLeagueData.league.name} • {fantasyLeagueData.user.name}
+                </p>
             </div>
 
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -123,11 +134,11 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
                     <CardHeader>
                         <CardTitle>Draft Board</CardTitle>
                         <CardDescription>
-                            {currentPick === 'ended' && <p>Draft Ended</p>}
-                            {current && currentPick !== 'ended' && current.id === currentPick && (
-                                <div>
+                            {currentPick === 'ended' || (currentPick === undefined && <p>Draft Ended</p>)}
+                            {currentPick !== 'ended' && currentParticipant && (
+                                <div className="flex gap-3">
                                     <span>Current Pick:</span>
-                                    <Badge>{current.teamName}</Badge>
+                                    <Badge>{currentParticipant.teamName}</Badge>
                                 </div>
                             )}
                         </CardDescription>
@@ -139,7 +150,7 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
                                     <div
                                         key={team.id}
                                         className={cn(
-                                            `flex items-center space-x-4 rounded-md border px-2 py-2 ${currentPick !== 'ended' && team.id === currentPick ? 'border-green-200 dark:border-green-700' : 'border-gray-200 dark:border-neutral-700'}"`,
+                                            `flex items-center space-x-4 rounded-md border px-2 py-2 ${currentPick !== 'ended' && team.user.id === currentPick ? 'border-green-400 dark:border-green-700' : 'border-gray-400 dark:border-neutral-700'}"`,
                                         )}
                                     >
                                         <Avatar>
