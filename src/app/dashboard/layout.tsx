@@ -16,7 +16,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
     const { maintenance } = await getConfig()
     if (maintenance && session.user.role !== 'admin') {
-        return redirect('/mainenance')
+        return redirect('/maintenance')
     }
 
     posthog.identify(session.user.id, {
