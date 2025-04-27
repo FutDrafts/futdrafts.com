@@ -11,13 +11,17 @@ import { Button } from '@/components/ui/button'
 import { MoreVerticalIcon } from 'lucide-react'
 import Link from 'next/link'
 import { FantasyLeagueType } from './types'
+import { H2HMatches } from './h2h-matches'
 
 interface LeagueTabsProps {
     fantasyLeague: FantasyLeagueType
+    currentUserId?: string
 }
 
-export function LeagueTabs({ fantasyLeague }: LeagueTabsProps) {
+export function LeagueTabs({ fantasyLeague, currentUserId }: LeagueTabsProps) {
     const [activeTab, setActiveTab] = useState('overview')
+
+    const isOwner = currentUserId === fantasyLeague.ownerId
 
     const formatDate = (date: Date | null) => {
         if (!date) return 'Not set'
@@ -26,9 +30,10 @@ export function LeagueTabs({ fantasyLeague }: LeagueTabsProps) {
 
     return (
         <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="standings">Standings</TabsTrigger>
+                <TabsTrigger value="matches">H2H Matches</TabsTrigger>
                 <TabsTrigger value="rules">Rules</TabsTrigger>
             </TabsList>
             <TabsContent value="overview" className="space-y-4 pt-4">
@@ -148,6 +153,24 @@ export function LeagueTabs({ fantasyLeague }: LeagueTabsProps) {
                                 </TableBody>
                             </Table>
                         </div>
+                    </CardContent>
+                </Card>
+            </TabsContent>
+
+            <TabsContent value="matches" className="pt-4">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Head-to-Head Matches</CardTitle>
+                        <CardDescription>Weekly matches between participants</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <H2HMatches
+                            matches={fantasyLeague.h2hMatches}
+                            fantasyLeagueId={fantasyLeague.id}
+                            isOwner={isOwner}
+                            leagueStatus={fantasyLeague.status}
+                            draftStatus={fantasyLeague.draftStatus}
+                        />
                     </CardContent>
                 </Card>
             </TabsContent>

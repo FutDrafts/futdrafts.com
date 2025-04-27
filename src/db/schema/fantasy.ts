@@ -8,6 +8,7 @@ import {
     messageType,
     messageStatus,
     draftStatus,
+    h2hMatchStatus,
 } from './enums'
 import { user } from './auth'
 import { league, player } from './sports'
@@ -88,6 +89,23 @@ export const draftsPicks = pgTable('drafts_picks', {
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
+export const h2hMatch = pgTable('h2h_match', {
+    id: text().primaryKey().notNull(),
+    fantasyLeagueId: text('fantasy_league_id').notNull(),
+    homeParticipantId: text('home_participant_id').notNull(),
+    awayParticipantId: text('away_participant_id').notNull(),
+    weekNumber: integer('week_number').notNull(),
+    matchNumber: integer('match_number').notNull(),
+    startDate: timestamp('start_date').notNull(),
+    endDate: timestamp('end_date').notNull(),
+    homePoints: integer('home_points').default(0).notNull(),
+    awayPoints: integer('away_points').default(0).notNull(),
+    status: h2hMatchStatus().default('scheduled').notNull(),
+    winnerId: text('winner_id'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
 export const scoreRulesRelations = relations(scoreRules, ({ many }) => ({
     fantasies: many(fantasy),
 }))
@@ -107,6 +125,7 @@ export const fantasyRelations = relations(fantasy, ({ one, many }) => ({
     }),
     chatMessages: many(chatMessage),
     fantasyParticipants: many(fantasyParticipant),
+    h2hMatches: many(h2hMatch),
 }))
 
 export const fantasyParticipantRelations = relations(fantasyParticipant, ({ one, many }) => ({
@@ -119,6 +138,9 @@ export const fantasyParticipantRelations = relations(fantasyParticipant, ({ one,
         references: [user.id],
     }),
     draftsPicks: many(draftsPicks),
+    homeMatches: many(h2hMatch, { relationName: 'homeMatches' }),
+    awayMatches: many(h2hMatch, { relationName: 'awayMatches' }),
+    wonMatches: many(h2hMatch, { relationName: 'wonMatches' }),
 }))
 
 export const chatMessageRelations = relations(chatMessage, ({ one }) => ({
@@ -147,6 +169,25 @@ export const draftsPicksRelations = relations(draftsPicks, ({ one }) => ({
     }),
     fantasyParticipant: one(fantasyParticipant, {
         fields: [draftsPicks.fantasyParticipantId],
+        references: [fantasyParticipant.id],
+    }),
+}))
+
+export const h2hMatchRelations = relations(h2hMatch, ({ one }) => ({
+    fantasyLeague: one(fantasy, {
+        fields: [h2hMatch.fantasyLeagueId],
+        references: [fantasy.id],
+    }),
+    homeParticipant: one(fantasyParticipant, {
+        fields: [h2hMatch.homeParticipantId],
+        references: [fantasyParticipant.id],
+    }),
+    awayParticipant: one(fantasyParticipant, {
+        fields: [h2hMatch.awayParticipantId],
+        references: [fantasyParticipant.id],
+    }),
+    winner: one(fantasyParticipant, {
+        fields: [h2hMatch.winnerId],
         references: [fantasyParticipant.id],
     }),
 }))

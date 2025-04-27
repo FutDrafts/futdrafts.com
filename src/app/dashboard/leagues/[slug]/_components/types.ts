@@ -1,4 +1,4 @@
-import { fantasy, fantasyParticipant } from '@/db/schema'
+import { fantasy, fantasyParticipant, h2hMatch } from '@/db/schema'
 
 export interface ParticipantType {
     id: string
@@ -21,6 +21,38 @@ export interface ScoreRuleType {
     penaltyMiss: number
     yellowCard: number
     redCard: number
+}
+
+export interface H2HMatchType
+    extends Omit<typeof h2hMatch.$inferSelect, 'homeParticipantId' | 'awayParticipantId' | 'winnerId'> {
+    homeParticipant: {
+        id: string
+        teamName: string | null
+        points: number
+        user: {
+            name: string
+            image: string | null
+            username: string
+        }
+    }
+    awayParticipant: {
+        id: string
+        teamName: string | null
+        points: number
+        user: {
+            name: string
+            image: string | null
+            username: string
+        }
+    }
+    winner?: {
+        id: string
+        teamName: string | null
+        user: {
+            name: string
+            username: string
+        }
+    } | null
 }
 
 export type FantasyLeagueType = typeof fantasy.$inferSelect & {
@@ -48,4 +80,5 @@ export type FantasyLeagueType = typeof fantasy.$inferSelect & {
             username: string
         }
     })[]
+    h2hMatches?: H2HMatchType[]
 }

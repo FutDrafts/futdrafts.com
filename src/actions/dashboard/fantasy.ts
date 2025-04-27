@@ -181,6 +181,57 @@ export async function getFantasyLeagueByCode(slug: string) {
                         },
                     },
                 },
+                h2hMatches: {
+                    with: {
+                        homeParticipant: {
+                            columns: {
+                                id: true,
+                                teamName: true,
+                                points: true,
+                            },
+                            with: {
+                                user: {
+                                    columns: {
+                                        name: true,
+                                        image: true,
+                                        username: true,
+                                    },
+                                },
+                            },
+                        },
+                        awayParticipant: {
+                            columns: {
+                                id: true,
+                                teamName: true,
+                                points: true,
+                            },
+                            with: {
+                                user: {
+                                    columns: {
+                                        name: true,
+                                        image: true,
+                                        username: true,
+                                    },
+                                },
+                            },
+                        },
+                        winner: {
+                            columns: {
+                                id: true,
+                                teamName: true,
+                            },
+                            with: {
+                                user: {
+                                    columns: {
+                                        name: true,
+                                        username: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    orderBy: (h2hMatch, { asc }) => [asc(h2hMatch.weekNumber), asc(h2hMatch.matchNumber)],
+                },
             },
         })
     } catch (error) {
@@ -452,6 +503,14 @@ export const joinPrivateLeague = async ({
             throw new Error('Invalid Fantasy League')
         }
 
+        if (league.fantasyParticipants.length == league.maximumPlayer) {
+            throw new Error('League is full. Join a different one.')
+        }
+
+        if (league.fantasyParticipants.some((user) => user.userId === session.user.id)) {
+            throw new Error('You are already a member of this league.')
+        }
+
         if (joinCode == '') {
             throw new Error('Please enter a join code')
         }
@@ -505,6 +564,14 @@ export const joinPublicLeague = async ({ leagueId, teamName }: { leagueId: strin
 
         if (!league) {
             throw new Error('Invalid Fantasy League')
+        }
+
+        if (league.fantasyParticipants.length == league.maximumPlayer) {
+            throw new Error('League is full. Join a different one.')
+        }
+
+        if (league.fantasyParticipants.some((user) => user.userId === session.user.id)) {
+            throw new Error('You are already a member of this league.')
         }
 
         await db.insert(fantasyParticipant).values({

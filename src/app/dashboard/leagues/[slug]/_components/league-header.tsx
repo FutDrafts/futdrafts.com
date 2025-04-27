@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Share2, MessageSquare, Globe, Lock, Users2Icon } from 'lucide-react'
+import { ArrowLeft, Share2, MessageSquare, Globe, Lock, Users2Icon, TrophyIcon } from 'lucide-react'
 import Link from 'next/link'
 import { LeagueChatSidebar } from './league-chat-sidebar'
 import { cn } from '@/lib/utils'
@@ -31,9 +31,20 @@ export function LeagueHeader({ fantasyLeague, leagueSlug }: LeagueHeaderProps) {
         setIsChatOpen(!isChatOpen)
     }
 
-    const handleDraft = () => {
-        startDraft(fantasyLeague.id)
+    const handleDraft = async () => {
+        try {
+            await startDraft(fantasyLeague.id)
+            window.location.reload()
+        } catch (error) {
+            console.error('Error starting draft:', error)
+        }
     }
+
+    // Check if there are any H2H matches
+    const hasH2HMatches = fantasyLeague.h2hMatches && fantasyLeague.h2hMatches.length > 0
+
+    // Check if draft is completed to show H2H button
+    const isDraftCompleted = fantasyLeague.draftStatus === 'finished'
 
     return (
         <>
@@ -56,11 +67,19 @@ export function LeagueHeader({ fantasyLeague, leagueSlug }: LeagueHeaderProps) {
                                     )}
                                     {fantasyLeague.isPrivate ? 'Private' : 'Public'}
                                 </Badge>
+                                {isDraftCompleted && (
+                                    <Badge
+                                        variant="outline"
+                                        className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100"
+                                    >
+                                        Draft Complete
+                                    </Badge>
+                                )}
                             </div>
                             <p className="text-muted-foreground">{fantasyLeague.description}</p>
                         </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap justify-end gap-2">
                         <Button variant="outline" onClick={copyInviteLink}>
                             <Share2 className="mr-2 h-4 w-4" />
                             {copied ? 'Copied!' : 'Share'}
@@ -79,11 +98,22 @@ export function LeagueHeader({ fantasyLeague, leagueSlug }: LeagueHeaderProps) {
                                 View Team
                             </Link>
                         </Button>
-                        {fantasyLeague.draftStatus === null ? (
-                            <div></div>
-                        ) : !fantasyLeague.draftStatus ? (
-                            <Button onClick={() => handleDraft()}>Start Draft</Button>
-                        ) : (
+
+                        {isDraftCompleted && (
+                            <Button
+                                variant={hasH2HMatches ? 'default' : 'outline'}
+                                className={hasH2HMatches ? 'bg-amber-600 hover:bg-amber-700' : ''}
+                                onClick={() =>
+                                    document.querySelector('[value="matches"]')?.dispatchEvent(new MouseEvent('click'))
+                                }
+                            >
+                                <TrophyIcon className="mr-2 h-4 w-4" />
+                                {hasH2HMatches ? 'View H2H Matches' : 'Set Up H2H Matches'}
+                            </Button>
+                        )}
+
+                        {fantasyLeague.draftStatus === 'pending' && <Button onClick={handleDraft}>Start Draft</Button>}
+                        {fantasyLeague.draftStatus === 'in-progress' && (
                             <Button asChild>
                                 <Link href={`/dashboard/leagues/${leagueSlug}/draft`}>Go To Draft</Link>
                             </Button>
