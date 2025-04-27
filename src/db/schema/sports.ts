@@ -62,10 +62,18 @@ export const fixture = pgTable('fixture', {
     secondHalf: timestamp().notNull(),
     status: fixtureStatus().default('upcoming').notNull(),
     score: json().default({ away: 0, home: 0 }),
-    venueId: text().notNull(),
-    leagueId: text().notNull(),
-    homeTeamId: text().notNull(),
-    awayTeamId: text().notNull(),
+    venueId: text()
+        .references(() => venue.id)
+        .notNull(),
+    leagueId: text()
+        .references(() => league.id)
+        .notNull(),
+    homeTeamId: text()
+        .references(() => team.id)
+        .notNull(),
+    awayTeamId: text()
+        .references(() => team.id)
+        .notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
@@ -171,6 +179,11 @@ export const playerStatistics = pgTable('player_statistics', {
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
+
+export const venueRelations = relations(venue, ({ many }) => ({
+    fixtures: many(fixture),
+    teams: many(team),
+}))
 
 export const fixtureRelations = relations(fixture, ({ one, many }) => ({
     venue: one(venue, {
