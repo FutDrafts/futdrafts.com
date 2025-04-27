@@ -43,7 +43,6 @@ export const team = pgTable('team', {
 
 export const venue = pgTable('venue', {
     id: text().primaryKey().notNull(),
-    teamId: text('team_id').notNull(),
     name: text().notNull(),
     address: text().notNull(),
     city: text().notNull(),
@@ -56,16 +55,34 @@ export const venue = pgTable('venue', {
 
 export const fixture = pgTable('fixture', {
     id: text().primaryKey().notNull(),
-    homeTeamId: text('home_team_id').notNull(),
-    awayTeamId: text('away_team_id').notNull(),
+    referee: text(),
+    timezone: text().default('UTC'),
+    matchDay: timestamp().notNull(),
+    firstHalf: timestamp().notNull(),
+    secondHalf: timestamp().notNull(),
+    status: fixtureStatus().default('upcoming').notNull(),
+    score: json().default({ away: 0, home: 0 }),
+    venueId: text().notNull(),
+    leagueId: text().notNull(),
+    homeTeamId: text().notNull(),
+    awayTeamId: text().notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
-    matchday: timestamp().notNull(),
-    halftime: timestamp().notNull(),
-    venueId: text('venue_id').notNull(),
-    leagueId: text('league_id').notNull(),
-    score: json().default({ away: 0, home: 0 }),
-    status: fixtureStatus().default('upcoming').notNull(),
+})
+
+export const fixtureEvent = pgTable('fixture_events', {
+    id: text().primaryKey().notNull(),
+    elapsedTime: timestamp(),
+    extraTime: timestamp(),
+    type: text(),
+    detail: text(),
+    comments: text(),
+    teamId: text(),
+    playerId: text(),
+    assistPlayerId: text(),
+    fixtureId: text(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
 export const playerStatistics = pgTable('player_statistics', {
@@ -155,7 +172,7 @@ export const playerStatistics = pgTable('player_statistics', {
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const fixtureRelations = relations(fixture, ({ one }) => ({
+export const fixtureRelations = relations(fixture, ({ one, many }) => ({
     venue: one(venue, {
         fields: [fixture.venueId],
         references: [venue.id],
@@ -172,6 +189,7 @@ export const fixtureRelations = relations(fixture, ({ one }) => ({
         fields: [fixture.awayTeamId],
         references: [team.id],
     }),
+    events: many(fixtureEvent),
 }))
 
 export const leagueRelations = relations(league, ({ many }) => ({
@@ -207,5 +225,24 @@ export const playerStatisticsRelations = relations(playerStatistics, ({ one }) =
     league: one(league, {
         fields: [playerStatistics.leagueId],
         references: [league.id],
+    }),
+}))
+
+export const fixtureEventRelations = relations(fixtureEvent, ({ one }) => ({
+    fixture: one(fixture, {
+        fields: [fixtureEvent.fixtureId],
+        references: [fixture.id],
+    }),
+    team: one(team, {
+        fields: [fixtureEvent.teamId],
+        references: [team.id],
+    }),
+    player: one(player, {
+        fields: [fixtureEvent.playerId],
+        references: [player.id],
+    }),
+    assist: one(player, {
+        fields: [fixtureEvent.assistPlayerId],
+        references: [player.id],
     }),
 }))
