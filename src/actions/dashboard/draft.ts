@@ -337,7 +337,7 @@ export const generateHeadToHeadSchedule = async (fantasyLeagueId: string) => {
 
         // Create a round-robin schedule
         // Circle method: https://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
-        const participantIds = activeParticipants.map((p) => p.id)
+        const participantIds = activeParticipants.map((p) => p.userId)
 
         // Make sure all IDs are valid strings
         const validParticipantIds = participantIds.filter((id) => typeof id === 'string')
@@ -368,30 +368,57 @@ export const generateHeadToHeadSchedule = async (fantasyLeagueId: string) => {
             validParticipantIds.splice(1, 0, validParticipantIds.pop()!)
         }
 
+        console.log(`Created ${rounds.length} initial rounds`)
+
+        // We need to create enough rounds to fill the total weeks
+        // If we have more weeks than rounds, we need to repeat the schedule
+        let fullScheduleRounds = [...rounds]
+        while (fullScheduleRounds.length < totalWeeks) {
+            fullScheduleRounds = [...fullScheduleRounds, ...rounds]
+        }
+
+        console.log(`Created ${fullScheduleRounds.length} total rounds after expansion`)
+        console.log(`Creating matches for ${Math.min(fullScheduleRounds.length, totalWeeks)} weeks`)
+
         // We'll just use the rounds as they are - no home/away doubling
         const h2hMatches = []
         const weekInMs = 7 * 24 * 60 * 60 * 1000
 
-        for (let weekNum = 0; weekNum < totalWeeks; weekNum++) {
-            const roundMatches = rounds[weekNum]
+        // Create a mapping of userId to participantId for easier lookup
+        const userIdToParticipantId = activeParticipants.reduce(
+            (map, participant) => {
+                map[participant.userId] = participant.id
+                return map
+            },
+            {} as Record<string, string>,
+        )
+
+        for (let weekNum = 0; weekNum < Math.min(fullScheduleRounds.length, totalWeeks); weekNum++) {
+            const roundMatches = fullScheduleRounds[weekNum]
             const weekStartDate = new Date(startDate.getTime() + weekNum * weekInMs)
             const weekEndDate = new Date(weekStartDate.getTime() + 6 * 24 * 60 * 60 * 1000) // Sunday
 
             for (let i = 0; i < roundMatches.length; i++) {
                 const match = roundMatches[i]
 
-                // Just one match per pairing per week
-                h2hMatches.push({
-                    id: nanoid(),
-                    fantasyLeagueId,
-                    homeParticipantId: match.home,
-                    awayParticipantId: match.away,
-                    weekNumber: weekNum + 1,
-                    matchNumber: i + 1,
-                    startDate: weekStartDate,
-                    endDate: weekEndDate,
-                    status: 'scheduled' as const,
-                })
+                // Map user IDs back to participant IDs
+                const homeParticipantId = userIdToParticipantId[match.home]
+                const awayParticipantId = userIdToParticipantId[match.away]
+
+                if (homeParticipantId && awayParticipantId) {
+                    // Just one match per pairing per week
+                    h2hMatches.push({
+                        id: nanoid(),
+                        fantasyLeagueId,
+                        homeParticipantId,
+                        awayParticipantId,
+                        weekNumber: weekNum + 1,
+                        matchNumber: i + 1,
+                        startDate: weekStartDate,
+                        endDate: weekEndDate,
+                        status: 'scheduled' as const,
+                    })
+                }
             }
         }
 
@@ -405,7 +432,7 @@ export const generateHeadToHeadSchedule = async (fantasyLeagueId: string) => {
 
         return h2hMatches
     } catch (error) {
-        console.error(error)
+        console.error('Error in generateHeadToHeadSchedule:', error)
         throw new Error('Failed to generate head-to-head schedule')
     }
 }

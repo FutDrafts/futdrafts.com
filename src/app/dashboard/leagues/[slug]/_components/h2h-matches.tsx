@@ -2,15 +2,16 @@
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { H2HMatchType } from './types'
 import { Button } from '@/components/ui/button'
 import { generateHeadToHeadSchedule } from '@/actions/dashboard/draft'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { CalendarIcon, TrophyIcon } from 'lucide-react'
+import { CalendarIcon, TrophyIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import { useCallback, useState } from 'react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 interface H2HMatchesProps {
     matches: H2HMatchType[] | undefined
@@ -23,6 +24,7 @@ interface H2HMatchesProps {
 export function H2HMatches({ matches, fantasyLeagueId, isOwner, leagueStatus }: H2HMatchesProps) {
     const router = useRouter()
     const [isGenerating, setIsGenerating] = useState(false)
+    const [currentWeek, setCurrentWeek] = useState('1')
 
     const handleGenerateSchedule = useCallback(async () => {
         try {
@@ -72,6 +74,22 @@ export function H2HMatches({ matches, fantasyLeagueId, isOwner, leagueStatus }: 
         {} as Record<number, H2HMatchType[]>,
     )
 
+    const weekNumbers = Object.keys(matchesByWeek).sort((a, b) => parseInt(a) - parseInt(b))
+
+    const goToPreviousWeek = () => {
+        const currentIndex = weekNumbers.indexOf(currentWeek)
+        if (currentIndex > 0) {
+            setCurrentWeek(weekNumbers[currentIndex - 1])
+        }
+    }
+
+    const goToNextWeek = () => {
+        const currentIndex = weekNumbers.indexOf(currentWeek)
+        if (currentIndex < weekNumbers.length - 1) {
+            setCurrentWeek(weekNumbers[currentIndex + 1])
+        }
+    }
+
     const formatDate = (date: Date) => {
         return new Date(date).toLocaleDateString('en-US', {
             month: 'short',
@@ -82,16 +100,42 @@ export function H2HMatches({ matches, fantasyLeagueId, isOwner, leagueStatus }: 
 
     return (
         <div className="space-y-6">
-            <Tabs defaultValue="1" className="w-full">
+            <Tabs value={currentWeek} onValueChange={setCurrentWeek} className="w-full">
                 <div className="mb-4 flex items-center justify-between">
                     <h3 className="text-lg font-semibold">Head-to-Head Schedule</h3>
-                    <TabsList className="grid max-w-[400px] overflow-auto">
-                        {Object.keys(matchesByWeek).map((week) => (
-                            <TabsTrigger key={week} value={week} className="px-3">
-                                Week {week}
-                            </TabsTrigger>
-                        ))}
-                    </TabsList>
+
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={goToPreviousWeek}
+                            disabled={weekNumbers.indexOf(currentWeek) === 0}
+                        >
+                            <ChevronLeftIcon className="h-4 w-4" />
+                        </Button>
+
+                        <Select value={currentWeek} onValueChange={setCurrentWeek}>
+                            <SelectTrigger className="w-[130px]">
+                                <SelectValue placeholder="Select Week" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {weekNumbers.map((week) => (
+                                    <SelectItem key={week} value={week}>
+                                        Week {week}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={goToNextWeek}
+                            disabled={weekNumbers.indexOf(currentWeek) === weekNumbers.length - 1}
+                        >
+                            <ChevronRightIcon className="h-4 w-4" />
+                        </Button>
+                    </div>
                 </div>
 
                 {Object.entries(matchesByWeek).map(([week, weekMatches]) => (
