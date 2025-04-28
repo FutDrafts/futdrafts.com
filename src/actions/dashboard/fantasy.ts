@@ -443,7 +443,7 @@ export async function createFantasyLeague({
                 name,
                 leagueId,
                 scoreRulesId: '5Etfk9Y467NO1Ph3JFhGM',
-                slug: slug ? generateSlug(slug) : generateSlug(name),
+                slug: genSlug,
                 joinCode,
                 minimumPlayer: minPlayer,
                 maximumPlayer: maxPlayer,
