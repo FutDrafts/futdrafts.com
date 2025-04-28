@@ -14,9 +14,10 @@ interface LeagueHeaderProps {
     fantasyLeague: FantasyLeagueType
     leagueSlug: string
     isOwner: boolean
+    isMember: boolean
 }
 
-export function LeagueHeader({ fantasyLeague, leagueSlug, isOwner }: LeagueHeaderProps) {
+export function LeagueHeader({ fantasyLeague, leagueSlug, isOwner, isMember }: LeagueHeaderProps) {
     const [copied, setCopied] = useState(false)
     const [isChatOpen, setIsChatOpen] = useState(false)
 
@@ -80,48 +81,61 @@ export function LeagueHeader({ fantasyLeague, leagueSlug, isOwner }: LeagueHeade
                             <p className="text-muted-foreground">{fantasyLeague.description}</p>
                         </div>
                     </div>
-                    <div className="flex flex-wrap justify-end gap-2">
-                        <Button variant="outline" onClick={copyInviteLink}>
-                            <Share2 className="mr-2 h-4 w-4" />
-                            {copied ? 'Copied!' : 'Share'}
-                        </Button>
-                        <Button
-                            variant={isChatOpen ? 'default' : 'outline'}
-                            onClick={toggleChat}
-                            className={isChatOpen ? 'bg-primary' : ''}
-                        >
-                            <MessageSquare className="mr-2 h-4 w-4" />
-                            Chat
-                        </Button>
-                        <Button variant="outline" asChild>
-                            <Link href={`/dashboard/leagues/${leagueSlug}/team`}>
-                                <Users2Icon className="mr-2 h-4 w-4" />
-                                View Team
-                            </Link>
-                        </Button>
-
-                        {isDraftCompleted && (
+                    {isMember ? (
+                        <div className="flex flex-wrap justify-end gap-2">
+                            <Button variant="outline" onClick={copyInviteLink}>
+                                <Share2 className="mr-2 h-4 w-4" />
+                                {copied ? 'Copied!' : 'Share'}
+                            </Button>
                             <Button
-                                variant={hasH2HMatches ? 'default' : 'outline'}
-                                className={hasH2HMatches ? 'bg-amber-600 hover:bg-amber-700' : ''}
-                                onClick={() =>
-                                    document.querySelector('[value="matches"]')?.dispatchEvent(new MouseEvent('click'))
-                                }
+                                variant={isChatOpen ? 'default' : 'outline'}
+                                onClick={toggleChat}
+                                className={isChatOpen ? 'bg-primary' : ''}
                             >
-                                <TrophyIcon className="mr-2 h-4 w-4" />
-                                {hasH2HMatches ? 'View H2H Matches' : 'Set Up H2H Matches'}
+                                <MessageSquare className="mr-2 h-4 w-4" />
+                                Chat
                             </Button>
-                        )}
+                            <Button variant="outline" asChild>
+                                <Link href={`/dashboard/leagues/${leagueSlug}/team`}>
+                                    <Users2Icon className="mr-2 h-4 w-4" />
+                                    View Team
+                                </Link>
+                            </Button>
 
-                        {fantasyLeague.draftStatus === 'pending' && isOwner && (
-                            <Button onClick={handleDraft}>Start Draft</Button>
-                        )}
-                        {fantasyLeague.draftStatus === 'in-progress' && (
-                            <Button asChild>
-                                <Link href={`/dashboard/leagues/${leagueSlug}/draft`}>Go To Draft</Link>
-                            </Button>
-                        )}
-                    </div>
+                            {isDraftCompleted && (
+                                <Button
+                                    variant={hasH2HMatches ? 'default' : 'outline'}
+                                    className={hasH2HMatches ? 'bg-amber-600 hover:bg-amber-700' : ''}
+                                    onClick={() =>
+                                        document
+                                            .querySelector('[value="matches"]')
+                                            ?.dispatchEvent(new MouseEvent('click'))
+                                    }
+                                >
+                                    <TrophyIcon className="mr-2 h-4 w-4" />
+                                    {hasH2HMatches ? 'View H2H Matches' : 'Set Up H2H Matches'}
+                                </Button>
+                            )}
+
+                            {fantasyLeague.draftStatus === 'pending' && isOwner && (
+                                <Button onClick={handleDraft}>Start Draft</Button>
+                            )}
+                            {fantasyLeague.draftStatus === 'in-progress' && (
+                                <Button asChild>
+                                    <Link href={`/dashboard/leagues/${leagueSlug}/draft`}>Go To Draft</Link>
+                                </Button>
+                            )}
+                        </div>
+                    ) : (
+                        !isMember &&
+                        !fantasyLeague.isPrivate && (
+                            <div>
+                                <Button size="sm" asChild>
+                                    <Link href={`/dashboard/leagues/${fantasyLeague.slug}/join`}>Join League</Link>
+                                </Button>
+                            </div>
+                        )
+                    )}
                 </div>
             </div>
 

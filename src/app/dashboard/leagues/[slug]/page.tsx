@@ -2,12 +2,13 @@ import { Suspense } from 'react'
 import { LeagueHeader } from './_components/league-header'
 import { LeagueInfo } from './_components/league-info'
 import { LeagueTabs } from './_components/league-tabs'
-import { getFantasyLeagueByCode } from '@/actions/dashboard/fantasy'
+import { getFantasyLeagueByCode, isMemberOfLeague } from '@/actions/dashboard/fantasy'
 import { Loader2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { FantasyLeagueType } from './_components/types'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 
 export default async function LeagueDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params
@@ -33,6 +34,12 @@ export default async function LeagueDetailsPage({ params }: { params: Promise<{ 
         )
     }
 
+    const isMember = await isMemberOfLeague({ leagueId: fantasyLeague.id })
+
+    if (!isMember && fantasyLeague.isPrivate) {
+        redirect('/dashboard/leagues')
+    }
+
     return (
         <Suspense
             fallback={
@@ -44,7 +51,12 @@ export default async function LeagueDetailsPage({ params }: { params: Promise<{ 
             <div className="flex h-full">
                 <div className="flex-1">
                     <div className="space-y-6">
-                        <LeagueHeader fantasyLeague={fantasyLeague} leagueSlug={slug} isOwner={isOwner} />
+                        <LeagueHeader
+                            fantasyLeague={fantasyLeague}
+                            leagueSlug={slug}
+                            isOwner={isOwner}
+                            isMember={isMember}
+                        />
                         <LeagueInfo fantasyLeague={fantasyLeague} />
                         <LeagueTabs fantasyLeague={fantasyLeague} currentUserId={currentUserId} />
                     </div>
