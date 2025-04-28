@@ -3,7 +3,6 @@ import { DashboardNavbar } from './_navbar'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import posthog from 'posthog-js'
-import { getConfig } from '@/actions/admin/config'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
     const session = await auth.api.getSession({
@@ -14,10 +13,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
         redirect('/')
     }
 
-    const { maintenance } = await getConfig()
-    if (maintenance && session.user.role !== 'admin') {
-        return redirect('/maintenance')
-    }
+    // const { maintenance } = await getConfig()
+    // if (maintenance && session.user.role !== 'admin') {
+    //     return redirect('/maintenance')
+    // }
 
     posthog.identify(session.user.id, {
         name: session.user.name,
