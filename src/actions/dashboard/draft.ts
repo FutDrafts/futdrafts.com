@@ -211,7 +211,7 @@ export const getAvailableDraftPlayers = async (slug: string) => {
         }
 
         const queryOne = await db.query.draftsPicks.findMany({
-            where: isNotNull(draftsPicks.playerId),
+            where: and(isNotNull(draftsPicks.playerId), eq(draftsPicks.fantasyLeagueId, fantasyLeague.id)),
         })
 
         const queryTwo = await db.query.player.findMany({
@@ -372,7 +372,7 @@ export const generateHeadToHeadSchedule = async (fantasyLeagueId: string) => {
         const h2hMatches = []
         const weekInMs = 7 * 24 * 60 * 60 * 1000
 
-        for (let weekNum = 0; weekNum < Math.min(rounds.length, totalWeeks); weekNum++) {
+        for (let weekNum = 0; weekNum < totalWeeks; weekNum++) {
             const roundMatches = rounds[weekNum]
             const weekStartDate = new Date(startDate.getTime() + weekNum * weekInMs)
             const weekEndDate = new Date(weekStartDate.getTime() + 6 * 24 * 60 * 60 * 1000) // Sunday

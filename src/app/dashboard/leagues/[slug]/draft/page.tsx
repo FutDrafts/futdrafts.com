@@ -6,13 +6,15 @@ import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
-import { AlertCircleIcon, Loader2 } from 'lucide-react'
+import { AlertCircleIcon, ArrowLeftIcon, Loader2 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { getFantasyLeagueByCode, getFantasyLeagueParticipantsBySlug } from '@/actions/dashboard/fantasy'
 import { createDraftPick, getAvailableDraftPlayers, getCurrentDraftPick } from '@/actions/dashboard/draft'
 import { player, playerStatistics } from '@/db/schema'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
+import Link from 'next/link'
 
 type PlayerStatsTable = typeof playerStatistics.$inferSelect
 type PlayerTable = typeof player.$inferSelect & {
@@ -68,7 +70,11 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
             })
 
             setSelectedPlayer(null)
-        } catch (error) {
+
+            window.location.reload()
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+            toast.error(`Error Drafting Player: ${errorMessage}`)
             console.error('Error drafting player:', error)
         }
     }
@@ -105,13 +111,16 @@ export default function DraftPage({ params }: { params: Promise<{ slug: string }
         )
     }
 
-    console.log(currentPick)
-
     const currentParticipant = currentPick !== 'ended' ? participants.find((p) => p.userId === currentPick) : undefined
 
     return (
         <div className="container mx-auto p-4">
-            <div className="mb-4">
+            <div className="mb-4 flex items-center justify-between">
+                <Button variant="ghost" size="sm" asChild className="mb-2">
+                    <Link href={`/dashboard/leagues/${fantasyLeagueData.slug}`} className="flex items-center">
+                        <ArrowLeftIcon className="mr-2 h-4 w-4" />
+                    </Link>
+                </Button>
                 <Alert variant="default">
                     <AlertCircleIcon className="h-4 w-4" />
                     <AlertTitle>Important Draft Information</AlertTitle>
