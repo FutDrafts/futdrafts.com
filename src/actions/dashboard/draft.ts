@@ -211,7 +211,7 @@ export const getAvailableDraftPlayers = async (slug: string) => {
         }
 
         const queryOne = await db.query.draftsPicks.findMany({
-            where: isNotNull(draftsPicks.playerId),
+            where: and(isNotNull(draftsPicks.playerId), eq(draftsPicks.fantasyLeagueId, fantasyLeague.id)),
         })
 
         const queryTwo = await db.query.player.findMany({
