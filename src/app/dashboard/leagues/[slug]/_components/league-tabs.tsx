@@ -165,7 +165,6 @@ export function LeagueTabs({ fantasyLeague, currentUserId }: LeagueTabsProps) {
                     </CardHeader>
                     <CardContent>
                         <H2HMatches
-                            matches={fantasyLeague.h2hMatches}
                             fantasyLeagueId={fantasyLeague.id}
                             isOwner={isOwner}
                             leagueStatus={fantasyLeague.status}
