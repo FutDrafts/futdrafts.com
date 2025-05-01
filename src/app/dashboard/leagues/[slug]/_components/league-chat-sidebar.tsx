@@ -8,7 +8,6 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import { SendIcon, SmileIcon, X, Check, CheckCheck } from 'lucide-react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getChatMessages, sendChatMessage } from '@/actions/dashboard/chat'
 import { Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
@@ -16,6 +15,7 @@ import { authClient } from '@/lib/auth-client'
 import { redirect } from 'next/navigation'
 import { toast } from 'sonner'
 import Link from 'next/link'
+import useSWR from 'swr'
 
 interface LeagueChatSidebarProps {
     isOpen: boolean
@@ -26,12 +26,18 @@ interface LeagueChatSidebarProps {
 
 const emojis = ['👍', '❤️', '😂', '😮', '😢', '😡']
 
-export function LeagueChatSidebar({ isOpen, onClose, leagueSlug, leagueId }: LeagueChatSidebarProps) {
+export function LeagueChatSidebar({ isOpen, onClose, leagueId }: LeagueChatSidebarProps) {
     const [newMessage, setNewMessage] = useState('')
     const [showEmojiPicker, setShowEmojiPicker] = useState(false)
     const scrollAreaRef = useRef<HTMLDivElement>(null)
-    const queryClient = useQueryClient()
+    // const queryClient = useQueryClient()
     const { data: session, isPending, error } = authClient.useSession()
+
+    const {
+        data: messages,
+        isLoading,
+        mutate,
+    } = useSWR(leagueId, async (id) => await getChatMessages(id), { refreshInterval: 2000 })
 
     if (error) {
         toast.error(error.message)
@@ -41,18 +47,18 @@ export function LeagueChatSidebar({ isOpen, onClose, leagueSlug, leagueId }: Lea
         redirect('/auth/sign-in')
     }
 
-    const { data: messages, isLoading } = useQuery({
-        queryKey: ['chat', 'messages', leagueId],
-        queryFn: () => getChatMessages(leagueId),
-    })
+    // const { data: messages, isLoading } = useQuery({
+    //     queryKey: ['chat', 'messages', leagueId],
+    //     queryFn: () => getChatMessages(leagueId),
+    // })
 
-    const sendMessageMutation = useMutation({
-        mutationFn: (content: string) => sendChatMessage(leagueId, content),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['chat', 'messages', leagueSlug] })
-            setNewMessage('')
-        },
-    })
+    // const sendMessageMutation = useMutation({
+    //     mutationFn: (content: string) => sendChatMessage(leagueId, content),
+    //     onSuccess: () => {
+    //         queryClient.invalidateQueries({ queryKey: ['chat', 'messages', leagueSlug] })
+    //         setNewMessage('')
+    //     },
+    // })
 
     // Format timestamp to readable format
     const formatTimestamp = (date: Date) => {
@@ -75,7 +81,10 @@ export function LeagueChatSidebar({ isOpen, onClose, leagueSlug, leagueId }: Lea
         e.preventDefault()
         if (!newMessage.trim()) return
 
-        sendMessageMutation.mutate(newMessage)
+        // sendMessageMutation.mutate(newMessage)
+        sendChatMessage(leagueId, newMessage)
+        setNewMessage('')
+        mutate()
     }
 
     const handleEmojiSelect = (emoji: string) => {
@@ -244,19 +253,20 @@ export function LeagueChatSidebar({ isOpen, onClose, leagueSlug, leagueId }: Lea
                                 onChange={(e) => setNewMessage(e.target.value)}
                                 placeholder="Type a message..."
                                 className="bg-background flex-1"
-                                disabled={sendMessageMutation.isPending}
+                                // disabled={sendMessageMutation.isPending}
                             />
                             <Button
                                 type="submit"
                                 size="icon"
-                                disabled={sendMessageMutation.isPending || !newMessage.trim()}
+                                // disabled={sendMessageMutation.isPending || !newMessage.trim()}
                                 className="bg-primary hover:bg-primary/90"
                             >
-                                {sendMessageMutation.isPending ? (
+                                {/* {sendMessageMutation.isPending ? (
                                     <Loader2 className="size-4 animate-spin" />
                                 ) : (
                                     <SendIcon className="size-4" />
-                                )}
+                                )} */}
+                                <SendIcon className="size-4" />
                                 <span className="sr-only">Send</span>
                             </Button>
                         </div>

@@ -138,9 +138,15 @@ export const fantasyParticipantRelations = relations(fantasyParticipant, ({ one,
         references: [user.id],
     }),
     draftsPicks: many(draftsPicks),
-    homeMatches: many(h2hMatch, { relationName: 'homeMatches' }),
-    awayMatches: many(h2hMatch, { relationName: 'awayMatches' }),
-    wonMatches: many(h2hMatch, { relationName: 'wonMatches' }),
+    homeMatches: many(h2hMatch, {
+        relationName: 'homeMatches',
+    }),
+    awayMatches: many(h2hMatch, {
+        relationName: 'awayMatches',
+    }),
+    wonMatches: many(h2hMatch, {
+        relationName: 'wonMatches',
+    }),
 }))
 
 export const chatMessageRelations = relations(chatMessage, ({ one }) => ({
@@ -181,13 +187,16 @@ export const h2hMatchRelations = relations(h2hMatch, ({ one }) => ({
     homeParticipant: one(fantasyParticipant, {
         fields: [h2hMatch.homeParticipantId],
         references: [fantasyParticipant.id],
+        relationName: 'homeMatches',
     }),
     awayParticipant: one(fantasyParticipant, {
         fields: [h2hMatch.awayParticipantId],
         references: [fantasyParticipant.id],
+        relationName: 'awayMatches',
     }),
     winner: one(fantasyParticipant, {
         fields: [h2hMatch.winnerId],
         references: [fantasyParticipant.id],
+        relationName: 'wonMatches',
     }),
 }))
