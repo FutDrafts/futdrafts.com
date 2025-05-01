@@ -4,8 +4,8 @@ import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { getFantasyLeagueByCode, getFantasyLeagueById, getFantasyLeagueParticipants } from './fantasy'
 import { db } from '@/db'
-import { draftsPicks, fantasy, fantasyParticipant, h2hMatch } from '@/db/schema'
-import { and, asc, eq, isNotNull, or } from 'drizzle-orm'
+import { draftsPicks, fantasy, fantasyParticipant, h2hMatch, player, playerStatistics } from '@/db/schema'
+import { and, asc, eq, isNotNull, or, inArray } from 'drizzle-orm'
 import { shuffleInPlace } from '@/lib/utils'
 import { nanoid } from 'nanoid'
 import { revalidatePath } from 'next/cache'
@@ -210,24 +210,41 @@ export const getAvailableDraftPlayers = async (slug: string) => {
             throw new Error("Fantasy league doesn't exist")
         }
 
-        const queryOne = await db.query.draftsPicks.findMany({
-            where: and(isNotNull(draftsPicks.playerId), eq(draftsPicks.fantasyLeagueId, fantasyLeague.id)),
+        // Get all players that belong to the fantasy league's associated league
+        // First, get all playerStatistics IDs for the league
+        const statsForLeague = await db.query.playerStatistics.findMany({
+            where: eq(playerStatistics.leagueId, fantasyLeague.leagueId),
+            columns: { id: true },
         })
+        const statsIds = statsForLeague.map((stat) => stat.id)
 
-        const queryTwo = await db.query.player.findMany({
+        // Then, get all players whose statisticsId is in statsIds
+        const allLeaguePlayers = await db.query.player.findMany({
+            where: statsIds.length > 0 ? inArray(player.statisticsId, statsIds) : undefined,
             with: {
                 playerStatistics: true,
             },
         })
 
-        const leaguePlayers = queryTwo.filter((p) => p.playerStatistics.leagueId === fantasyLeague.leagueId)
+        // Get all drafted player IDs for this fantasy league
+        const draftedPicks = await db.query.draftsPicks.findMany({
+            where: and(isNotNull(draftsPicks.playerId), eq(draftsPicks.fantasyLeagueId, fantasyLeague.id)),
+            columns: {
+                playerId: true,
+            },
+        })
 
-        if (queryOne.length < 1) {
-            return leaguePlayers
+        // If no players have been drafted yet, return all players
+        if (draftedPicks.length === 0) {
+            return allLeaguePlayers
         }
 
-        const draftedPlayerIds = new Set(queryOne.map((pick) => pick.playerId))
-        const availablePlayers = leaguePlayers.filter((player) => !draftedPlayerIds.has(player.id))
+        // Create a set of drafted player IDs for efficient lookup
+        const draftedPlayerIds = new Set(draftedPicks.map((pick) => pick.playerId))
+
+        // Filter out players that have already been drafted
+        const availablePlayers = allLeaguePlayers.filter((player) => !draftedPlayerIds.has(player.id))
+
         return availablePlayers
     } catch (error) {
         console.error(error)
@@ -368,18 +385,12 @@ export const generateHeadToHeadSchedule = async (fantasyLeagueId: string) => {
             validParticipantIds.splice(1, 0, validParticipantIds.pop()!)
         }
 
-        console.log(`Created ${rounds.length} initial rounds`)
-
         // We need to create enough rounds to fill the total weeks
         // If we have more weeks than rounds, we need to repeat the schedule
         let fullScheduleRounds = [...rounds]
         while (fullScheduleRounds.length < totalWeeks) {
-            fullScheduleRounds = [...fullScheduleRounds, ...rounds]
         }
-
-        console.log(`Created ${fullScheduleRounds.length} total rounds after expansion`)
-        console.log(`Creating matches for ${Math.min(fullScheduleRounds.length, totalWeeks)} weeks`)
-
+            fullScheduleRounds = [...fullScheduleRounds, ...rounds]
         // We'll just use the rounds as they are - no home/away doubling
         const h2hMatches = []
         const weekInMs = 7 * 24 * 60 * 60 * 1000

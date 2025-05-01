@@ -58,16 +58,7 @@ export default function LeaguesPage() {
         },
     })
 
-    const { data: leagueData, error: leagueError } = useQuery({
-        queryKey: ['fantasy', 'leagues', 'soccer'],
-        queryFn: async () => {
-            return getAllLeagueNames()
-        },
-    })
-
     const { fantasyLeagues = [], total = 0 } = data || {}
-    const { leagues = [], total: totalLeagues = 0 } = leagueData || {}
-    console.log(leagues, totalLeagues)
     const totalPages = Math.ceil(total / ITEMS_PER_PAGE)
 
     const colorStatusCell = (status: FantasyStatus) => {
@@ -108,10 +99,6 @@ export default function LeaguesPage() {
 
     if (error) {
         toast.error(error.message)
-    }
-
-    if (leagueError) {
-        toast.error(leagueError.message)
     }
 
     return (
