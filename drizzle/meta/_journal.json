@@ -57,6 +57,13 @@
       "when": 1745751960032,
       "tag": "0007_woozy_harpoon",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1746016566884,
+      "tag": "0008_glamorous_grandmaster",
+      "breakpoints": true
     }
   ]
 }
