@@ -6,39 +6,79 @@ import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { H2HMatchType } from './types'
 import { Button } from '@/components/ui/button'
-import { generateHeadToHeadSchedule } from '@/actions/dashboard/draft'
 import { toast } from 'sonner'
-import { useRouter } from 'next/navigation'
-import { CalendarIcon, TrophyIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
-import { useCallback, useState } from 'react'
+import { CalendarIcon, TrophyIcon, ChevronLeftIcon, ChevronRightIcon, Loader2Icon } from 'lucide-react'
+import { useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import useSWR from 'swr'
+import useSWRMutation from 'swr/mutation'
 
 interface H2HMatchesProps {
-    matches: H2HMatchType[] | undefined
     fantasyLeagueId: string
     isOwner: boolean
     leagueStatus: string
     draftStatus?: string
 }
 
-export function H2HMatches({ matches, fantasyLeagueId, isOwner, leagueStatus }: H2HMatchesProps) {
-    const router = useRouter()
-    const [isGenerating, setIsGenerating] = useState(false)
+async function fetchMatches(url: string) {
+    const response = await fetch(url)
+    if (!response.ok) {
+        throw new Error('Failed to fetch matches')
+    }
+    return response.json()
+}
+
+async function generateSchedule(url: string) {
+    const response = await fetch(url, { method: 'POST' })
+    if (!response.ok) {
+        const error = await response.text()
+        throw new Error(error)
+    }
+    return response.json()
+}
+
+export function H2HMatches({ fantasyLeagueId, isOwner, leagueStatus }: H2HMatchesProps) {
     const [currentWeek, setCurrentWeek] = useState('1')
 
-    const handleGenerateSchedule = useCallback(async () => {
-        try {
-            setIsGenerating(true)
-            await generateHeadToHeadSchedule(fantasyLeagueId)
-            toast.success('H2H schedule generated successfully!')
-            router.refresh()
-        } catch (error) {
-            console.error('Error generating H2H schedule:', error)
-            toast.error('Failed to generate H2H schedule. Please try again.')
-        } finally {
-            setIsGenerating(false)
-        }
-    }, [fantasyLeagueId, router])
+    const {
+        data: matches,
+        error,
+        isLoading,
+        mutate,
+    } = useSWR<H2HMatchType[]>(`/server/api/dashboard/draft/h2h?fantasyLeagueId=${fantasyLeagueId}`, fetchMatches, {
+        revalidateOnFocus: false,
+    })
+
+    const { trigger: generateH2H, isMutating } = useSWRMutation(
+        `/server/api/dashboard/draft/h2h?fantasyLeagueId=${fantasyLeagueId}`,
+        generateSchedule,
+        {
+            onSuccess: async (newMatches) => {
+                toast.success(`Successfully generated ${newMatches.length} matches!`)
+                await mutate() // Revalidate the matches data
+            },
+            onError: (error) => {
+                console.error('Error generating H2H schedule:', error)
+                toast.error(`Failed to generate H2H schedule: ${error.message}`)
+            },
+        },
+    )
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center py-8">
+                <Loader2Icon className="size-4 animate-spin" />
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center gap-4 py-8">
+                <p className="text-destructive">Error loading matches. Please try again later.</p>
+            </div>
+        )
+    }
 
     if (!matches || matches.length === 0) {
         return (
@@ -47,15 +87,27 @@ export function H2HMatches({ matches, fantasyLeagueId, isOwner, leagueStatus }: 
                     <h3 className="text-lg font-semibold">No Head-to-Head Matches Yet</h3>
                     <p className="text-muted-foreground mt-1">
                         {isOwner && leagueStatus === 'active'
-                            ? 'Generate a schedule to create head-to-head matches between participants.'
+                            ? 'Generate a schedule to create head-to-head matches between participants. Make sure you have an even number of active participants.'
                             : 'The league owner needs to generate the match schedule.'}
                     </p>
                 </div>
 
                 {isOwner && leagueStatus === 'active' && (
-                    <Button onClick={handleGenerateSchedule} disabled={isGenerating} className="mt-4">
-                        {isGenerating ? 'Generating...' : 'Generate H2H Schedule'}
-                    </Button>
+                    <div className="flex flex-col items-center gap-2">
+                        <Button onClick={() => generateH2H()} disabled={isMutating} className="mt-4">
+                            {isMutating ? (
+                                <>
+                                    <Loader2Icon className="mr-2 size-4 animate-spin" />
+                                    Generating Schedule...
+                                </>
+                            ) : (
+                                'Generate H2H Schedule'
+                            )}
+                        </Button>
+                        <p className="text-muted-foreground text-xs">
+                            This will create a balanced schedule for all participants
+                        </p>
+                    </div>
                 )}
             </div>
         )

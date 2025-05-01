@@ -331,6 +331,11 @@ export const generateHeadToHeadSchedule = async (fantasyLeagueId: string) => {
         const fantasyLeague = await getFantasyLeagueById(fantasyLeagueId)
 
         if (!fantasyLeague || !fantasyLeague.startDate || !fantasyLeague.endDate) {
+            console.error('Fantasy League validation failed:', {
+                exists: !!fantasyLeague,
+                hasStartDate: !!fantasyLeague?.startDate,
+                hasEndDate: !!fantasyLeague?.endDate,
+            })
             throw new Error('Fantasy League not found or missing dates')
         }
 
@@ -349,11 +354,7 @@ export const generateHeadToHeadSchedule = async (fantasyLeagueId: string) => {
         const totalDays = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
         const totalWeeks = Math.floor(totalDays / 7)
 
-        // Each participant plays against every other participant once
-        // const numParticipants = activeParticipants.length
-
         // Create a round-robin schedule
-        // Circle method: https://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
         const participantIds = activeParticipants.map((p) => p.userId)
 
         // Make sure all IDs are valid strings
@@ -385,15 +386,26 @@ export const generateHeadToHeadSchedule = async (fantasyLeagueId: string) => {
             validParticipantIds.splice(1, 0, validParticipantIds.pop()!)
         }
 
-        // We need to create enough rounds to fill the total weeks
-        // If we have more weeks than rounds, we need to repeat the schedule
-        let fullScheduleRounds = [...rounds]
-        while (fullScheduleRounds.length < totalWeeks) {
+        const fullScheduleRounds = []
+        const roundsNeeded = Math.min(totalWeeks, n * 2) // Double round-robin, but cap at total weeks
+
+        while (fullScheduleRounds.length < roundsNeeded) {
+            // Add rounds, alternating home/away for fairness
+            const isSecondHalf: boolean = fullScheduleRounds.length >= rounds.length
+            const roundsToAdd: Array<Array<{ home: string; away: string }>> = isSecondHalf
+                ? rounds.map((round) =>
+                      round.map((match) => ({
+                          home: match.away,
+                          away: match.home,
+                      })),
+                  )
+                : rounds
+
+            const remainingRounds = roundsNeeded - fullScheduleRounds.length
+            const roundsToAddSliced = roundsToAdd.slice(0, remainingRounds)
+
+            fullScheduleRounds.push(...roundsToAddSliced)
         }
-            fullScheduleRounds = [...fullScheduleRounds, ...rounds]
-        // We'll just use the rounds as they are - no home/away doubling
-        const h2hMatches = []
-        const weekInMs = 7 * 24 * 60 * 60 * 1000
 
         // Create a mapping of userId to participantId for easier lookup
         const userIdToParticipantId = activeParticipants.reduce(
@@ -404,20 +416,29 @@ export const generateHeadToHeadSchedule = async (fantasyLeagueId: string) => {
             {} as Record<string, string>,
         )
 
+        const h2hMatches = []
+        const weekInMs = 7 * 24 * 60 * 60 * 1000
+
         for (let weekNum = 0; weekNum < Math.min(fullScheduleRounds.length, totalWeeks); weekNum++) {
             const roundMatches = fullScheduleRounds[weekNum]
+            if (!roundMatches) {
+                continue
+            }
+
             const weekStartDate = new Date(startDate.getTime() + weekNum * weekInMs)
             const weekEndDate = new Date(weekStartDate.getTime() + 6 * 24 * 60 * 60 * 1000) // Sunday
 
             for (let i = 0; i < roundMatches.length; i++) {
                 const match = roundMatches[i]
+                if (!match) {
+                    continue
+                }
 
                 // Map user IDs back to participant IDs
                 const homeParticipantId = userIdToParticipantId[match.home]
                 const awayParticipantId = userIdToParticipantId[match.away]
 
-                if (homeParticipantId && awayParticipantId) {
-                    // Just one match per pairing per week
+                if (homeParticipantId && awayParticipantId && homeParticipantId !== awayParticipantId) {
                     h2hMatches.push({
                         id: nanoid(),
                         fantasyLeagueId,
