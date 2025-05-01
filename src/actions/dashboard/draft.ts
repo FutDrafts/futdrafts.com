@@ -389,9 +389,8 @@ export const generateHeadToHeadSchedule = async (fantasyLeagueId: string) => {
         // If we have more weeks than rounds, we need to repeat the schedule
         let fullScheduleRounds = [...rounds]
         while (fullScheduleRounds.length < totalWeeks) {
-            fullScheduleRounds = [...fullScheduleRounds, ...rounds]
         }
-
+            fullScheduleRounds = [...fullScheduleRounds, ...rounds]
         // We'll just use the rounds as they are - no home/away doubling
         const h2hMatches = []
         const weekInMs = 7 * 24 * 60 * 60 * 1000
