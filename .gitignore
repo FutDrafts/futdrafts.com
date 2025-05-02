@@ -42,6 +42,7 @@ next-env.d.ts
 
 /certificates
 /scripts
+/data
 package-lock.json
 yarn-lock.json
 
