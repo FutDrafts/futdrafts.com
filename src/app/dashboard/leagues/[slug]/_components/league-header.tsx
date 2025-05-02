@@ -20,6 +20,7 @@ interface LeagueHeaderProps {
 export function LeagueHeader({ fantasyLeague, leagueSlug, isOwner, isMember }: LeagueHeaderProps) {
     const [copied, setCopied] = useState(false)
     const [isChatOpen, setIsChatOpen] = useState(false)
+    const [isDrafting, setIsDrafting] = useState(false)
 
     const copyInviteLink = () => {
         navigator.clipboard.writeText(
@@ -34,11 +35,13 @@ export function LeagueHeader({ fantasyLeague, leagueSlug, isOwner, isMember }: L
     }
 
     const handleDraft = async () => {
+        setIsDrafting(true)
         try {
             await startDraft(fantasyLeague.id)
             window.location.reload()
         } catch (error) {
             console.error('Error starting draft:', error)
+            setIsDrafting(false)
         }
     }
 
@@ -118,7 +121,9 @@ export function LeagueHeader({ fantasyLeague, leagueSlug, isOwner, isMember }: L
                             )}
 
                             {fantasyLeague.draftStatus === 'pending' && isOwner && (
-                                <Button onClick={handleDraft}>Start Draft</Button>
+                                <Button onClick={handleDraft} disabled={isDrafting}>
+                                    Start Draft
+                                </Button>
                             )}
                             {fantasyLeague.draftStatus === 'in-progress' && (
                                 <Button asChild>
