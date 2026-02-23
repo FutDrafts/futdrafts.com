@@ -1,6 +1,0 @@
-onlyBuiltDependencies:
-  - core-js
-  - esbuild
-  - msgpackr-extract
-  - sharp
-  - unrs-resolver
