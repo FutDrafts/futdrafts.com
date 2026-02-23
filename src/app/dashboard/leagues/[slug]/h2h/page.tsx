@@ -59,8 +59,8 @@ export default function HeadToHeadPage() {
     const [player1, player2] = [...participants].sort((a, b) => b.points - a.points).slice(0, 2)
 
     return (
-        <div className="container mx-auto py-6 space-y-6">
-            <div className="flex justify-between items-center">
+        <div className="container mx-auto space-y-6 py-6">
+            <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-bold">Head to Head</h1>
                 <Button variant="outline">Match History</Button>
             </div>
@@ -72,8 +72,8 @@ export default function HeadToHeadPage() {
                 <CardContent>
                     <div className="flex items-center justify-between gap-4">
                         {/* Player 1 */}
-                        <div className="flex-1 text-center space-y-4">
-                            <Avatar className="w-24 h-24 mx-auto">
+                        <div className="flex-1 space-y-4 text-center">
+                            <Avatar className="mx-auto h-24 w-24">
                                 <AvatarImage src={player1.user.image || undefined} />
                                 <AvatarFallback>{player1.user.name[0]}</AvatarFallback>
                             </Avatar>
@@ -81,12 +81,12 @@ export default function HeadToHeadPage() {
                                 <h3 className="text-xl font-semibold">{player1.teamName || player1.user.name}</h3>
                                 <Badge>{player1.status === 'active' ? 'Active' : 'Offline'}</Badge>
                             </div>
-                            <div className="grid grid-cols-2 gap-2 max-w-xs mx-auto text-sm">
-                                <div className="bg-muted p-2 rounded">
+                            <div className="mx-auto grid max-w-xs grid-cols-2 gap-2 text-sm">
+                                <div className="bg-muted rounded p-2">
                                     <div className="font-medium">Points</div>
                                     <div className="text-xl">{player1.points}</div>
                                 </div>
-                                <div className="bg-muted p-2 rounded">
+                                <div className="bg-muted rounded p-2">
                                     <div className="font-medium">Rank</div>
                                     <div className="text-xl">#{player1.rank}</div>
                                 </div>
@@ -97,8 +97,8 @@ export default function HeadToHeadPage() {
                         <div className="text-2xl font-bold opacity-50">VS</div>
 
                         {/* Player 2 */}
-                        <div className="flex-1 text-center space-y-4">
-                            <Avatar className="w-24 h-24 mx-auto">
+                        <div className="flex-1 space-y-4 text-center">
+                            <Avatar className="mx-auto h-24 w-24">
                                 <AvatarImage src={player2.user.image || undefined} />
                                 <AvatarFallback>{player2.user.name[0]}</AvatarFallback>
                             </Avatar>
@@ -108,12 +108,12 @@ export default function HeadToHeadPage() {
                                     {player2.status === 'active' ? 'Active' : 'Offline'}
                                 </Badge>
                             </div>
-                            <div className="grid grid-cols-2 gap-2 max-w-xs mx-auto text-sm">
-                                <div className="bg-muted p-2 rounded">
+                            <div className="mx-auto grid max-w-xs grid-cols-2 gap-2 text-sm">
+                                <div className="bg-muted rounded p-2">
                                     <div className="font-medium">Points</div>
                                     <div className="text-xl">{player2.points}</div>
                                 </div>
-                                <div className="bg-muted p-2 rounded">
+                                <div className="bg-muted rounded p-2">
                                     <div className="font-medium">Rank</div>
                                     <div className="text-xl">#{player2.rank}</div>
                                 </div>
@@ -123,22 +123,22 @@ export default function HeadToHeadPage() {
                 </CardContent>
             </Card>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid gap-6 md:grid-cols-2">
                 <Card>
                     <CardHeader>
                         <CardTitle>Team Stats</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                                 <span>Total Wins</span>
                                 <span className="font-semibold">12</span>
                             </div>
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                                 <span>Goals Scored</span>
                                 <span className="font-semibold">28</span>
                             </div>
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                                 <span>Clean Sheets</span>
                                 <span className="font-semibold">5</span>
                             </div>
@@ -151,7 +151,7 @@ export default function HeadToHeadPage() {
                         <CardTitle>Recent Form</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="flex gap-2 justify-center">
+                        <div className="flex justify-center gap-2">
                             <Badge className="bg-green-500">W</Badge>
                             <Badge className="bg-red-500">L</Badge>
                             <Badge className="bg-green-500">W</Badge>

@@ -30,7 +30,7 @@ export function ForgotPasswordDialog({ open, setOpen }: { open: boolean; setOpen
     const onSubmit = async (data: EmailFormValues) => {
         setLoading(true)
         try {
-            await authClient.requestPasswordReset({
+            await authClient.forgetPassword({
                 email: data.email,
                 redirectTo: '/auth/reset-password',
             })
