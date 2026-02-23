@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation'
 import { getConfig } from '@/actions/admin/config'
 import { MobileRedirect } from '@/components/mobile-redirect'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminRootLayout({ children }: { children: React.ReactNode }) {
     const session = await auth.api.getSession({
         headers: await headers(),
